@@ -1,0 +1,3039 @@
+﻿var colors = {};
+
+var properties = {
+	panelName: 'WSHtitle_bar',
+	Remember_previous_state: window.GetProperty("Resume panel state on startup, except on visualization tab", false),
+	background_color: window.GetProperty("Background color", "255-255-255"),
+	fullMode_savedwidth: window.GetProperty("Full mode saved width", 1100),
+	fullMode_pmanagerheight: window.GetProperty("Full mode pmanager saved height", 820),
+	miniMode_savedwidth: window.GetProperty("Mini mode saved width", 290),
+	miniMode_playlistheight: window.GetProperty("Mini mode playlist saved height", 380),
+	autosearch: window.GetProperty("_DISPLAY: autosearch", true),
+	miniMode_defaultwidth:290,
+	miniMode_defaultheight:380,
+	fullMode_defaultwidth:1100,
+	fullMode_defaultheight:820,
+	fullMode_minwidth:600,
+	fullMode_minheight:500,
+	fullcontrolsHeight:72,
+	compactNoTrackcontrolsHeight:47,
+	compactcontrolsHeight:54,
+	minicontrolsHeight:51,
+	miniNoTrackcontrolsHeight:43,
+	full_titlebar_height:64,
+	minimode_titlebar_height:64,
+	compact_titlebar_height:36,
+	compact_titlebar_big_height:50,	
+	searchHistory_max_items: window.GetProperty("Max items in search history", 6),
+	library_dark_theme: window.GetProperty("LIBRARY dark theme", false),
+	playlists_dark_theme: window.GetProperty("PLAYLISTS dark theme", false),
+	bio_dark_theme: window.GetProperty("BIO dark theme", false),
+	bio_stick2darklayout: window.GetProperty("BIO stick to Dark layout",false),
+	visualization_dark_theme: window.GetProperty("VISUALIZATION dark theme", false),
+	minimode_dark_theme: window.GetProperty("MINIMODE dark theme", false),
+	show_visualization: window.GetProperty("_PROPERTY show visualization tab", true),
+	showwallpaper: window.GetProperty("_DISPLAY: Show Wallpaper", false),
+	wallpapermode: window.GetProperty("_SYSTEM: Wallpaper Mode", 0),
+	wallpaperblurred: window.GetProperty("_DISPLAY: Wallpaper Blurred", true),
+	wallpaperblurvalue: window.GetProperty("_DISPLAY: Wallpaper Blur Value", 1.05),
+	wallpaperdisplay: window.GetProperty("_DISPLAY: Wallpaper 0=Filling 1=Adjust 2=Stretch", 0),
+	darklayout: window.GetProperty("_DISPLAY: Dark layout", false),
+	darklayout_follow_cui: window.GetProperty("_DISPLAY: Dark layout follow CUI", false),
+	tracktitle_ontop: window.GetProperty("_DISPLAY: Track title", true),
+	tracktitle_format: window.GetProperty("_DISPLAY: Track title format", "[%artist%  -  ][%album%[  -  %tracknumber%] : ]%title%[  -  %date%]"),
+	showRightSidebarBtn: window.GetProperty("_DISPLAY: show right sidebar btn", true),
+	showConfigLayoutBtn: window.GetProperty("_DISPLAY: show configure layout btn", true),	
+	showLightswitchBtn: window.GetProperty("_DISPLAY: show light switch btn", true),
+	showPanelBtnText: window.GetProperty("_DISPLAY: show panels btn text", true),
+	showNowPlayingBtn: window.GetProperty("_DISPLAY: show now playing btn", true),
+	showFullscreenBtn: window.GetProperty("_DISPLAY: show fullscreen btn", true),
+	LightswitchBtnGlobal: window.GetProperty("_DISPLAY: light switch btn global", true),
+	savedFilterState: window.GetProperty("_PROPERTY: Saved filter state", -1),
+	SuperCompact_titlebar: window.GetProperty("_PROPERTY: Compactify panels buttons", false),
+	panelFontAdjustement: 0,
+	toUpperCase: window.GetProperty("_DISPLAY: panels btn text to uppercase", false),
+	alwaysShowSearch: window.GetProperty("_DISPLAY: always show search box", true),
+	mini_mainmenu_button: window.GetProperty("_DISPLAY: mini main menu button", false),
+}
+if(globalProperties.deleteDiskCache) {
+	delete_full_cache();
+}
+
+var scheduler = {
+	shutdown_after_current: false,
+	shutdown_after_playlist: false,
+	hibernate_after_current: false,
+	hibernate_after_playlist: false
+}
+var g_searchbox = null;
+var g_fsize=12;
+var cSearchBox = {};
+var g_genre_cache = null;
+var main_panel_btns = null;
+var previous_darkvalue = properties.darklayout;
+
+var cSearchBoxMainLight = {
+	width:270,
+	marginRight:128,
+	marginLeft:5,
+	marginTop:35,
+	marginBottom:0,
+	paddingLeft:37,
+	paddingRight:40,
+	paddingTop:5,
+	paddingBottom:6
+};
+var cSearchBoxCompact = {
+	width:270,
+	marginRight:190,
+	marginRightSmall:185,	
+	marginRightBig:198,	
+	marginLeft:5,
+	marginTop:1,
+	marginBottom:0,
+	paddingLeft:27,
+	paddingRight:40,
+	paddingTop:5,
+	paddingBottom:6
+};
+var cSearchBoxMainDark = {
+	width:270,
+	marginRight:128,
+	marginLeft:5,
+	marginTop:35,
+	marginBottom:0,
+	paddingLeft:37,
+	paddingRight:40,
+	paddingTop:5,
+	paddingBottom:6
+};
+var cSearchBoxMini = {
+	width:300,
+	marginRight:34,
+	marginLeft:5,
+	marginTop:34,
+	marginBottom:4,
+	paddingLeft:37,
+	paddingRight:40,
+	paddingTop:6,
+	paddingBottom:4
+};
+var btn = {
+	width:85,
+	width_small_btns:27,
+	width_small_btns_compact:36,
+	width_small_btns_compact_big:43,	
+	height:33,
+	height_small:33,		
+	height_big:47,	
+	padding:[0,7,0,0],
+	top_m:31,
+	top_m_to_uppercase:32,
+	top_m_compact:1,
+	top_padding:1,
+	left_m:23,
+	left_m_compact:56,
+	left_m_compact_mini:50,
+	left_m_hide_search_compact:26,
+	left_m_hide_search_compact_mini:20,
+	margin:15,
+};
+
+var update_wallpaper = false;
+
+var ww = 0, wh = 0;
+var caption_title_default = "未播放 - 没有播放任何内容";
+var caption_title = caption_title_default;
+
+var Settings_width = 102;
+var btn_initialized = false;
+
+function setScheduler(schedulerState, dontNotify) {
+	dontNotify = typeof dontNotify !== 'undefined' ? dontNotify : false;
+	!dontNotify && window.NotifyOthers("schedulerState", schedulerState);
+
+	scheduler.hibernate_after_current = false;
+	scheduler.shutdown_after_current = false;
+	scheduler.hibernate_after_playlist = false;
+	scheduler.shutdown_after_playlist = false;
+	fb.StopAfterCurrent=false;
+
+	switch (schedulerState) {
+		case 0:
+			break;
+		case 1:
+			fb.StopAfterCurrent=true;
+			break;
+		case 2:
+			scheduler.hibernate_after_current = true;
+			fb.StopAfterCurrent=true;
+			break;
+		case 3:
+			scheduler.shutdown_after_current = true;
+			fb.StopAfterCurrent=true;
+			break;
+		case 4:
+			scheduler.hibernate_after_playlist = true;
+			break;
+		case 5:
+			scheduler.shutdown_after_playlist = true;
+			break;
+	}
+}
+
+var images = {}
+
+function build_images() {
+	properties.darklayout ? (colors.icons_folder = "white") : (colors.icons_folder = "");
+	const icon_prefix = layout_state === 1 ? "mini" : "";
+
+	images = {
+		config_layout_img: gdi.Image(`${theme_img_path}\\icons\\${colors.icons_folder}\\panel_settings.png`),
+		artist_bio_img: gdi.Image(`${theme_img_path}\\icons\\${colors.icons_folder}\\artist_bio_icon.png`),
+		playlist_img: gdi.Image(`${theme_img_path}\\icons\\${colors.icons_folder}\\playlist_icon.png`),
+		visualization_img: gdi.Image(`${theme_img_path}\\icons\\${colors.icons_folder}\\nowplaying_icon.png`),
+		trackinfos_on: gdi.Image(`${theme_img_path}\\icons\\${colors.icons_folder}\\trackinfos_on.png`),
+		trackinfos_off: gdi.Image(`${theme_img_path}\\icons\\${colors.icons_folder}\\trackinfos_off.png`),
+		fullscreen_img: gdi.Image(`${theme_img_path}\\icons\\${colors.icons_folder}\\fullscreen_icon.png`),
+		search_toggle_img: gdi.Image(`${theme_img_path}\\icons\\${colors.icons_folder}\\search_icon.png`),
+		lightswitch_img: gdi.Image(`${theme_img_path}\\icons\\${colors.icons_folder}\\lightswitch_icon3.png`),
+		minimode_on_img: gdi.Image(`${theme_img_path}\\icons\\${colors.icons_folder}\\minimode_on_icon.png`),
+		minimode_off_img: gdi.Image(`${theme_img_path}\\icons\\${colors.icons_folder}\\minimode_off_icon.png`),
+		library_img: gdi.Image(`${theme_img_path}\\icons\\${colors.icons_folder}\\library_icon.png`),
+		global_settings_img: gdi.Image(`${theme_img_path}\\icons\\${colors.icons_folder}\\global_settings.png`),
+		global_settings_big_img: gdi.Image(`${theme_img_path}\\icons\\${colors.icons_folder}\\global_settings_big.png`),		
+		nowplaying_off_icon: gdi.Image(`${theme_img_path}\\icons\\${colors.icons_folder}\\nowplaying_off.png`),
+		nowplaying_off_hover_icon: gdi.Image(`${theme_img_path}\\icons\\${colors.icons_folder}\\nowplaying_off_hover.png`),
+		nowplaying_on_icon: gdi.Image(`${theme_img_path}\\icons\\${colors.icons_folder}\\nowplaying_on.png`),
+		nowplaying_on_hover_icon: gdi.Image(`${theme_img_path}\\icons\\${colors.icons_folder}\\${icon_prefix}close_icon.png`),
+		nowplaying_on_hover_icon_hover: gdi.Image(`${theme_img_path}\\icons\\white\\${icon_prefix}close_icon.png`),
+		max_icon: gdi.Image(`${theme_img_path}\\icons\\${colors.icons_folder}\\${icon_prefix}max_icon.png`),
+		maxon_icon: gdi.Image(`${theme_img_path}\\icons\\${colors.icons_folder}\\${icon_prefix}maxon_icon.png`),
+		reduce_icon: gdi.Image(`${theme_img_path}\\icons\\${colors.icons_folder}\\${icon_prefix}reduce_icon.png`),
+		mini_icon: gdi.Image(`${theme_img_path}\\icons\\${colors.icons_folder}\\minimode_icon.png`)
+	}
+
+	build_buttons();
+}
+
+function setDarkLayout(){
+	switch(true){
+		case (main_panel_state.isEqual(0) && properties.library_dark_theme && layout_state.isEqual(0)):
+		case (main_panel_state.isEqual(1) && properties.playlists_dark_theme && layout_state.isEqual(0)):
+		case (main_panel_state.isEqual(2) && properties.bio_dark_theme && layout_state.isEqual(0)):
+		case (main_panel_state.isEqual(3) && properties.visualization_dark_theme && layout_state.isEqual(0)):
+		case (properties.minimode_dark_theme && layout_state.isEqual(1)):
+			properties.darklayout = true;
+		break;
+		default:
+			properties.darklayout = false;
+		break;
+	}
+}
+
+function get_colors(){
+	setDarkLayout();
+	get_colors_global();
+	if (properties.darklayout) {
+		colors.wallpaper_overlay = GetGrey(0,203);
+		colors.wallpaper_overlay_blurred = GetGrey(0,140);
+		colors.albumartbg_overlay = GetGrey(0,80);
+
+		colors.btn_inactive_opacity = 110;
+		colors.active_tab = GetGrey(255);
+		colors.active_tab_line_height = 1;
+
+		colors.inactive_txt = GetGrey(110);
+		colors.faded_txt = GetGrey(240);
+
+		colors.search_txt = GetGrey(240);
+		colors.search_reset_icon = GetGrey(255);
+		colors.bottom_line = GetGrey(255,35);
+		colors.icons_folder = "white";
+
+		colors.titlebar_btn_hover_bg = GetGrey(255,50);
+		colors.settings_btn_hover_bg = GetGrey(255,30);
+		if(compact_titlebar.isActive()) {
+			colors.settings_btn_line = GetGrey(255,35);
+			colors.search_line = GetGrey(255,35);
+		} else {
+			colors.settings_btn_line = GetGrey(255,45);
+			colors.search_line = GetGrey(255,35);
+		}
+		cSearchBox.marginBottom = 3;
+	}
+	else {
+		colors.wallpaper_overlay = GetGrey(255,232);
+		colors.wallpaper_overlay_blurred = GetGrey(255,232);
+		colors.albumartbg_overlay = GetGrey(0,80);
+
+		colors.btn_inactive_opacity = 255;
+		colors.inactive_txt = GetGrey(0);
+		colors.active_tab = GetGrey(0);
+		colors.active_tab_line_height = 2;
+
+		colors.faded_txt = GetGrey(0);
+
+		colors.search_txt = GetGrey(70);
+
+		colors.search_line=GetGrey(0,49);
+		colors.search_reset_icon = GetGrey(0);
+		colors.bottom_line =  colors.sidesline;
+		colors.icons_folder = "";
+
+		colors.titlebar_btn_hover_bg = GetGrey(0,27);
+		colors.settings_btn_hover_bg = GetGrey(0,7);
+		if(compact_titlebar.isActive()) {
+			colors.settings_btn_line = GetGrey(210);
+			colors.search_line = GetGrey(210);
+		} else {
+			colors.settings_btn_line = GetGrey(210);
+			colors.search_line = GetGrey(0,49);
+		}
+	}
+	build_images();
+}
+
+//get_colors();
+
+function Lightswitch(switch_all,new_state){
+	switch_all = typeof switch_all !== 'undefined' ? switch_all : false;
+	new_state = typeof new_state !== 'undefined' ? new_state : !properties.darklayout;
+
+	if(layout_state.isEqual(1)){
+		if(switch_all) properties.minimode_dark_theme=new_state;
+		else properties.minimode_dark_theme=!properties.minimode_dark_theme;
+        window.NotifyOthers("minimode_dark_theme",properties.minimode_dark_theme);
+		window.SetProperty("MINIMODE dark theme", properties.minimode_dark_theme);
+		on_notify_data("minimode_dark_theme",properties.minimode_dark_theme);
+		get_colors();g_searchbox.adapt_look_to_layout();
+        if(!switch_all) window.Repaint();
+	}
+	if((main_panel_state.isEqual(0) && layout_state.isEqual(0)) || switch_all){
+		if(switch_all) properties.library_dark_theme=new_state;
+		else properties.library_dark_theme=!properties.library_dark_theme;
+        window.NotifyOthers("library_dark_theme",properties.library_dark_theme);
+		window.SetProperty("LIBRARY dark theme", properties.library_dark_theme);
+		on_notify_data("library_dark_theme",properties.library_dark_theme);
+        if(!switch_all) window.Repaint();
+	}
+	if((main_panel_state.isEqual(1) && layout_state.isEqual(0)) || switch_all){
+		if(switch_all) properties.playlists_dark_theme=new_state;
+		else properties.playlists_dark_theme=!properties.playlists_dark_theme;
+        window.NotifyOthers("playlists_dark_theme",properties.playlists_dark_theme);
+		window.SetProperty("PLAYLISTS dark theme", properties.playlists_dark_theme);
+		on_notify_data("playlists_dark_theme",properties.playlists_dark_theme);
+		fb.RunMainMenuCommand("View/ElPlaylist/Refresh");
+        if(!switch_all) window.Repaint();
+	}
+	if((main_panel_state.isEqual(2) && layout_state.isEqual(0)) || switch_all){
+		if(switch_all) properties.bio_dark_theme=new_state;
+		else properties.bio_dark_theme=!properties.bio_dark_theme;
+        window.NotifyOthers("bio_dark_theme",properties.bio_dark_theme);
+		window.SetProperty("BIO dark theme", properties.bio_dark_theme);
+		on_notify_data("bio_dark_theme",properties.bio_dark_theme);
+        if(!switch_all) window.Repaint();
+	}
+	if((main_panel_state.isEqual(3) && layout_state.isEqual(0)) || switch_all){
+		if(switch_all) properties.visualization_dark_theme=new_state;
+		else properties.visualization_dark_theme=!properties.visualization_dark_theme;
+        window.NotifyOthers("visualization_dark_theme",properties.visualization_dark_theme);
+		window.SetProperty("VISUALIZATION dark theme", properties.visualization_dark_theme);
+		on_notify_data("visualization_dark_theme",properties.visualization_dark_theme);
+	}
+	if(switch_all) window.Repaint();
+}
+function toggleNowPlayingState(switch_all,new_state, refresh_panel){
+	switch_all = typeof switch_all !== 'undefined' ? switch_all : false;
+	new_state = typeof new_state !== 'undefined' ? new_state : false;
+	refresh_panel = typeof refresh_panel !== 'undefined' ? refresh_panel : true;
+	if(switch_all){
+		if(new_state===false) {
+			nowplayinglib_state.toggleValue(refresh_panel);
+			nowplayingplaylist_state.toggleValue(refresh_panel);
+			nowplayingbio_state.toggleValue(refresh_panel);
+			nowplayingvisu_state.toggleValue(refresh_panel);
+		} else {
+			nowplayinglib_state.setValue(new_state,refresh_panel);
+			nowplayingplaylist_state.setValue(new_state,refresh_panel);
+			nowplayingbio_state.setValue(new_state,refresh_panel);
+			nowplayingvisu_state.setValue(new_state,refresh_panel);
+		}
+	} else {
+		switch(main_panel_state.value){
+			case 0:
+				if(new_state!==false) nowplayinglib_state.setValue(new_state,refresh_panel);
+				else nowplayinglib_state.toggleValue(refresh_panel);
+			break;
+			case 1:
+				if(new_state!==false) nowplayingplaylist_state.setValue(new_state,refresh_panel);
+				else nowplayingplaylist_state.toggleValue(refresh_panel);
+			break;
+			case 2:
+				if(new_state!==false) nowplayingbio_state.setValue(new_state,refresh_panel);
+				else nowplayingbio_state.toggleValue(refresh_panel);
+			break;
+			case 3:
+				if(new_state!==false) nowplayingvisu_state.setValue(new_state,refresh_panel);
+				else nowplayingvisu_state.toggleValue(refresh_panel);
+			break;
+		}
+	}
+	build_buttons();
+	window.Repaint();
+}
+function toggleTrackInfosState(switch_all,new_state, refresh_panel){
+	switch_all = typeof switch_all !== 'undefined' ? switch_all : false;
+	new_state = typeof new_state !== 'undefined' ? new_state : false;
+	refresh_panel = typeof refresh_panel !== 'undefined' ? refresh_panel : true;
+
+	//if(getNowPlayingState()==0) toggleNowPlayingState();
+
+	if(switch_all){
+		if(new_state===false) {
+			trackinfoslib_state.cycleIncrement(1,refresh_panel);
+			trackinfosplaylist_state.cycleIncrement(1,refresh_panel);
+			trackinfosbio_state.cycleIncrement(1,refresh_panel);
+			trackinfosvisu_state.cycleIncrement(1,refresh_panel);
+		} else {
+			trackinfoslib_state.setValue(new_state,refresh_panel);
+			trackinfosplaylist_state.setValue(new_state,refresh_panel);
+			trackinfosbio_state.setValue(new_state,refresh_panel);
+			trackinfosvisu_state.setValue(new_state,refresh_panel);
+		}
+	} else {
+		switch(main_panel_state.value){
+			case 0:
+				if(new_state!==false) trackinfoslib_state.setValue(new_state,refresh_panel);
+				else trackinfoslib_state.cycleIncrement(1,refresh_panel);
+			break;
+			case 1:
+				if(new_state!==false) trackinfosplaylist_state.setValue(new_state,refresh_panel);
+				else trackinfosplaylist_state.cycleIncrement(1,refresh_panel);
+			break;
+			case 2:
+				if(new_state!==false) trackinfosbio_state.setValue(new_state,refresh_panel);
+				else trackinfosbio_state.cycleIncrement(1,refresh_panel);
+			break;
+			case 3:
+				if(new_state!==false) trackinfosvisu_state.setValue(new_state,refresh_panel);
+				else trackinfosvisu_state.cycleIncrement(1,refresh_panel);
+			break;
+		}
+	}
+	build_buttons();
+	window.Repaint();
+}
+function saveFilterState(){
+	properties.savedFilterState = filters_panel_state.value;
+	window.SetProperty("_PROPERTY: Saved filter state", properties.savedFilterState);
+	window.NotifyOthers("save_filter_state",properties.savedFilterState);
+}
+function setMaxButton(){
+	if(g_uihacks.getMainWindowState()==WindowState.Normal) buttons.Max.H_img = images.max_icon;
+	else buttons.Max.H_img = images.maxon_icon;
+	buttons.Max.N_img = buttons.Max.H_img;
+	buttons.Max.D_img = buttons.Max.H_img;	
+}
+
+function build_buttons(){
+	if(btn_initialized){
+		buttons.Library.N_img = images.library_img;
+		buttons.Library.H_img = images.library_img;
+		buttons.Library.D_img = buttons.Library.H_img;
+
+		buttons.Playlists.N_img = images.playlist_img;
+		buttons.Playlists.H_img = images.playlist_img;
+		buttons.Playlists.D_img = buttons.Playlists.H_img;
+
+		buttons.Artist_Bio.H_img = images.artist_bio_img;
+		buttons.Artist_Bio.N_img = images.artist_bio_img;
+		buttons.Artist_Bio.D_img = buttons.Artist_Bio.H_img;
+
+		buttons.Visualization.H_img = images.visualization_img;
+		buttons.Visualization.N_img = images.visualization_img;
+		buttons.Visualization.D_img = buttons.Visualization.H_img;
+
+		buttons.Lightswitch.H_img = images.lightswitch_img;
+		buttons.Lightswitch.N_img = images.lightswitch_img;
+		buttons.Lightswitch.D_img = buttons.Lightswitch.H_img;
+
+		if(getNowPlayingState()==1) buttons.NowPlaying.H_img = images.nowplaying_on_icon;
+		else buttons.NowPlaying.H_img = images.nowplaying_off_icon;
+		buttons.NowPlaying.N_img = buttons.NowPlaying.H_img;
+		buttons.NowPlaying.D_img = buttons.NowPlaying.H_img;
+		
+		buttons.ConfigLayout.H_img = images.config_layout_img;
+		buttons.ConfigLayout.N_img = images.config_layout_img;
+		buttons.ConfigLayout.D_img = buttons.ConfigLayout.H_img;
+
+		if(getTrackInfosState()>=1) {
+			buttons.RightSidebar.H_img = images.trackinfos_off;
+			buttons.RightSidebar.N_img = images.trackinfos_off;
+		} else {
+			buttons.RightSidebar.H_img = images.trackinfos_on;
+			buttons.RightSidebar.N_img = images.trackinfos_on;
+		}
+		buttons.RightSidebar.D_img = buttons.RightSidebar.H_img;
+
+		buttons.ShowSearch.H_img = images.search_toggle_img;
+		buttons.ShowSearch.N_img = images.search_toggle_img;
+		buttons.ShowSearch.D_img = buttons.ShowSearch.H_img;
+
+		buttons.Fullscreen.H_img = images.fullscreen_img;
+		buttons.Fullscreen.N_img = images.fullscreen_img;
+		buttons.Fullscreen.D_img = buttons.Fullscreen.H_img;
+		if(compact_titlebar.isEqual(2) && layout_state.isEqual(0)){
+			buttons.Settings.H_img = images.global_settings_big_img;
+			buttons.Settings.N_img = images.global_settings_big_img;
+		} else {
+			buttons.Settings.H_img = images.global_settings_img;
+			buttons.Settings.N_img = images.global_settings_img;			
+		}
+		buttons.Settings.D_img = buttons.Settings.H_img;
+
+		buttons.Close.N_img = images.nowplaying_on_hover_icon;
+		buttons.Close.H_img = images.nowplaying_on_hover_icon_hover;
+		buttons.Close.D_img = buttons.Close.H_img;
+
+		setMaxButton();
+		buttons.Max.hover_color = colors.titlebar_btn_hover_bg;
+
+		buttons.Mini.N_img = images.mini_icon;
+		buttons.Mini.H_img = images.mini_icon;
+		buttons.Mini.D_img = buttons.Mini.H_img;
+		buttons.Mini.hover_color = colors.titlebar_btn_hover_bg;
+
+		buttons.Reduce.H_img = images.reduce_icon;
+		buttons.Reduce.N_img = images.reduce_icon;
+		buttons.Reduce.D_img = buttons.Reduce.H_img;
+		buttons.Reduce.hover_color = colors.titlebar_btn_hover_bg;
+	} else {
+		btn_initialized = true;
+		if(compact_titlebar.isEqual(2) && layout_state.isEqual(0)){
+			btn.height = btn.height_big;
+		} else {
+			btn.height = btn.height_small;			
+		}
+		buttons = {
+			Library: new JSButton(btn.left_m+btn.margin*0, btn.top_m, btn.width, btn.height, "媒体库", "媒体库", "", function () {
+				main_panel_state.setValue(0);
+				get_colors();g_searchbox.adapt_look_to_layout();
+			}, false,false,images.library_img,images.library_img,0, false, false, true,(compact_titlebar.isEqual(2)?g_font.plus1:g_font.normal)),
+			Playlists: new JSButton(btn.left_m+btn.width+btn.margin*1, btn.top_m, btn.width, btn.height, "播放列表", "播放列表", "", function () {
+				main_panel_state.setValue(1);
+				get_colors();g_searchbox.adapt_look_to_layout();
+			}, false,false,images.playlist_img,images.playlist_img,1, false, false, true,(compact_titlebar.isEqual(2)?g_font.plus1:g_font.normal)),
+			Artist_Bio: new JSButton(btn.left_m+btn.width+btn.width+btn.margin*2, btn.top_m, btn.width, btn.height, "当前播放", "当前播放", "", function () {
+				main_panel_state.setValue(2);
+				get_colors();g_searchbox.adapt_look_to_layout();
+			}, false,false,images.artist_bio_img,images.artist_bio_img,2, false, false, true,(compact_titlebar.isEqual(2)?g_font.plus1:g_font.normal)),
+			Visualization: new JSButton(btn.left_m+btn.width+btn.width+btn.width+btn.margin*3, btn.top_m, btn.width, btn.height, "可视化", "可视化", "", function () {
+				main_panel_state.setValue(3);
+				get_colors();g_searchbox.adapt_look_to_layout();
+			}, false,false,images.visualization_img,images.visualization_img,3, false, false, true,(compact_titlebar.isEqual(2)?g_font.plus1:g_font.normal)),
+			NowPlaying: new JSButton(-38, btn.top_m, btn.width_small_btns, btn.height, "", "nowplaying", "隐藏/显示右侧边栏", function () {
+				toggleNowPlayingState();
+			}, false, false,images.nowplaying_off_icon,images.nowplaying_off_icon,-1, false, false, true,(compact_titlebar.isEqual(2)?g_font.plus1:g_font.normal)),
+			ConfigLayout: new JSButton(-38, btn.top_m, btn.width_small_btns, btn.height, "", "Configlayout", "配置布局", function () {
+				draw_layout_menu(this.x+this.w,this.y+this.h-1);
+			}, false, false,images.config_layout_img,images.config_layout_img,-1, false, false, true,(compact_titlebar.isEqual(2)?g_font.plus1:g_font.normal)),			
+			RightSidebar: new JSButton(-38, btn.top_m, btn.width_small_btns, btn.height, "", "rightsidebar", "隐藏/显示音轨信息", function () {
+				if(getNowPlayingState()==1) {
+					toggleTrackInfosState();
+				} else {
+					if(getTrackInfosState()==0) toggleTrackInfosState(false,1,false);
+					toggleNowPlayingState();
+					/*trigger_refresh_PSS = setTimeout(function(){
+						RefreshPSS();
+						clearTimeout(trigger_refresh_PSS);
+						trigger_refresh_PSS = false;
+					}, 100);*/
+				}
+			}, false, false,images.nowplaying_off_icon,images.nowplaying_off_icon,-1, false, false, true),
+			Lightswitch: new JSButton(-38, btn.top_m, btn.width_small_btns, btn.height, "", "lightswitch", "切换 深色/浅色"+"\n"+"(双击切换全局)", false, function () {
+				previous_darkvalue = properties.darklayout;				
+				Lightswitch();
+			}, function () {
+				Lightswitch(true,!previous_darkvalue);
+			}, images.lightswitch_img,images.lightswitch_img,-1, false, false, true),
+			Fullscreen: new JSButton(-112, btn.top_m, btn.width_small_btns, btn.height, "", "fullscreen", "全屏", function () {
+				g_uihacks.toggleFullscreen();
+			}, false,false,images.fullscreen_img,images.fullscreen_img,-1, false, false, true),
+			ShowSearch: new JSButton(-150, btn.top_m, btn.width_small_btns, btn.height, "", "search", "显示输入搜索", function () {
+				toggleSearch();
+				g_cursor.setCursor(IDC_ARROW,2);
+			}, false,false,images.search_toggle_img,images.search_toggle_img,-1, false, false, true),
+			Settings: new JSButton(2, -1, Settings_width, btn.height-3, "Foobar", "Foobar", "主菜单", function () {
+				g_tooltip.Deactivate();
+				draw_main_menu(0, 28);
+			}, false,false,((compact_titlebar.isEqual(2) && layout_state.isEqual(0))?images.global_settings_big_img:images.global_settings_img),((compact_titlebar.isEqual(2) && layout_state.isEqual(0))?images.global_settings_big_img:images.global_settings_img),-1, false, false, false),
+			Close: new JSButton(-45, 0, 45, 29, "", "close", "", false, function () {
+				fb.Exit();
+			},false,images.nowplaying_on_hover_icon,images.nowplaying_on_hover_icon_hover,-1,false,RGB(232,17,35),true),
+			Max: new JSButton(-90, 0, 45, 29, "", "max", "最大化/主播放器", false, function () {
+				if(layout_state.isEqual(1)){
+					toggleLayoutMode();get_colors();g_searchbox.adapt_look_to_layout();
+					this.changeState(ButtonStates.normal);
+				} else {
+					if(g_uihacks.getMainWindowState()==WindowState.Normal)
+						g_uihacks.setMainWindowState(WindowState.Maximized);
+					else
+						g_uihacks.setMainWindowState(WindowState.Normal);
+				}
+			},false,images.max_icon,images.max_icon,-1,false,colors.titlebar_btn_hover_bg,true),
+			Mini: new JSButton(-135, 0, 45, 29, "", "mini", "Mini 播放器", false, function () {
+				toggleLayoutMode();get_colors();g_searchbox.adapt_look_to_layout();
+			},false,images.mini_icon,images.mini_icon,-1,false,colors.titlebar_btn_hover_bg,true),
+			Reduce: new JSButton(-180, 0, 45, 29, "", "reduce", "", false, function () {
+				g_uihacks.setMainWindowState(WindowState.Minimized);
+			},false,images.reduce_icon,images.reduce_icon,-1,false,colors.titlebar_btn_hover_bg,true)
+		}
+
+		all_btns = new JSButtonGroup("top-left", 0, 0, 'all_btns', false);
+		all_btns.addButtons(buttons, [0,0,0,0]);
+
+		topleft_btns = new JSButtonGroup("top-left", 0, 0, 'topleft_btns', true);
+		topleft_btns.addButtons([buttons.Settings], [0,0,0,0]);
+		topleft_btns.setPadding([0,7,0,2]);
+
+		main_panel_btns = new JSButtonGroup("top-left", btn.left_m, btn.top_m, 'main_panel_btns', true);
+		main_panel_btns.addButtons([buttons.Library,buttons.Playlists,buttons.Artist_Bio,buttons.Visualization], [0,btn.margin+2,0,0]);
+		main_panel_btns.setPadding(btn.padding);
+
+		window_btns = new JSButtonGroup("top-right", 0, 0, 'window_btns', false);
+		window_btns.addButtons([buttons.Close,buttons.Max,buttons.Mini,buttons.Reduce], [0,0,0,0]);
+
+		additional_btns = new JSButtonGroup("top-right", 11, btn.top_m, 'additional_btns', true);
+		additional_btns.addButtons([buttons.NowPlaying,buttons.ConfigLayout,buttons.RightSidebar,buttons.Fullscreen,buttons.Lightswitch,buttons.ShowSearch], [0,9,0,0]);
+
+		compact_btns = new JSButtonGroup("top-left", 0, -1, 'compact_btns', true);
+		compact_btns.addButtons([buttons.Settings,buttons.NowPlaying,buttons.ConfigLayout,buttons.RightSidebar,buttons.Lightswitch,buttons.Fullscreen,buttons.ShowSearch], [0,0,0,0]);
+		compact_btns.addButtons([buttons.Library], [0,0,0,btn.margin+5]);
+		compact_btns.addButtons([buttons.Playlists,buttons.Artist_Bio,buttons.Visualization], [0,0,0,btn.margin]);
+	}
+}
+function toggleSearch(new_search_state){
+	g_searchbox.toggleVisibility();
+	if(!g_searchbox.hide) g_searchbox.inputbox.activate(0,0);
+}
+function toggleLayoutMode(new_layout_state, main_window_state){
+	new_layout_state = typeof new_layout_state !== 'undefined' ? new_layout_state : 1-layout_state.value;
+	main_window_state = typeof main_window_state !== 'undefined' ? main_window_state : 0;
+
+	if(new_layout_state == 1) {
+		if(!g_uihacks.getFullscreenState() && g_uihacks.getMainWindowState()==0){
+			properties.fullMode_savedwidth=window.Width;
+			window.SetProperty("Full mode saved width", properties.fullMode_savedwidth);
+		} else {
+			g_uihacks.setFullscreenState(false);
+			g_uihacks.setMainWindowState(main_window_state);
+		}
+		layout_state.setValue(1);
+		g_uihacks.setMinWidth(globalProperties.miniMode_minwidth);
+		g_uihacks.setMinHeight(globalProperties.miniMode_minwidth);
+		g_uihacks.setMaxWidth(properties.miniMode_savedwidth);
+
+		try{
+			g_uihacks.setMaxHeight(properties.miniMode_playlistheight+(showtrackinfo_small.isActive()?properties.minicontrolsHeight:properties.miniNoTrackcontrolsHeight)+properties.minimode_titlebar_height + 1);
+		} catch (e) {
+			g_uihacks.setMaxHeight(window.Height);
+		}
+		g_uihacks.enableMaxSize();
+		maxsize_disabling = setTimeout(function(){
+			clearTimeout(maxsize_disabling);
+			maxsize_disabling = false;
+			g_uihacks.disableMaxSize();
+		}, 100);
+		adapt_buttons_to_layout();
+	} else {
+		if(!g_uihacks.getFullscreenState() && g_uihacks.getMainWindowState()==0){
+			properties.miniMode_savedwidth=window.Width;
+			window.SetProperty("Mini mode saved width", properties.miniMode_savedwidth);
+		} else {
+			g_uihacks.setFullscreenState(false);
+			g_uihacks.setMainWindowState(main_window_state);
+		}
+		layout_state.setValue(0);
+		g_uihacks.enableMinSize();
+		g_uihacks.setMinWidth(Math.max(properties.fullMode_savedwidth,globalProperties.fullMode_minwidth));
+		try{
+			g_uihacks.setMinHeight(Math.max(properties.fullMode_pmanagerheight+(mini_controlbar.isActive()?(showtrackinfo_big.isActive()?properties.compactcontrolsHeight:properties.compactNoTrackcontrolsHeight):properties.fullcontrolsHeight)+(compact_titlebar.isActive()?(compact_titlebar.isEqual(2)?properties.compact_titlebar_big_height:properties.compact_titlebar_height):properties.full_titlebar_height),globalProperties.fullMode_minheight) + 1);
+		} catch (e) {
+			g_uihacks.setMinHeight(window.Height);
+		}
+		minsize_disabling = setTimeout(function(){
+			clearTimeout(minsize_disabling);
+			minsize_disabling = false;
+			g_uihacks.setMinWidth(650);
+			g_uihacks.setMinHeight(300);
+		}, 100);
+		adapt_buttons_to_layout();
+		set_main_btns_visibility();
+	}
+}
+function adapt_buttons_to_layout(){
+	if(compact_titlebar.isEqual(2) && layout_state.isEqual(0)){
+		btn.height = btn.height_big;
+	} else {
+		btn.height = btn.height_small;			
+	}	
+	if(layout_state.isEqual(1)) {
+		main_panel_btns.hide = true;
+		buttons.Fullscreen.setVisibility(false);
+		buttons.Mini.setVisibility(false);
+		buttons.ConfigLayout.setVisibility(false);		
+		buttons.NowPlaying.setVisibility(false);
+		buttons.RightSidebar.setVisibility(false);
+		buttons.Settings.calculate_size = true;
+
+		g_searchbox.toggleVisibility(true);
+
+		if(!properties.showLightswitchBtn)
+			buttons.Lightswitch.setVisibility(false);
+		else buttons.Lightswitch.setVisibility(true);
+
+		additional_btns.x = 5;
+
+		topleft_btns.setBtnsHeight(btn.height-4);
+		topleft_btns.setPadding([0,7,0,2]);
+		additional_btns.setBtnsHeight(btn.height-1);
+		additional_btns.setBtnsWidth(btn.width_small_btns_compact);
+		cSearchBoxMini.marginRight = ((properties.showLightswitchBtn)?32:0);
+
+		buttons.Close.w = 36;
+		window_btns.setBtnsHeight(28);
+		buttons.Max.w = buttons.Reduce.w = 32;
+
+		if(properties.tracktitle_ontop || properties.mini_mainmenu_button) {
+			buttons.Settings.w = buttons.Settings.N_img.Width+3;
+			buttons.Settings.displayLabel(false);
+		} else {
+			buttons.Settings.w = 41+buttons.Settings.N_img.Width+btn.padding/2;
+			buttons.Settings.displayLabel(true);
+		}
+	} else {
+		main_panel_btns.hide = false;
+		if((!(properties.alwaysShowSearch && !compact_titlebar.isActive())) && g_searchbox.inputbox.text.length == 0) {
+			g_searchbox.toggleVisibility(false);
+		} else g_searchbox.toggleVisibility(true);
+
+		buttons.Mini.setVisibility(true);
+
+		if(!properties.showFullscreenBtn)
+			buttons.Fullscreen.setVisibility(false);
+		else buttons.Fullscreen.setVisibility(true);
+
+		buttons.Settings.calculate_size = true;
+		
+		if(!properties.showConfigLayoutBtn)
+			buttons.ConfigLayout.setVisibility(false);
+		else buttons.ConfigLayout.setVisibility(true);
+		
+		if(!properties.showRightSidebarBtn)
+			buttons.RightSidebar.setVisibility(false);
+		else buttons.RightSidebar.setVisibility(true);		
+
+		if(!properties.showLightswitchBtn)
+			buttons.Lightswitch.setVisibility(false);
+		else buttons.Lightswitch.setVisibility(true);
+
+		if(!properties.showNowPlayingBtn)
+			buttons.NowPlaying.setVisibility(false);
+		else buttons.NowPlaying.setVisibility(true);
+
+		additional_btns.x = 14;
+
+		if(compact_titlebar.isEqual(2))
+			window_btns.setBtnsWidth(50);
+		else
+			window_btns.setBtnsWidth(45);			
+		if(properties.mini_mainmenu_button) {
+			buttons.Settings.w = buttons.Settings.N_img.Width+5+(compact_titlebar.isEqual(2)?19:0);
+			buttons.Settings.displayLabel(false);
+		} else {
+			buttons.Settings.w = 43+buttons.Settings.N_img.Width+btn.padding/2;
+			buttons.Settings.displayLabel(true);
+		}
+		if(compact_titlebar.isActive()) {
+			//properties.showPanelBtnText = false;
+			compact_btns.setBtnsHeight(btn.height+4);
+			if(compact_titlebar.isEqual(1)){
+				topleft_btns.setPadding([0,8,0,4]);
+				window_btns.setBtnsHeight(36);
+				additional_btns.setBtnsWidth(btn.width_small_btns_compact);
+			} else {		
+				topleft_btns.setPadding([0,18,0,14]);
+				if(properties.mini_mainmenu_button) {
+					topleft_btns.setPadding([0,18,0,14]);					
+					topleft_btns.imgXAdjust(0);
+				} else {
+					topleft_btns.setPadding([0,18,0,18]);					
+					topleft_btns.imgXAdjust(-4);						
+				}
+				window_btns.setBtnsHeight(50);		
+				additional_btns.setBtnsWidth(btn.width_small_btns_compact_big);				
+			}
+			
+		} else {
+			//properties.showPanelBtnText = true;
+			topleft_btns.setBtnsHeight(btn.height-3);
+			topleft_btns.setPadding([0,7,0,2]);
+			main_panel_btns.x = 17;
+			main_panel_btns.setBtnsHeight(btn.height);
+			additional_btns.setBtnsHeight(btn.height);
+			window_btns.setBtnsHeight(29);
+			additional_btns.setBtnsWidth(btn.width_small_btns);
+		}
+		cSearchBoxMainDark.marginRight = cSearchBoxMainLight.marginRight = 18 + additional_btns.getWidth(true) - (!properties.alwaysShowSearch?buttons.ShowSearch.w+5:0);
+
+		if(!properties.showRightSidebarBtn && !properties.showLightswitchBtn && !properties.showFullscreenBtn && !properties.showNowPlayingBtn && !properties.showConfigLayoutBtn){
+			cSearchBoxMainLight.marginRight -= 10;
+			cSearchBoxMainDark.marginRight -= 10;
+		}
+		main_panel_btns.txtYAdjust(compact_titlebar.isEqual(2)?0:1);
+		if(properties.toUpperCase) main_panel_btns.toUpperCase(true);
+		if(!properties.showPanelBtnText) main_panel_btns.displayLabel(false);
+	}
+	g_searchbox.adapt_look_to_layout();
+	if(!properties.show_visualization) buttons.Visualization.setVisibility(false);
+	g_panel.on_size_changed();
+}
+function SetCaptionTitleSize(){
+	if(layout_state.isEqual(1)) {
+		caption_title_x = topleft_btns.getWidth()+15;
+		caption_title_w = window.Width-window_btns.getWidth()-topleft_btns.getWidth()-20;
+	} else {
+		caption_title_x = topleft_btns.getWidth()+13;
+		caption_title_w = window.Width-window_btns.getWidth()-topleft_btns.getWidth()-20;
+	}
+}
+function oPanel(name, firstPaintCallback){
+	this.name = name;
+	this.firstPaintCallback = firstPaintCallback;
+	this.firstPaint = true;
+	this.on_size_changed = function(){
+		this.firstPaint = true;
+	}
+	this.draw = function(){
+		if(this.firstPaint){
+			this.firstPaintCallback && this.firstPaintCallback();
+			this.firstPaint = false;
+		}
+	};
+}
+function drawAllButtons(gr) {
+	if(compact_titlebar.isActive() && layout_state.isEqual(0)){
+		window_btns.draw(gr);
+		compact_btns.draw(gr);
+	} else {
+		topleft_btns.draw(gr);
+		main_panel_btns.draw(gr);
+		window_btns.draw(gr);
+		additional_btns.draw(gr);
+	}
+}
+
+function set_main_btns_visibility(){
+	if((compact_titlebar.isActive() && !g_searchbox.hide) || layout_state.isEqual(1)) {
+		buttons.Playlists.setVisibility(false);
+		buttons.Artist_Bio.setVisibility(false);
+		buttons.Library.setVisibility(false);
+		buttons.Visualization.setVisibility(false);
+		return;
+	}
+
+	if(!g_searchbox.hide) var searchbox_width = cSearchBox.width;
+	else var searchbox_width = 0;
+
+	if(properties.show_visualization){
+		if(ww-cSearchBox.marginRight-searchbox_width<btn.left_m+btn.width*4+btn.padding*3) buttons.Visualization.setVisibility(false);
+		else buttons.Visualization.setVisibility(true);
+	}
+	if(ww-cSearchBox.marginRight-searchbox_width<btn.left_m+btn.width*3+btn.padding*2) buttons.Artist_Bio.setVisibility(false);
+	else buttons.Artist_Bio.setVisibility(true);
+	if(ww-cSearchBox.marginRight-searchbox_width<btn.left_m+btn.width*2+btn.padding*1) buttons.Playlists.setVisibility(false);
+	else buttons.Playlists.setVisibility(true);
+	buttons.Library.setVisibility(true);
+}
+// -------------------------------- WSH Callbacks -------------------------------------------
+function on_size(w, h) {
+    ww = Math.max(w,globalProperties.miniMode_minwidth);
+    wh = h;
+	var fullscreen =  g_uihacks.getFullscreenState();
+	var mainWindowState =  g_uihacks.getMainWindowState();
+	if(layout_state.isEqual(0)){
+		if(!fullscreen && mainWindowState==0) properties.fullMode_savedwidth=ww;
+		set_main_btns_visibility();
+	} else {
+		if(mainWindowState==2){
+			toggleLayoutMode(0 , 0, false);get_colors();g_searchbox.adapt_look_to_layout();
+		}
+	}
+	setMaxButton();
+	g_panel.on_size_changed();
+    // set wallpaper
+    if(fb.IsPlaying && properties.showwallpaper) {
+        //g_wallpaperImg = setWallpaperImg(globalProperties.default_wallpaper, fb.GetNowPlaying());
+    }
+}
+function SetPseudoCaption(){
+	if(layout_state.isEqual(0)) {
+		if(!compact_titlebar.isActive()){
+			var topleft_btns_w = topleft_btns.getWidth();
+			g_uihacks.SetPseudoCaption(topleft_btns_w, 8, ww-280, 28);
+		} else {
+			if(g_searchbox.hide) {
+				var compact_btns_w = compact_btns.getWidth();
+				var window_btns_w = window_btns.getWidth();
+				g_uihacks.SetPseudoCaption(compact_btns_w, 8, ww - compact_btns_w - window_btns_w, (compact_titlebar.isEqual(2)?42:28));
+			} else {
+				g_uihacks.SetPseudoCaption(0, 8, 0, 28);
+			}
+		}
+	} else {
+		var window_btns_w = window_btns.getWidth();
+		var topleft_btns_w = topleft_btns.getWidth();
+		g_uihacks.SetPseudoCaption(topleft_btns_w, 8, ww - window_btns_w - topleft_btns_w, 28);
+	}
+}
+function on_paint(gr) {
+	gr.SetTextRenderingHint(globalProperties.TextRendering);
+
+	gr.FillSolidRect(0, 0, ww, wh, colors.normal_bg);
+    // BG wallpaper
+    if(properties.showwallpaper && (typeof(g_wallpaperImg) == "undefined" || !g_wallpaperImg || update_wallpaper)) {
+        g_wallpaperImg = setWallpaperImg(globalProperties.default_wallpaper, fb.GetNowPlaying());
+    };
+	if(properties.showwallpaper && g_wallpaperImg) {
+		gr.DrawImage(g_wallpaperImg, 0, 0, ww, wh, 0, 0, g_wallpaperImg.Width, g_wallpaperImg.Height);
+		gr.FillSolidRect(0, 0, ww, wh, (properties.wallpaperblurred)?colors.wallpaper_overlay_blurred:colors.wallpaper_overlay);
+	}
+
+	switch(true){
+		case (main_panel_state.isEqual(0) && ((properties.library_dark_theme && !properties.darklayout) || (!properties.library_dark_theme && properties.darklayout)) && layout_state.isEqual(0)):
+		case (main_panel_state.isEqual(1) && ((properties.playlists_dark_theme && !properties.darklayout) || (!properties.playlists_dark_theme && properties.darklayout)) && layout_state.isEqual(0)):
+		case (main_panel_state.isEqual(2) && ((properties.bio_dark_theme && !properties.darklayout) || (!properties.bio_dark_theme && (properties.darklayout || (properties.bio_stick2darklayout && !nowplayingbio_state.isActive())))) && layout_state.isEqual(0)):
+		case (main_panel_state.isEqual(3) && layout_state.isEqual(0) && !nowplayingvisu_state.isActive()):
+		case (((properties.minimode_dark_theme && !properties.darklayout) || (!properties.minimode_dark_theme && properties.darklayout)) && layout_state.isEqual(1)):
+		break;
+		default:
+			gr.FillSolidRect(0, wh-1, ww, 2, colors.bottom_line);
+		break;
+	}
+    drawAllButtons(gr);
+	g_panel.draw();
+
+	if(properties.tracktitle_ontop && !(compact_titlebar.isActive() && layout_state.isEqual(0))){
+		gr.GdiDrawText(caption_title, g_font.normal, colors.normal_txt, caption_title_x, 0, caption_title_w, 29, DT_LEFT| DT_VCENTER | DT_CALCRECT | DT_NOPREFIX | DT_END_ELLIPSIS);
+	}
+
+	if(layout_state.isEqual(0)){
+		g_searchbox.draw(gr, ww - g_searchbox.w - cSearchBox.marginRight, cSearchBox.marginTop);
+	} else {
+		g_searchbox.draw(gr, cSearchBox.marginLeft, cSearchBox.marginTop);
+	}
+
+}
+function on_playback_new_track(metadb){
+	//setPlaybackPlaylist();
+	eval_caption_title(metadb);
+	if(properties.showwallpaper && properties.wallpapermode == 0) {
+		g_wallpaperImg = setWallpaperImg(globalProperties.default_wallpaper, metadb);
+	};
+	window.Repaint();
+}
+function eval_caption_title(metadb){
+	if(metadb)
+		caption_title = fb.TitleFormat(properties.tracktitle_format).EvalWithMetadb(metadb).replace(/\r?\n/gm, ' ');
+}
+function on_playback_stop(reason) {
+	switch(reason) {
+	case 0: // user stop
+	case 1: // eof (e.g. end of playlist)
+		caption_title = caption_title_default;
+		g_wallpaperImg = null;
+		break;
+	case 2: // starting_another (only called on user action, i.e. click on next button)
+		break;
+	};
+	window.Repaint();
+}
+
+function on_mouse_move(x,y,m){
+	if(g_cursor.x==x && g_cursor.y==y) return;
+	g_cursor.onMouse("move", x, y, m);
+    g_searchbox.on_mouse("move", x, y);
+	topleft_btns.on_mouse("move",x,y);
+	main_panel_btns.on_mouse("move",x,y);
+	window_btns.on_mouse("move",x,y);
+	compact_btns.on_mouse("move",x,y);
+	all_btns.on_mouse("move",x,y);
+}
+
+function on_mouse_leave() {
+    g_searchbox.on_mouse("leave", 0, 0);
+	topleft_btns.on_mouse("leave");
+	main_panel_btns.on_mouse("leave");
+	window_btns.on_mouse("leave");
+	compact_btns.on_mouse("leave");
+	all_btns.on_mouse("leave");
+}
+
+function on_mouse_lbtn_down(x,y){
+	//if(g_cursor.x!=x || g_cursor.y!=y) on_mouse_move(x,y);
+	g_searchbox.on_mouse("lbtn_down", x, y);
+	all_btns.on_mouse("lbtn_down",x, y);
+}
+
+function on_mouse_lbtn_up(x,y){
+	g_searchbox.on_mouse("lbtn_up", x, y);
+	all_btns.on_mouse("lbtn_up",x, y);
+}
+function on_mouse_lbtn_dblclk(x, y) {
+	all_btns.on_mouse("dble_click",x, y);
+}
+function on_mouse_rbtn_down(x, y, mask) {
+	g_searchbox.on_mouse("rbtn_down", x, y);
+}
+function on_mouse_wheel(step, stepstrait, delta){
+	if(typeof(stepstrait) == "undefined" || typeof(delta) == "undefined") intern_step = step;
+	else intern_step = stepstrait/delta;
+	if(utils.IsKeyPressed(VK_CONTROL)) { // zoom all elements
+		var zoomStep = 1;
+		var previous = globalProperties.fontAdjustement;
+		if(!timers.mouseWheel) {
+			if(intern_step > 0) {
+				globalProperties.fontAdjustement += zoomStep;
+				if(globalProperties.fontAdjustement > globalProperties.fontAdjustement_max) globalProperties.fontAdjustement = globalProperties.fontAdjustement_max;
+			} else {
+				globalProperties.fontAdjustement -= zoomStep;
+				if(globalProperties.fontAdjustement < globalProperties.fontAdjustement_min) globalProperties.fontAdjustement = globalProperties.fontAdjustement_min;
+			};
+			if(previous != globalProperties.fontAdjustement) {
+				timers.mouseWheel = setTimeout(function() {
+					on_notify_data('set_font',globalProperties.fontAdjustement);
+					window.NotifyOthers('set_font',globalProperties.fontAdjustement);
+					timers.mouseWheel && clearTimeout(timers.mouseWheel);
+					timers.mouseWheel = false;
+				}, 100);
+			};
+		};
+	}
+}
+function on_mouse_rbtn_up(x, y){
+        var _menu = window.CreatePopupMenu();
+        var idx;
+
+		_menu.AppendMenuItem(MF_STRING, 103, "设置...");
+		_menu.AppendMenuSeparator();
+
+		if(layout_state.isEqual(0)) {
+			_menu.AppendMenuItem(MF_STRING, 1, "媒体库");
+			_menu.AppendMenuItem(MF_STRING, 2, "播放列表");
+			_menu.AppendMenuItem(MF_STRING, 3, "当前播放");
+			if(properties.show_visualization) _menu.AppendMenuItem(MF_STRING, 4, "可视化");
+			_menu.CheckMenuRadioItem(1, 4, (parseInt(main_panel_state.value)+1));
+			_menu.AppendMenuSeparator();
+			_menu.AppendMenuItem(MF_STRING, 6, "Mini 播放器");
+			if(g_uihacks.getFullscreenState())
+				_menu.AppendMenuItem(MF_STRING, 5, "退出全屏");
+			else
+				_menu.AppendMenuItem(MF_STRING, 5, "全屏");
+		} else {
+			_menu.AppendMenuItem(MF_STRING, 7, "切换主播放器");
+		}
+
+		if(utils.IsKeyPressed(VK_SHIFT)) {
+			_menu.AppendMenuSeparator();
+			_menu.AppendMenuItem(MF_STRING, 100, "属性 ");
+			_menu.AppendMenuItem(MF_STRING, 101, "配置...");
+            _menu.AppendMenuSeparator();
+			_menu.AppendMenuItem(MF_STRING, 102, "重载入");
+		}
+        idx = _menu.TrackPopupMenu(x,y);
+        switch(true) {
+            case (idx == 1):
+				main_panel_state.setValue(0);
+				get_colors();g_searchbox.adapt_look_to_layout();
+                break;
+            case (idx == 2):
+				main_panel_state.setValue(1);
+				get_colors();g_searchbox.adapt_look_to_layout();
+                break;
+            case (idx == 3):
+				main_panel_state.setValue(2);
+				get_colors();g_searchbox.adapt_look_to_layout();
+                break;
+            case (idx == 4):
+				main_panel_state.setValue(3);
+				get_colors();g_searchbox.adapt_look_to_layout();
+                break;
+            case (idx == 5):
+				g_uihacks.toggleFullscreen();
+                break;
+            case (idx == 6):
+				toggleLayoutMode(1);get_colors();g_searchbox.adapt_look_to_layout();
+                break;
+            case (idx == 7):
+				toggleLayoutMode(0);get_colors();g_searchbox.adapt_look_to_layout();
+                break;
+            case (idx == 100):
+                window.ShowProperties();
+                break;
+            case (idx == 101):
+                window.ShowConfigure();
+                break;
+            case (idx == 102):
+                window.Reload();
+                break;
+			case (idx == 103):
+				draw_settings_menu(x,y);
+                break;
+            default:
+				return true;
+        }
+        _menu = undefined;
+        return true;
+}
+function draw_settings_menu(x,y){
+        var _menu = window.CreatePopupMenu();
+		var _menu3 = window.CreatePopupMenu();
+		var _menu3A = window.CreatePopupMenu();
+		var _menu_button = window.CreatePopupMenu();
+        var idx;
+
+		_menu.AppendMenuItem(MF_STRING, 1811, "正常标题栏");
+		_menu.AppendMenuItem(MF_STRING, 1812, "紧凑标题栏 - 小");
+		_menu.AppendMenuItem(MF_STRING, 1813, "紧凑标题栏 - 大");		
+		_menu.CheckMenuRadioItem(1811, 1813, (parseInt(compact_titlebar.getValue())+1811));
+		
+		_menu.AppendMenuSeparator();
+		
+		_menu.AppendMenuItem((compact_titlebar.isActive() && layout_state.isEqual(0))?MF_GRAYED:MF_STRING, 1800, "顶部显示音轨标题");
+		_menu.CheckMenuItem(1800, properties.tracktitle_ontop)
+		_menu.AppendMenuItem((compact_titlebar.isActive() && layout_state.isEqual(0))?MF_GRAYED:MF_STRING, 1809, "播放音轨标题格式...");
+		_menu.AppendMenuItem(MF_STRING, 1805, "大写面板文本按钮");
+		_menu.CheckMenuItem(1805, properties.toUpperCase)
+		_menu.AppendMenuItem(MF_STRING, 1810, "Mini 主菜单按钮");
+		_menu.CheckMenuItem(1810, properties.mini_mainmenu_button)
+
+		_menu.AppendMenuItem(compact_titlebar.isActive() ? MF_GRAYED : MF_STRING, 1801, "总是显示搜索框");
+		_menu.CheckMenuItem(1801, properties.alwaysShowSearch)
+
+		_menu.AppendMenuItem(MF_STRING, 1900, "启动时恢复面板状态");
+		_menu.CheckMenuItem(1900, properties.Remember_previous_state)
+
+		_menu.AppendMenuItem(MF_STRING, 1901, "隐藏可视化面板");
+		_menu.CheckMenuItem(1901, !properties.show_visualization)
+
+		_menu.AppendMenuSeparator();
+		_menu_button.AppendMenuItem(MF_STRING, 1806, "右侧边栏显示");
+		_menu_button.CheckMenuItem(1806, properties.showNowPlayingBtn);
+		_menu_button.AppendMenuItem(MF_STRING, 1808, "面板布局");
+		_menu_button.CheckMenuItem(1808, properties.showConfigLayoutBtn);		
+		_menu_button.AppendMenuItem(MF_STRING, 1807, "右侧边栏功能");
+		_menu_button.CheckMenuItem(1807, properties.showRightSidebarBtn);
+		_menu_button.AppendMenuItem(MF_STRING, 1803, "明暗切换");
+		_menu_button.CheckMenuItem(1803, properties.showLightswitchBtn);
+		_menu_button.AppendMenuItem(MF_STRING, 1804, "全屏");
+		_menu_button.CheckMenuItem(1804, properties.showFullscreenBtn);
+		_menu_button.AppendTo(_menu,MF_STRING, "按钮");
+
+		_menu3.AppendMenuItem(MF_STRING, 2000, "启用");
+		_menu3.CheckMenuItem(2000, properties.showwallpaper);
+		_menu3.AppendMenuItem(MF_STRING, 2200, "模糊");
+		_menu3.CheckMenuItem(2200, properties.wallpaperblurred);
+
+		_menu3A.AppendMenuItem(MF_STRING, 2210, "填充");
+		_menu3A.CheckMenuItem(2210, properties.wallpaperdisplay==0);
+		_menu3A.AppendMenuItem(MF_STRING, 2220, "适合");
+		_menu3A.CheckMenuItem(2220, properties.wallpaperdisplay==1);
+		_menu3A.AppendMenuItem(MF_STRING, 2230, "拉伸");
+		_menu3A.CheckMenuItem(2230, properties.wallpaperdisplay==2);
+		_menu3A.AppendTo(_menu3,MF_STRING, "壁纸大小");
+
+		_menu3.AppendTo(_menu,MF_STRING, "壁纸背景");
+
+        idx = _menu.TrackPopupMenu(x,y);
+        switch(true) {
+			case (idx == 1800):
+				properties.tracktitle_ontop = !properties.tracktitle_ontop;
+				window.SetProperty("_DISPLAY: Track title", properties.tracktitle_ontop);
+				adapt_buttons_to_layout();
+				window.Repaint();
+				break;
+			case (idx == 1801):
+				properties.alwaysShowSearch = !properties.alwaysShowSearch;
+				window.SetProperty("_DISPLAY: always show search box", properties.alwaysShowSearch);
+				g_searchbox.toggleVisibility(true);
+				adapt_buttons_to_layout();
+				window.Repaint();
+				break;
+			case (idx == 1803):
+				properties.showLightswitchBtn = !properties.showLightswitchBtn;
+				window.SetProperty("_DISPLAY: show light switch btn", properties.showLightswitchBtn);
+				adapt_buttons_to_layout();
+				window.Repaint();
+				break;
+			case (idx == 1804):
+				properties.showFullscreenBtn = !properties.showFullscreenBtn;
+				window.SetProperty("_DISPLAY: show fullscreen btn", properties.showFullscreenBtn);
+				adapt_buttons_to_layout();
+				window.Repaint();
+				break;
+			case (idx == 1805):
+				properties.toUpperCase = !properties.toUpperCase;
+				window.SetProperty("_DISPLAY: panels btn text to uppercase", properties.toUpperCase);
+				on_font_changed();
+				main_panel_btns.toUpperCase(properties.toUpperCase);
+				adapt_buttons_to_layout();
+				window.Repaint();
+				break;
+			case (idx == 1806):
+				properties.showNowPlayingBtn = !properties.showNowPlayingBtn;
+				window.SetProperty("_DISPLAY: show now playing btn", properties.showNowPlayingBtn);
+				adapt_buttons_to_layout();
+				window.Repaint();
+				break;
+			case (idx == 1807):
+				properties.showRightSidebarBtn = !properties.showRightSidebarBtn;
+				window.SetProperty("_DISPLAY: show right sidebar btn", properties.showRightSidebarBtn);
+				adapt_buttons_to_layout();
+				window.Repaint();
+				break;
+			case (idx == 1808):
+				properties.showConfigLayoutBtn = !properties.showConfigLayoutBtn;
+				window.SetProperty("_DISPLAY: show configure layout btn", properties.showConfigLayoutBtn);
+				adapt_buttons_to_layout();
+				window.Repaint();
+				break;				
+			case (idx == 1809):
+				try {
+					new_caption_format = utils.InputBox(window.ID, "输入一个标题格式脚本.\n您可以在这里使用完整的 foobar2000 标题格式语法.\n\n参考 http://tinyurl.com/lwhay6f\n了解关于工具栏标题格式信息.", "自定义窗口标题", properties.tracktitle_format, true);
+					if (!(new_caption_format == "" || typeof new_caption_format == 'undefined')) {
+						properties.tracktitle_format = new_caption_format;
+						window.SetProperty("_DISPLAY: Track title format", properties.tracktitle_format);
+						eval_caption_title(fb.GetNowPlaying());
+					}
+				} catch(e) {
+				}
+				window.Repaint();
+				break;
+			case (idx == 1810):
+				properties.mini_mainmenu_button = !properties.mini_mainmenu_button;
+				window.SetProperty("_DISPLAY: mini main menu button", properties.mini_mainmenu_button);
+				adapt_buttons_to_layout();
+				g_searchbox.on_size();
+				window.Repaint();
+				break;
+			case (idx == 1811):
+				btn_initialized = false;
+				compact_titlebar.setValue(0);
+				get_colors();
+				adapt_buttons_to_layout();
+				window.Repaint();
+				break;
+			case (idx == 1812):
+				btn_initialized = false;
+				compact_titlebar.setValue(1);
+				get_colors();
+				adapt_buttons_to_layout();
+				window.Repaint();
+				break;
+			case (idx == 1813):
+				btn_initialized = false;
+				compact_titlebar.setValue(2);
+				get_colors();
+				adapt_buttons_to_layout();
+				window.Repaint();
+				break;				
+			case (idx == 1809):
+			case (idx == 1900):
+				properties.Remember_previous_state = !properties.Remember_previous_state;
+				window.SetProperty("Resume panel state on startup, except on visualization tab", properties.Remember_previous_state);
+				window.Repaint();
+				break;
+			case (idx == 1901):
+				properties.show_visualization = !properties.show_visualization;
+				window.SetProperty("_PROPERTY show visualization tab", properties.show_visualization);
+				if(main_panel_state.isEqual(3)) main_panel_state.setValue(0);
+				get_colors();
+				adapt_buttons_to_layout();
+				window.Repaint();
+				break;
+			case (idx == 2000):
+				properties.showwallpaper = !properties.showwallpaper;
+				window.SetProperty("_DISPLAY: Show Wallpaper", properties.showwallpaper);
+				get_colors();
+				if(properties.showwallpaper) {
+					g_wallpaperImg = setWallpaperImg(globalProperties.default_wallpaper, fb.IsPlaying ? fb.GetNowPlaying() : null);
+				};
+				window.Repaint();
+				break;
+			case (idx == 2100):
+				properties.wallpapermode = 99;
+				window.SetProperty("_SYSTEM: Wallpaper Mode", properties.wallpapermode);
+				if(fb.IsPlaying) g_wallpaperImg = setWallpaperImg(globalProperties.default_wallpaper, fb.GetNowPlaying());
+				window.Repaint();
+				break;
+			case (idx == 2110):
+				properties.wallpapermode = 0;
+				window.SetProperty("_SYSTEM: Wallpaper Mode", properties.wallpapermode);
+				if(fb.IsPlaying) g_wallpaperImg = setWallpaperImg(globalProperties.default_wallpaper, fb.GetNowPlaying());
+				window.Repaint();
+				break;
+			case (idx == 2200):
+				properties.wallpaperblurred = !properties.wallpaperblurred;
+				window.SetProperty("_DISPLAY: Wallpaper Blurred", properties.wallpaperblurred);
+				g_wallpaperImg = setWallpaperImg(globalProperties.default_wallpaper, fb.GetNowPlaying());
+				window.Repaint();
+				break;
+			case (idx == 2210):
+				properties.wallpaperdisplay = 0;
+				window.SetProperty("_DISPLAY: Wallpaper 0=Filling 1=Adjust 2=Stretch", properties.wallpaperdisplay);
+				g_wallpaperImg = setWallpaperImg(globalProperties.default_wallpaper, fb.GetNowPlaying());
+				window.Repaint();
+				break;
+			case (idx == 2220):
+				properties.wallpaperdisplay = 1;
+				window.SetProperty("_DISPLAY: Wallpaper 0=Filling 1=Adjust 2=Stretch", properties.wallpaperdisplay);
+				g_wallpaperImg = setWallpaperImg(globalProperties.default_wallpaper, fb.GetNowPlaying());
+				window.Repaint();
+				break;
+			case (idx == 2230):
+				properties.wallpaperdisplay = 2;
+				window.SetProperty("_DISPLAY: Wallpaper 0=Filling 1=Adjust 2=Stretch", properties.wallpaperdisplay);
+				g_wallpaperImg = setWallpaperImg(globalProperties.default_wallpaper, fb.GetNowPlaying());
+				window.Repaint();
+				break;
+            default:
+				return true;
+        }
+
+        _menu = undefined;
+		_menu3 = undefined;
+		_menu3A = undefined;
+		_menu_button = undefined;
+        return true;
+}
+function draw_layout_menu(x,y){
+    var basemenu = window.CreatePopupMenu();
+	library_menu = window.CreatePopupMenu();
+	playlists_menu = window.CreatePopupMenu();
+	bio_menu = window.CreatePopupMenu();
+	visu_menu = window.CreatePopupMenu();
+	minimode_menu = window.CreatePopupMenu();
+	right_menu_trackdetails = window.CreatePopupMenu();
+	
+	wallpaper_visibility = window.CreatePopupMenu();
+	wallpaper_visibility.AppendMenuItem(MF_STRING, 4005, "启用");
+	wallpaper_visibility.AppendMenuItem(MF_STRING, 4006, "禁用");
+	wallpaper_blur = window.CreatePopupMenu();
+	wallpaper_blur.AppendMenuItem(MF_STRING, 4007, "启用");
+	wallpaper_blur.AppendMenuItem(MF_STRING, 4008, "禁用");
+
+	nowplaying = window.CreatePopupMenu();
+	var now_playing_state = getNowPlayingState();
+	if(now_playing_state==1) nowplaying.AppendMenuItem(MF_STRING, 4027, "隐藏");
+	else nowplaying.AppendMenuItem(MF_STRING, 4027, "显示");
+	
+	right_menu_trackdetails.AppendMenuItem(MF_STRING, 202, "顶部显示");	
+	right_menu_trackdetails.AppendMenuItem(MF_STRING, 203, "底部显示");			
+	right_menu_trackdetails.AppendMenuItem(MF_STRING, 204, "隐藏");
+	var track_infos_state = getTrackInfosState();
+	if(track_infos_state==0) var checked = 204;
+	else if(track_infos_state==1) var checked = 202;
+	else if(track_infos_state==2) var checked = 203;
+	right_menu_trackdetails.CheckMenuRadioItem(202, 204, checked);				
+	right_menu_trackdetails.AppendTo(nowplaying,MF_STRING, "专辑封面/音轨信息");	
+		
+	nowplaying.AppendMenuSeparator();
+	nowplaying.AppendMenuItem((now_playing_state?MF_STRING:MF_GRAYED), 4030, "增加宽度");
+	nowplaying.AppendMenuItem((now_playing_state?MF_STRING:MF_GRAYED), 4031, "减少宽度");
+	nowplaying.AppendMenuItem((now_playing_state?MF_STRING:MF_GRAYED), 4033, "自定义宽度...");
+	nowplaying.AppendMenuItem((now_playing_state?MF_STRING:MF_GRAYED), 4032, "重置");
+
+	if(layout_state.isEqual(1)){
+		basemenu.AppendMenuItem(MF_GRAYED, 0, "Mini 模式布局");
+		basemenu.AppendMenuSeparator();		
+		basemenu.AppendMenuItem(MF_STRING, 3990, "深色主题");
+		basemenu.CheckMenuItem(3990, properties.minimode_dark_theme);
+		wallpaper_visibility.AppendTo(basemenu,MF_STRING, "壁纸显示");
+		wallpaper_blur.AppendTo(basemenu,MF_STRING, "壁纸模糊");
+	} else if(main_panel_state.isEqual(0)){
+		basemenu.AppendMenuItem(MF_GRAYED, 0, "媒体库布局");
+		basemenu.AppendMenuSeparator();				
+		nowplaying.AppendTo(basemenu,MF_STRING, "右侧播放列表");
+		left_menu = window.CreatePopupMenu();
+		left_menu.AppendTo(basemenu,MF_STRING, "左侧菜单");
+		if(libraryfilter_state.isActive()) left_menu.AppendMenuItem(MF_STRING, 4028, "隐藏");
+		else left_menu.AppendMenuItem(MF_STRING, 4028, "显示");
+		left_menu.AppendMenuSeparator();
+		left_menu.AppendMenuItem((libraryfilter_state.isActive()?MF_STRING:MF_GRAYED), 4034, "增加宽度");
+		left_menu.AppendMenuItem((libraryfilter_state.isActive()?MF_STRING:MF_GRAYED), 4035, "减少宽度");
+		left_menu.AppendMenuItem((libraryfilter_state.isActive()?MF_STRING:MF_GRAYED), 4037, "自定义宽度...");
+		left_menu.AppendMenuItem((libraryfilter_state.isActive()?MF_STRING:MF_GRAYED), 4036, "重置");
+		basemenu.AppendMenuSeparator();
+		basemenu.AppendMenuItem(MF_STRING, 4000, "深色主题");
+		basemenu.CheckMenuItem(4000, properties.library_dark_theme);
+		wallpaper_visibility.AppendTo(basemenu,MF_STRING, "壁纸显示");
+		wallpaper_blur.AppendTo(basemenu,MF_STRING, "壁纸模糊");
+	} else if(main_panel_state.isEqual(1)){
+		basemenu.AppendMenuItem(MF_GRAYED, 0, "播放列表布局");
+		basemenu.AppendMenuSeparator();				
+		nowplaying.AppendTo(basemenu,MF_STRING, "右侧播放列表");
+		playlistpanel_menu = window.CreatePopupMenu();
+		playlistpanel_menu.AppendTo(basemenu,MF_STRING, "播放列表面板");
+		playlistpanel_menu.AppendMenuItem(MF_STRING, 4038, "增加宽度");
+		playlistpanel_menu.AppendMenuItem(MF_STRING, 4039, "减少宽度");
+		playlistpanel_menu.AppendMenuItem(MF_STRING, 4041, "自定义宽度...");
+		playlistpanel_menu.AppendMenuItem(MF_STRING, 4040, "重置");
+		var FiltersMenu = window.CreatePopupMenu();
+		if(filters_panel_state.value>0)
+			FiltersMenu.AppendMenuItem(MF_STRING, 4990, "隐藏");
+		else
+			FiltersMenu.AppendMenuItem(MF_STRING, 4988, "显示");
+		FiltersMenu.AppendMenuItem(MF_STRING, 4992, "增大高度");
+		FiltersMenu.AppendMenuItem((filters_panel_state.isActive()? MF_STRING : MF_GRAYED), 4991, "减小高度");
+		FiltersMenu.AppendMenuSeparator();
+		FiltersMenu.AppendMenuItem((filters_panel_state.isActive() ? MF_STRING : MF_GRAYED | MF_DISABLED), 4993, "启用第 1 个过滤");
+		FiltersMenu.CheckMenuItem(4993, (filter1_state.isActive()));
+		FiltersMenu.AppendMenuItem((filters_panel_state.isActive() ? MF_STRING : MF_GRAYED | MF_DISABLED), 4994, "启用第 2 个过滤");
+		FiltersMenu.CheckMenuItem(4994, (filter2_state.isActive()));
+		FiltersMenu.AppendMenuItem((filters_panel_state.isActive() ? MF_STRING : MF_GRAYED | MF_DISABLED), 4995, "启用第 3 个过滤");
+		FiltersMenu.CheckMenuItem(4995, (filter3_state.isActive()));
+		FiltersMenu.AppendTo(basemenu, MF_STRING, "过滤");
+		if(!filters_panel_state.isMaximumValue()) basemenu.AppendMenuItem(MF_STRING, 4996, "隐藏底部播放列表");
+		else basemenu.AppendMenuItem(MF_STRING, 4997, "显示底部播放列表");
+		basemenu.AppendMenuSeparator();
+		basemenu.AppendMenuItem(MF_STRING, 4001, "深色主题");
+		basemenu.CheckMenuItem(4001, properties.playlists_dark_theme);
+		wallpaper_visibility.AppendTo(basemenu,MF_STRING, "壁纸显示");
+		wallpaper_blur.AppendTo(basemenu,MF_STRING, "壁纸模糊");
+	} else if(main_panel_state.isEqual(2)){
+		basemenu.AppendMenuItem(MF_GRAYED, 0, "当前播放布局");
+		basemenu.AppendMenuSeparator();				
+		nowplaying.AppendTo(basemenu,MF_STRING, "右侧播放列表");
+
+		if(!lyrics_state.isActive()){
+			basemenu.AppendMenuItem(MF_STRING, 4999, "显示歌词");
+		} else {
+			var LyricsMenu = window.CreatePopupMenu();
+			LyricsMenu.AppendMenuItem(MF_STRING, 5000, "隐藏");
+			LyricsMenu.AppendMenuSeparator();
+			LyricsMenu.AppendMenuItem((!lyrics_state.isMaximumValue())?MF_STRING:MF_GRAYED, 4999, "增加宽度");
+			LyricsMenu.AppendMenuItem(MF_STRING, 4998, "减少宽度");
+			LyricsMenu.AppendTo(basemenu, MF_STRING, "歌词面板");
+			LyricsMenu.AppendMenuSeparator();
+			LyricsMenu.AppendMenuItem(MF_STRING, 6000, "显示切换按钮");
+			LyricsMenu.AppendMenuItem(MF_STRING, 6001, "隐藏切换按钮");			
+		}
+		basemenu.AppendMenuSeparator();
+		basemenu.AppendMenuItem(MF_STRING, 4002, "深色主题");
+		basemenu.CheckMenuItem(4002, properties.bio_dark_theme);
+		wallpaper_visibility.AppendTo(basemenu,MF_STRING, "壁纸显示");
+		wallpaper_blur.AppendTo(basemenu,MF_STRING, "壁纸模糊");
+	} else if(main_panel_state.isEqual(3)){
+		basemenu.AppendMenuItem(MF_GRAYED, 0, "可视化布局");
+		basemenu.AppendMenuSeparator();				
+		nowplaying.AppendTo(basemenu,MF_STRING, "右侧播放列表");
+		basemenu.AppendMenuSeparator();
+		basemenu.AppendMenuItem(MF_STRING, 4003, "深色主题");
+		basemenu.CheckMenuItem(4003, properties.visualization_dark_theme);
+	}
+
+    idx = basemenu.TrackPopupMenu(x, y, 0x0008);
+
+    switch (true) {
+	case (idx == 202):
+		if(getNowPlayingState()==1) {
+			toggleTrackInfosState(false,1,true);
+		} else {
+			toggleTrackInfosState(false,1,false);
+			toggleNowPlayingState();
+		}
+		window.Repaint();
+		break;
+	case (idx == 203):
+		if(getNowPlayingState()==1) {
+			toggleTrackInfosState(false,2,true);
+		} else {
+			toggleTrackInfosState(false,2,false);
+			toggleNowPlayingState();
+		}			
+		window.Repaint();
+		break;	
+	case (idx == 204):
+		if(getNowPlayingState()==1) {
+			toggleTrackInfosState(false,0,true);
+		} else {
+			toggleTrackInfosState(false,0,false);
+		}				
+		window.Repaint();
+		break;			
+   case (idx == 3990):
+		properties.minimode_dark_theme=!properties.minimode_dark_theme;
+        window.NotifyOthers("minimode_dark_theme",properties.minimode_dark_theme);
+		window.SetProperty("MINIMODE dark theme", properties.minimode_dark_theme);
+		get_colors();g_searchbox.adapt_look_to_layout();
+        window.Repaint();
+        break;
+   case (idx == 4000):
+		properties.library_dark_theme=!properties.library_dark_theme;
+        window.NotifyOthers("library_dark_theme",properties.library_dark_theme);
+		window.SetProperty("LIBRARY dark theme", properties.library_dark_theme);
+		on_notify_data("library_dark_theme",properties.library_dark_theme);
+        window.Repaint();
+        break;
+   case (idx == 4001):
+		properties.playlists_dark_theme=!properties.playlists_dark_theme;
+        window.NotifyOthers("playlists_dark_theme",properties.playlists_dark_theme);
+		window.SetProperty("PLAYLISTS dark theme", properties.playlists_dark_theme);
+		on_notify_data("playlists_dark_theme",properties.playlists_dark_theme);
+		fb.RunMainMenuCommand("View/ElPlaylist/Refresh");
+        window.Repaint();
+        break;
+   case (idx == 4002):
+		properties.bio_dark_theme=!properties.bio_dark_theme;
+        window.NotifyOthers("bio_dark_theme",properties.bio_dark_theme);
+		window.SetProperty("BIO dark theme", properties.bio_dark_theme);
+		on_notify_data("bio_dark_theme",properties.bio_dark_theme);
+        window.Repaint();
+        break;
+   case (idx == 4003):
+		properties.visualization_dark_theme=!properties.visualization_dark_theme;
+        window.NotifyOthers("visualization_dark_theme",properties.visualization_dark_theme);
+		window.SetProperty("VISUALIZATION dark theme", properties.visualization_dark_theme);
+		on_notify_data("visualization_dark_theme",properties.visualization_dark_theme);
+        break;
+   case (idx == 4005):
+        window.NotifyOthers("wallpaperVisibility",true);
+		//on_notify_data("wallpaperVisibility",true);
+        break;
+   case (idx == 4006):
+        window.NotifyOthers("wallpaperVisibility",false);
+		//on_notify_data("wallpaperVisibility",false);
+        break;
+   case (idx == 4007):
+        window.NotifyOthers("wallpaperBlur",true);
+		on_notify_data("wallpaperBlur",true);
+        break;
+   case (idx == 4008):
+        window.NotifyOthers("wallpaperBlur",false);
+		on_notify_data("wallpaperBlur",false);
+        break;
+	case (idx == 4012):
+		globalProperties.fontAdjustement++;
+		window.SetProperty("GLOBAL Font Adjustement", globalProperties.fontAdjustement);
+		window.NotifyOthers('set_font',globalProperties.fontAdjustement);
+		on_font_changed();
+		break;
+	case (idx == 4013):
+		globalProperties.fontAdjustement--;
+		window.SetProperty("GLOBAL Font Adjustement", globalProperties.fontAdjustement);
+		window.NotifyOthers('set_font',globalProperties.fontAdjustement);
+		on_font_changed();
+		break;
+	case (idx == 4014):
+		globalProperties.fontAdjustement = 0;
+		window.SetProperty("GLOBAL Font Adjustement", globalProperties.fontAdjustement);
+		window.NotifyOthers('set_font',globalProperties.fontAdjustement);
+		on_font_changed();
+		break;
+	case (idx == 4021):
+		Lightswitch(true,true);
+		break;
+	case (idx == 4022):
+		Lightswitch(true,false);
+		break;
+	case (idx == 4027):
+		toggleNowPlayingState();
+		break;
+	case (idx == 4028):
+		libraryfilter_state.toggleValue();
+		build_buttons();
+		window.Repaint();
+		break;
+	case (idx == 4030):
+		rightplaylist_width.increment(10);
+		break;
+	case (idx == 4031):
+		rightplaylist_width.decrement(10);
+		break;
+	case (idx == 4032):
+		rightplaylist_width.setDefault();
+		break;
+	case (idx == 4033):
+		rightplaylist_width.userInputValue("以像素为单位输入所需的宽度.\n默认宽度为 270px.\n最小宽度: 100px. 最大宽度: 900px", "自定义播放列表宽度");
+		break;
+	case (idx == 4034):
+		libraryfilter_width.increment(10);
+		break;
+	case (idx == 4035):
+		libraryfilter_width.decrement(10);
+		break;
+	case (idx == 4036):
+		libraryfilter_width.setDefault();
+		break;
+	case (idx == 4037):
+		libraryfilter_width.userInputValue("以像素为单位输入所需的宽度.\n默认宽度为 210px.\n最小宽度: 100px. 最大宽度: 900px", "自定义左侧菜单宽度");
+		break;
+	case (idx == 4038):
+		playlistpanel_width.increment(10);
+		break;
+	case (idx == 4039):
+		playlistpanel_width.decrement(10);
+		break;
+	case (idx == 4040):
+		playlistpanel_width.setDefault();
+		break;
+	case (idx == 4041):
+		playlistpanel_width.userInputValue("以像素为单位输入所需的宽度.\n默认宽度为 180px.\n最小宽度: 100px. 最大宽度: 900px", "自定义左侧菜单宽度");
+		break;
+    case (idx == 4988):
+		if(properties.savedFilterState>=0 && !properties.displayToggleBtns) filters_panel_state.setValue(properties.savedFilterState);
+		else filters_panel_state.setValue(1);
+        break;
+    case (idx == 4990):
+		saveFilterState();
+		filters_panel_state.setValue(0);
+        break;
+    case (idx == 4991):
+		filters_panel_state.decrement(1);
+        break;
+    case (idx == 4992):
+		filters_panel_state.increment(1);
+        break;
+    case (idx == 4993):
+		if(!filter2_state.isActive() && !filter3_state.isActive()) filters_panel_state.setValue(0);
+		else filter1_state.toggleValue();
+        break;
+    case (idx == 4994):
+		if(!filter1_state.isActive() && !filter3_state.isActive()) filters_panel_state.setValue(0);
+		else filter2_state.toggleValue();
+        break;
+    case (idx == 4995):
+		if(!filter1_state.isActive() && !filter2_state.isActive()) filters_panel_state.setValue(0);
+		else filter3_state.toggleValue();
+        break;
+    case (idx == 4996):
+		saveFilterState();
+		filters_panel_state.setValue(filters_panel_state.max_value);
+        break;
+    case (idx == 4997):
+		if(properties.savedFilterState>=0) filters_panel_state.setValue(properties.savedFilterState);
+		else filters_panel_state.setValue(1);
+        break;
+    case (idx == 4998):
+		lyrics_state.decrement(1);
+        break;
+    case (idx == 4999):
+		lyrics_state.increment(1);
+        break;
+    case (idx == 6000):
+		window.NotifyOthers("show_lyrics_btns",true);
+        break;		
+    case (idx == 6001):
+		window.NotifyOthers("show_lyrics_btns",false);
+        break;			
+    case (idx == 5000):
+		lyrics_state.setValue(0);
+        break;
+    }
+
+    basemenu = undefined;
+    contextman = undefined;
+    menuman1 = undefined;
+    menuman2 = undefined;
+    menuman3 = undefined;
+    menuman4 = undefined;
+    menuman5 = undefined;
+    menuman6 = undefined;
+	minimode_menu = undefined;
+	font_size = undefined;
+	if(FiltersMenu) FiltersMenu = undefined;
+	right_menu_trackdetails = undefined;
+    library_menu = undefined;
+    playlists_menu = undefined;
+    bio_menu = undefined;
+    wallpaper_visibility = undefined;
+    wallpaper_blur = undefined;
+	return true;
+}
+function draw_main_menu(x,y){
+
+    var basemenu = window.CreatePopupMenu();
+    var contextman = fb.CreateContextMenuManager();
+
+    contextman.InitNowPlaying();
+
+    var child1 = window.CreatePopupMenu(); //文件
+    var child2 = window.CreatePopupMenu(); //编辑
+    var child3 = window.CreatePopupMenu(); //视图
+    var child4 = window.CreatePopupMenu(); //播放
+    var child5 = window.CreatePopupMenu(); //媒体库
+    var child6 = window.CreatePopupMenu(); //帮助
+    var child7 = window.CreatePopupMenu(); //正在播放
+	
+    var menuman1 = fb.CreateMainMenuManager();
+    var menuman2 = fb.CreateMainMenuManager();
+    var menuman3 = fb.CreateMainMenuManager();
+    var menuman4 = fb.CreateMainMenuManager();
+    var menuman5 = fb.CreateMainMenuManager();
+    var menuman6 = fb.CreateMainMenuManager();
+
+    child1.AppendTo(basemenu, MF_STRING, "文件");
+    child2.AppendTo(basemenu, MF_STRING, "编辑");
+    child3.AppendTo(basemenu, MF_STRING, "视图");
+    child4.AppendTo(basemenu, MF_STRING, "播放");
+    child5.AppendTo(basemenu, MF_STRING, "媒体库");
+    child6.AppendTo(basemenu, MF_STRING, "帮助");
+	if(fb.IsPlaying) child7.AppendTo(basemenu, MF_STRING, "正在播放");
+
+	skin_settings_menu = window.CreatePopupMenu();
+	library_menu = window.CreatePopupMenu();
+	playlists_menu = window.CreatePopupMenu();
+	bio_menu = window.CreatePopupMenu();
+	visu_menu = window.CreatePopupMenu();
+	minimode_menu = window.CreatePopupMenu();
+	appearance_menu = window.CreatePopupMenu();
+	basemenu.AppendMenuSeparator();
+
+	wallpaper_visibility = window.CreatePopupMenu();
+	wallpaper_visibility.AppendMenuItem(MF_STRING, 4005, "启用");
+	wallpaper_visibility.AppendMenuItem(MF_STRING, 4006, "禁用");
+	wallpaper_blur = window.CreatePopupMenu();
+	wallpaper_blur.AppendMenuItem(MF_STRING, 4007, "启用");
+	wallpaper_blur.AppendMenuItem(MF_STRING, 4008, "禁用");
+
+	nowplaying = window.CreatePopupMenu();
+	var now_playing_state = getNowPlayingState();
+	if(now_playing_state==1) nowplaying.AppendMenuItem(MF_STRING, 4027, "隐藏");
+	else nowplaying.AppendMenuItem(MF_STRING, 4027, "显示");
+	nowplaying.AppendMenuSeparator();
+	nowplaying.AppendMenuItem((now_playing_state?MF_STRING:MF_GRAYED), 4030, "增加宽度");
+	nowplaying.AppendMenuItem((now_playing_state?MF_STRING:MF_GRAYED), 4031, "减少宽度");
+	nowplaying.AppendMenuItem((now_playing_state?MF_STRING:MF_GRAYED), 4033, "自定义宽度...");
+	nowplaying.AppendMenuItem((now_playing_state?MF_STRING:MF_GRAYED), 4032, "重置");
+
+	if(layout_state.isEqual(1)){
+		minimode_menu.AppendTo(skin_settings_menu,MF_STRING, "面板布局");
+		minimode_menu.AppendMenuItem(MF_STRING, 3990, "深色主题");
+		minimode_menu.CheckMenuItem(3990, properties.minimode_dark_theme);
+		wallpaper_visibility.AppendTo(minimode_menu,MF_STRING, "壁纸显示");
+		wallpaper_blur.AppendTo(minimode_menu,MF_STRING, "壁纸模糊");
+	} else if(main_panel_state.isEqual(0)){
+		library_menu.AppendTo(skin_settings_menu,MF_STRING, "面板布局");
+		nowplaying.AppendTo(library_menu,MF_STRING, "右侧播放列表");
+		left_menu = window.CreatePopupMenu();
+		left_menu.AppendTo(library_menu,MF_STRING, "左侧菜单");
+		if(libraryfilter_state.isActive()) left_menu.AppendMenuItem(MF_STRING, 4028, "隐藏");
+		else left_menu.AppendMenuItem(MF_STRING, 4028, "显示");
+		left_menu.AppendMenuSeparator();
+		left_menu.AppendMenuItem((libraryfilter_state.isActive()?MF_STRING:MF_GRAYED), 4034, "增加宽度");
+		left_menu.AppendMenuItem((libraryfilter_state.isActive()?MF_STRING:MF_GRAYED), 4035, "减少宽度");
+		left_menu.AppendMenuItem((libraryfilter_state.isActive()?MF_STRING:MF_GRAYED), 4037, "自定义宽度...");
+		left_menu.AppendMenuItem((libraryfilter_state.isActive()?MF_STRING:MF_GRAYED), 4036, "重置");
+		library_menu.AppendMenuSeparator();
+		library_menu.AppendMenuItem(MF_STRING, 4000, "深色主题");
+		library_menu.CheckMenuItem(4000, properties.library_dark_theme);
+		wallpaper_visibility.AppendTo(library_menu,MF_STRING, "壁纸显示");
+		wallpaper_blur.AppendTo(library_menu,MF_STRING, "壁纸模糊");
+	} else if(main_panel_state.isEqual(1)){
+		playlists_menu.AppendTo(skin_settings_menu,MF_STRING, "面板布局");
+		nowplaying.AppendTo(playlists_menu,MF_STRING, "右侧播放列表");
+		playlistpanel_menu = window.CreatePopupMenu();
+		playlistpanel_menu.AppendTo(playlists_menu,MF_STRING, "播放列表面板");
+		playlistpanel_menu.AppendMenuItem(MF_STRING, 4038, "增加宽度");
+		playlistpanel_menu.AppendMenuItem(MF_STRING, 4039, "减少宽度");
+		playlistpanel_menu.AppendMenuItem(MF_STRING, 4041, "自定义宽度...");
+		playlistpanel_menu.AppendMenuItem(MF_STRING, 4040, "重置");
+		var FiltersMenu = window.CreatePopupMenu();
+		if(filters_panel_state.value>0)
+			FiltersMenu.AppendMenuItem(MF_STRING, 4990, "隐藏");
+		else
+			FiltersMenu.AppendMenuItem(MF_STRING, 4988, "显示");
+		FiltersMenu.AppendMenuItem(MF_STRING, 4992, "增大高度");
+		FiltersMenu.AppendMenuItem((filters_panel_state.isActive()? MF_STRING : MF_GRAYED), 4991, "减小高度");
+		FiltersMenu.AppendMenuSeparator();
+		FiltersMenu.AppendMenuItem((filters_panel_state.isActive() ? MF_STRING : MF_GRAYED | MF_DISABLED), 4993, "启用第 1 个过滤");
+		FiltersMenu.CheckMenuItem(4993, (filter1_state.isActive()));
+		FiltersMenu.AppendMenuItem((filters_panel_state.isActive() ? MF_STRING : MF_GRAYED | MF_DISABLED), 4994, "启用第 2 个过滤");
+		FiltersMenu.CheckMenuItem(4994, (filter2_state.isActive()));
+		FiltersMenu.AppendMenuItem((filters_panel_state.isActive() ? MF_STRING : MF_GRAYED | MF_DISABLED), 4995, "启用第 3 个过滤");
+		FiltersMenu.CheckMenuItem(4995, (filter3_state.isActive()));
+		FiltersMenu.AppendTo(playlists_menu, MF_STRING, "过滤");
+		if(!filters_panel_state.isMaximumValue()) playlists_menu.AppendMenuItem(MF_STRING, 4996, "隐藏底部播放列表");
+		else playlists_menu.AppendMenuItem(MF_STRING, 4997, "显示底部播放列表");
+		playlists_menu.AppendMenuSeparator();
+		playlists_menu.AppendMenuItem(MF_STRING, 4001, "深色主题");
+		playlists_menu.CheckMenuItem(4001, properties.playlists_dark_theme);
+		wallpaper_visibility.AppendTo(playlists_menu,MF_STRING, "壁纸显示");
+		wallpaper_blur.AppendTo(playlists_menu,MF_STRING, "壁纸模糊");
+	} else if(main_panel_state.isEqual(2)){
+		bio_menu.AppendTo(skin_settings_menu,MF_STRING, "面板布局");
+
+		nowplaying.AppendTo(bio_menu,MF_STRING, "右侧播放列表");
+
+		if(!lyrics_state.isActive()){
+			bio_menu.AppendMenuItem(MF_STRING, 4999, "显示歌词");
+		} else {
+			var LyricsMenu = window.CreatePopupMenu();
+			LyricsMenu.AppendMenuItem(MF_STRING, 5000, "隐藏");
+			LyricsMenu.AppendMenuSeparator();
+			LyricsMenu.AppendMenuItem((!lyrics_state.isMaximumValue())?MF_STRING:MF_GRAYED, 4999, "增加宽度");
+			LyricsMenu.AppendMenuItem(MF_STRING, 4998, "减少宽度");
+			LyricsMenu.AppendTo(bio_menu, MF_STRING, "歌词面板");
+		}
+
+		bio_menu.AppendMenuSeparator();
+		bio_menu.AppendMenuItem(MF_STRING, 4002, "深色主题");
+		bio_menu.CheckMenuItem(4002, properties.bio_dark_theme);
+		wallpaper_visibility.AppendTo(bio_menu,MF_STRING, "壁纸显示");
+		wallpaper_blur.AppendTo(bio_menu,MF_STRING, "壁纸模糊");
+	} else if(main_panel_state.isEqual(3)){
+		visu_menu.AppendTo(skin_settings_menu,MF_STRING, "面板布局");
+		nowplaying.AppendTo(visu_menu,MF_STRING, "右侧播放列表");
+		visu_menu.AppendMenuSeparator();
+		visu_menu.AppendMenuItem(MF_STRING, 4003, "深色主题");
+		visu_menu.CheckMenuItem(4003, properties.visualization_dark_theme);
+	}
+
+	appearance_menu.AppendTo(skin_settings_menu, MF_STRING, "全局布局");
+	nowplayinglobal = window.CreatePopupMenu();
+	nowplayinglobal.AppendMenuItem(MF_STRING, 4072, "隐藏");
+	nowplayinglobal.AppendMenuItem(MF_STRING, 4073, "显示");
+	nowplayinglobal.AppendMenuSeparator();
+	nowplayinglobal.AppendMenuItem(MF_STRING, 4030, "增加宽度");
+	nowplayinglobal.AppendMenuItem(MF_STRING, 4031, "减少宽度");
+	nowplayinglobal.AppendMenuItem(MF_STRING, 4033, "自定义宽度...");
+	nowplayinglobal.AppendMenuItem(MF_STRING, 4032, "重置");
+	nowplayinglobal.AppendTo(appearance_menu,MF_STRING, "右侧播放列表");
+	appearance_menu.AppendMenuItem(MF_STRING, 4046, "启用边框调整");
+	appearance_menu.CheckMenuItem(4046, globalProperties.enableResizableBorders);
+
+	wallpaper_visibility_global = window.CreatePopupMenu();
+	wallpaper_visibility_global.AppendMenuItem(MF_STRING, 40051, "启用");
+	wallpaper_visibility_global.AppendMenuItem(MF_STRING, 40061, "禁用");
+	wallpaper_blur_global = window.CreatePopupMenu();
+	wallpaper_blur_global.AppendMenuItem(MF_STRING, 40071, "启用");
+	wallpaper_blur_global.AppendMenuItem(MF_STRING, 40081, "禁用");
+	appearance_menu.AppendMenuSeparator();
+	wallpaper_visibility_global.AppendTo(appearance_menu,MF_STRING, "壁纸显示");
+	wallpaper_blur_global.AppendTo(appearance_menu,MF_STRING, "壁纸模糊");
+
+	font_size = window.CreatePopupMenu();
+	font_size.AppendTo(skin_settings_menu,MF_STRING, "字体大小");
+	font_size.AppendMenuItem(MF_STRING, 4012, "增加");
+	font_size.AppendMenuItem(MF_STRING, 4013, "减少");
+	font_size.AppendMenuItem(MF_STRING, 4014, "重置");
+	font_size.AppendMenuSeparator();
+	font_size.AppendMenuItem(MF_DISABLED, 0, "提示: 按住 CTRL 并使用鼠标滚轮");
+	font_size.AppendMenuItem(MF_DISABLED, 0, "在皮肤面板的任何位置滚动滚轮 !");
+
+	colors_menu = window.CreatePopupMenu();
+	colors_menu.AppendTo(skin_settings_menu,MF_STRING, "颜色");
+	main_panel = window.CreatePopupMenu();
+	main_panel.AppendTo(colors_menu,MF_STRING, "主面板");
+	main_panel.AppendMenuItem(MF_STRING, 5001, "纯白色");
+	main_panel.AppendMenuItem(MF_STRING, 5002, "白色与专辑封面");
+	main_panel.AppendMenuItem(MF_STRING, 5003, "白色, 灰色与专辑封面");
+	main_panel.AppendMenuSeparator();
+	main_panel.AppendMenuItem(MF_STRING, 5011, "纯黑色");
+	main_panel.AppendMenuItem(MF_STRING, 5012, "黑色与专辑封面");
+	main_panel.AppendMenuItem(MF_STRING, 5013, "黑色, 炭黑与专辑封面");
+	if(layout_state.isEqual(0)) var checked_item = (properties.darklayout?10:0);
+	else var checked_item = (properties.library_dark_theme?10:0);
+	main_panel.CheckMenuItem(5001+globalProperties.colorsMainPanel+checked_item, true);
+
+	mini_player = window.CreatePopupMenu();
+	mini_player.AppendTo(colors_menu,MF_STRING, "Mini 播放器");
+	mini_player.AppendMenuItem(MF_STRING, 5201, "纯白色");
+	mini_player.AppendMenuItem(MF_STRING, 5202, "白色与专辑封面");
+	mini_player.AppendMenuSeparator();
+	mini_player.AppendMenuItem(MF_STRING, 5203, "纯黑色");
+	mini_player.AppendMenuItem(MF_STRING, 5204, "黑色与专辑封面");
+	mini_player.CheckMenuItem(5201+globalProperties.colorsMiniPlayer+(properties.minimode_dark_theme?2:0), true);
+
+	control_bar = window.CreatePopupMenu();
+	control_bar.AppendTo(colors_menu,MF_STRING, "控制栏");
+	control_bar.AppendMenuItem(MF_STRING, 5101, "纯白色");
+	control_bar.AppendMenuItem(MF_STRING, 5102, "白色与专辑封面");
+	control_bar.AppendMenuSeparator();
+	control_bar.AppendMenuItem(MF_STRING, 5103, "纯黑色");
+	control_bar.AppendMenuItem(MF_STRING, 5104, "黑色与专辑封面");
+	control_bar.AppendMenuSeparator();
+	control_bar.AppendMenuItem(MF_STRING, 5105, "适应主面板颜色");
+	control_bar.CheckMenuItem(5101+globalProperties.colorsControls, true);
+
+	colors_menu.AppendMenuItem(MF_STRING, 5301, "深浅色跟随 CUI 设置")
+	colors_menu.CheckMenuItem(5301, properties.darklayout_follow_cui);
+
+	/*appearance_menu.AppendMenuItem(MF_STRING, 4025, "启用磁盘封面缓存");
+	appearance_menu.CheckMenuItem(4025, globalProperties.enableDiskCache);
+	appearance_menu.AppendMenuItem((globalProperties.enableDiskCache)?MF_STRING:MF_GRAYED, 4023, "启动时加载所有封面");
+	appearance_menu.CheckMenuItem(4023, globalProperties.load_covers_at_startup);
+	appearance_menu.AppendMenuItem((globalProperties.enableDiskCache)?MF_STRING:MF_GRAYED, 4024, "Load all artist thumbnails at startup");
+	appearance_menu.CheckMenuItem(4024, globalProperties.load_artist_img_at_startup);	*/
+
+	skin_settings_menu.AppendMenuSeparator();
+	/*mem_solicitation = window.CreatePopupMenu();
+	mem_solicitation.AppendMenuItem(MF_STRING, 4042, "0 - Minimum");
+	mem_solicitation.AppendMenuItem(MF_STRING, 4043, "1 - Keep loaded covers in memory");
+	mem_solicitation.AppendMenuItem(MF_STRING, 4044, "2 - Load all covers at startup");
+	mem_solicitation.AppendMenuItem(MF_STRING, 4045, "3 - Load all covers && artist thumbnails at startup");
+	mem_solicitation.AppendMenuSeparator();
+	mem_solicitation.CheckMenuRadioItem(4042, 4045, 4042+globalProperties.mem_solicitation);
+	mem_solicitation.AppendMenuItem(MF_STRING, 4026, "重置图像缓存");
+	mem_solicitation.AppendTo(skin_settings_menu, MF_STRING, "封面 && 内存使用率");*/
+
+	skin_settings_menu.AppendMenuItem(MF_STRING, 4029, "封面 && 内存使用率");
+	skin_settings_menu.AppendMenuItem(MF_STRING, 4026, "重置图像缓存");
+	skin_settings_menu.AppendMenuSeparator();
+
+	var ratingMenu = window.CreatePopupMenu();
+	ratingMenu.AppendMenuItem(MF_STRING, 4047, "保存到/加载文件标签");
+	ratingMenu.AppendMenuItem(MF_STRING, 4048, "保存到/加载播放统计数据库");
+		checked_item=0;
+		if (globalProperties.use_ratings_file_tags)
+			checked_item = 4047;
+		else
+			checked_item = 4048;
+	ratingMenu.CheckMenuRadioItem(4047, 4048, checked_item);
+	ratingMenu.AppendTo(skin_settings_menu, MF_STRING, "评级");
+
+	var schedulerMenu = window.CreatePopupMenu();
+	schedulerMenu.AppendMenuItem(MF_STRING, 3018, "无操作");
+	schedulerMenu.AppendMenuSeparator();
+	schedulerMenu.AppendMenuItem(MF_STRING, 3019, "当前结束后停止");
+	schedulerMenu.AppendMenuItem(MF_STRING, 3020, "当前结束后休眠");
+	schedulerMenu.AppendMenuItem(MF_STRING, 3021, "当前结束后关机");
+	schedulerMenu.AppendMenuSeparator();
+	schedulerMenu.AppendMenuItem(MF_STRING, 3022, "播放列表结束后休眠");
+	schedulerMenu.AppendMenuItem(MF_STRING, 3023, "播放列表结束后关机");
+		checked_item=0;
+		switch (true) {
+			case (scheduler.hibernate_after_current):
+				checked_item=3020
+				break;
+			case (scheduler.shutdown_after_current):
+				checked_item=3021
+				break;
+			case (scheduler.hibernate_after_playlist):
+				checked_item=3022
+				break;
+			case (scheduler.shutdown_after_playlist):
+				checked_item=3023
+				break;
+			case (fb.StopAfterCurrent):
+				checked_item=3019
+				break;
+			default:
+				checked_item=3018
+				break;
+		}
+	schedulerMenu.CheckMenuRadioItem(3018, 3023, checked_item);
+	schedulerMenu.AppendTo(skin_settings_menu, MF_STRING, "电源和休眠");
+
+	if(layout_state.isEqual(0)) {
+		skin_settings_menu.AppendMenuItem(MF_STRING, 4010, "Mini 播放器");
+		if(g_uihacks.getFullscreenState())
+			skin_settings_menu.AppendMenuItem(MF_STRING, 4009, "退出全屏");
+		else
+			skin_settings_menu.AppendMenuItem(MF_STRING, 4009, "全屏");
+	} else {
+		skin_settings_menu.AppendMenuItem(MF_STRING, 4011, "主播放器");
+	}
+	skin_settings_menu.AppendMenuSeparator();
+	skin_settings_menu.AppendMenuItem(MF_GRAYED, 0, "Eole v"+globalProperties.theme_version);
+
+	skin_settings_menu.AppendTo(basemenu, MF_STRING, "皮肤设置");
+
+    menuman1.Init("file");
+    menuman2.Init("edit");
+    menuman3.Init("View");
+    menuman4.Init("playback");
+    menuman5.Init("library");
+    menuman6.Init("help");
+
+    menuman1.BuildMenu(child1, 1001, 200);
+    menuman2.BuildMenu(child2, 1201, 200);
+    menuman3.BuildMenu(child3, 1401, 200);
+    menuman4.BuildMenu(child4, 1601, 300);
+    menuman5.BuildMenu(child5, 1901, 300);
+    menuman6.BuildMenu(child6, 2201, 100);
+
+    contextman.InitNowPlaying();
+    contextman.BuildMenu(child7, 2301, -1);
+    idx = 0;
+
+    idx = basemenu.TrackPopupMenu(x, y);
+
+    switch (true) {
+    case(idx >= 1001 && idx < 1201):
+        menuman1.ExecuteByID(idx - 1001);
+        break;
+
+    case (idx >= 1201 && idx < 1401):
+        menuman2.ExecuteByID(idx - 1201);
+        break;
+
+    case (idx >= 1401 && idx < 1601):
+        menuman3.ExecuteByID(idx - 1401);
+        break;
+
+    case (idx >= 1601 && idx < 1901):
+        menuman4.ExecuteByID(idx - 1601);
+        break;
+
+    case (idx >= 1901 && idx < 2201):
+        menuman5.ExecuteByID(idx - 1901);
+        break;
+
+    case (idx >= 2201 && idx < 2301):
+        menuman6.ExecuteByID(idx - 2201);
+        break;
+
+    case (idx >= 2301 && idx < 3000):
+        contextman.ExecuteByID(idx - 2301);
+        break;
+	case (idx == 3018):
+		setScheduler(0);
+		break;
+	case (idx == 3019):
+		setScheduler(1);
+		break;
+	case (idx == 3020):
+		setScheduler(2);
+		break;
+	case (idx == 3021):
+		setScheduler(3);
+		break;
+	case (idx == 3022):
+		setScheduler(4);
+		break;
+	case (idx == 3023):
+		setScheduler(5);
+		break;
+   case (idx == 3990):
+		properties.minimode_dark_theme=!properties.minimode_dark_theme;
+        window.NotifyOthers("minimode_dark_theme",properties.minimode_dark_theme);
+		window.SetProperty("MINIMODE dark theme", properties.minimode_dark_theme);
+		get_colors();g_searchbox.adapt_look_to_layout();
+        window.Repaint();
+        break;
+   case (idx == 4000):
+		properties.library_dark_theme=!properties.library_dark_theme;
+        window.NotifyOthers("library_dark_theme",properties.library_dark_theme);
+		window.SetProperty("LIBRARY dark theme", properties.library_dark_theme);
+		on_notify_data("library_dark_theme",properties.library_dark_theme);
+        window.Repaint();
+        break;
+   case (idx == 4001):
+		properties.playlists_dark_theme=!properties.playlists_dark_theme;
+        window.NotifyOthers("playlists_dark_theme",properties.playlists_dark_theme);
+		window.SetProperty("PLAYLISTS dark theme", properties.playlists_dark_theme);
+		on_notify_data("playlists_dark_theme",properties.playlists_dark_theme);
+		fb.RunMainMenuCommand("View/ElPlaylist/Refresh");
+        window.Repaint();
+        break;
+   case (idx == 4002):
+		properties.bio_dark_theme=!properties.bio_dark_theme;
+        window.NotifyOthers("bio_dark_theme",properties.bio_dark_theme);
+		window.SetProperty("BIO dark theme", properties.bio_dark_theme);
+		on_notify_data("bio_dark_theme",properties.bio_dark_theme);
+        window.Repaint();
+        break;
+   case (idx == 4003):
+		properties.visualization_dark_theme=!properties.visualization_dark_theme;
+        window.NotifyOthers("visualization_dark_theme",properties.visualization_dark_theme);
+		window.SetProperty("VISUALIZATION dark theme", properties.visualization_dark_theme);
+		on_notify_data("visualization_dark_theme",properties.visualization_dark_theme);
+        break;
+   case (idx == 4005):
+        window.NotifyOthers("wallpaperVisibility",true);
+		//on_notify_data("wallpaperVisibility",true);
+        break;
+   case (idx == 4006):
+        window.NotifyOthers("wallpaperVisibility",false);
+		//on_notify_data("wallpaperVisibility",false);
+        break;
+   case (idx == 4007):
+        window.NotifyOthers("wallpaperBlur",true);
+		on_notify_data("wallpaperBlur",true);
+        break;
+   case (idx == 4008):
+        window.NotifyOthers("wallpaperBlur",false);
+		on_notify_data("wallpaperBlur",false);
+        break;
+   case (idx == 40051):
+        window.NotifyOthers("wallpaperVisibilityGlobal",true);
+		//on_notify_data("wallpaperVisibility",true);
+        break;
+   case (idx == 40061):
+        window.NotifyOthers("wallpaperVisibilityGlobal",false);
+		//on_notify_data("wallpaperVisibility",false);
+        break;
+   case (idx == 40071):
+        window.NotifyOthers("wallpaperBlurGlobal",true);
+		on_notify_data("wallpaperBlur",true);
+        break;
+   case (idx == 4072):
+        toggleNowPlayingState(true,0);
+        break;
+   case (idx == 4073):
+        toggleNowPlayingState(true,1);
+        break;
+   case (idx == 40081):
+        window.NotifyOthers("wallpaperBlurGlobal",false);
+		on_notify_data("wallpaperBlur",false);
+        break;
+	case (idx == 4009):
+		g_uihacks.toggleFullscreen();
+		break;
+	case (idx == 4010):
+		toggleLayoutMode(1);get_colors();g_searchbox.adapt_look_to_layout();
+		break;
+	case (idx == 4011):
+		toggleLayoutMode(0);get_colors();g_searchbox.adapt_look_to_layout();
+		break;
+	case (idx == 4012):
+		globalProperties.fontAdjustement++;
+		window.SetProperty("GLOBAL Font Adjustement", globalProperties.fontAdjustement);
+		window.NotifyOthers('set_font',globalProperties.fontAdjustement);
+		on_font_changed();
+		break;
+	case (idx == 4013):
+		globalProperties.fontAdjustement--;
+		window.SetProperty("GLOBAL Font Adjustement", globalProperties.fontAdjustement);
+		window.NotifyOthers('set_font',globalProperties.fontAdjustement);
+		on_font_changed();
+		break;
+	case (idx == 4014):
+		globalProperties.fontAdjustement = 0;
+		window.SetProperty("GLOBAL Font Adjustement", globalProperties.fontAdjustement);
+		window.NotifyOthers('set_font',globalProperties.fontAdjustement);
+		on_font_changed();
+		break;
+	case (idx == 4021):
+		Lightswitch(true,true);
+		break;
+	case (idx == 4022):
+		Lightswitch(true,false);
+		break;
+	case (idx == 4023):
+		enableCoversAtStartupGlobally();
+		break;
+	case (idx == 4024):
+		enableArtistImgAtStartupGlobally();
+		break;
+	case (idx == 4025):
+		enableDiskCacheGlobally();
+		break;
+	case (idx == 4026):
+		delete_full_cache();
+		break;
+	case (idx == 4029):
+		chooseMemorySettings(" ", "<div class='titleBig'>封面  &  内存使用</div><div class='separator'></div><br/>为了使内存使用适应您的计算机速度和音乐库的大小, 请选择以下封面 & 内存设置之一.\n\n如果您遇到问题或内存不足的错误. 您可以在以后减少它, 相反, 如果一切工作正常. 那么您可以增加它.",'<br/>注意: Eole 使用封面缓存. 封面缓存是逐渐建立起来的: 当显示一个封面时, 如果这时还没有建立缓存, 将被添加到缓存中, 所以第一次显示封面都会有些缓慢, 但第二次显示时将会变快很多.<br/><br/>这个缓存基于 %album artist% & %album% 标签.<br/><br/>如果更新现有封面, 需要刷新缓存. 在封面上点击右键, 会弹出一个相关的菜单项.<br/><br/>','MemoryDialog','可以减少内存中储存封面的宽度, 如下所示. 数字越低, 皮肤内存占用就越低. 注意: 如果减少太多, 封面看起来会很模糊.. <u>警告: 改变这个值将重置封面缓存.</u>');
+		break;
+	case (idx == 4027):
+		toggleNowPlayingState();
+		break;
+	case (idx == 4028):
+		libraryfilter_state.toggleValue();
+		build_buttons();
+		window.Repaint();
+		break;
+	case (idx == 4030):
+		rightplaylist_width.increment(10);
+		break;
+	case (idx == 4031):
+		rightplaylist_width.decrement(10);
+		break;
+	case (idx == 4032):
+		rightplaylist_width.setDefault();
+		break;
+	case (idx == 4033):
+		rightplaylist_width.userInputValue("以像素为单位输入所需的宽度.\n默认宽度为 270px.\n最小宽度: 100px. 最大宽度: 900px", "自定义播放列表宽度");
+		break;
+	case (idx == 4034):
+		libraryfilter_width.increment(10);
+		break;
+	case (idx == 4035):
+		libraryfilter_width.decrement(10);
+		break;
+	case (idx == 4036):
+		libraryfilter_width.setDefault();
+		break;
+	case (idx == 4037):
+		libraryfilter_width.userInputValue("以像素为单位输入所需的宽度.\n默认宽度为 210px.\n最小宽度: 100px. 最大宽度: 900px", "自定义左侧菜单宽度");
+		break;
+	case (idx == 4038):
+		playlistpanel_width.increment(10);
+		break;
+	case (idx == 4039):
+		playlistpanel_width.decrement(10);
+		break;
+	case (idx == 4040):
+		playlistpanel_width.setDefault();
+		break;
+	case (idx == 4041):
+		playlistpanel_width.userInputValue("以像素为单位输入所需的宽度.\n默认宽度为 180px.\n最小宽度: 100px. 最大宽度: 900px", "自定义左侧菜单宽度");
+		break;
+	case (idx == 4042):
+		setMemoryUsageGlobally(0);
+		break;
+	case (idx == 4043):
+		setMemoryUsageGlobally(1);
+		break;
+	case (idx == 4044):
+		setMemoryUsageGlobally(2);
+		break;
+	case (idx == 4045):
+		setMemoryUsageGlobally(3);
+		break;
+	case (idx == 4046):
+		globalProperties.enableResizableBorders = !globalProperties.enableResizableBorders;
+		window.NotifyOthers("enableResizableBorders",globalProperties.enableResizableBorders);
+		on_notify_data("enableResizableBorders",globalProperties.enableResizableBorders);
+		break;
+	case (idx == 4047):
+		globalProperties.use_ratings_file_tags = true;
+		window.SetProperty("GLOBAL use ratings in file tags", globalProperties.use_ratings_file_tags);
+		window.NotifyOthers("use_ratings_file_tags",globalProperties.use_ratings_file_tags);
+		break;
+	case (idx == 4048):
+		globalProperties.use_ratings_file_tags = false;
+		window.SetProperty("GLOBAL use ratings in file tags", globalProperties.use_ratings_file_tags);
+		window.NotifyOthers("use_ratings_file_tags",globalProperties.use_ratings_file_tags);
+		break;
+    case (idx == 4988):
+		if(properties.savedFilterState>=0 && !properties.displayToggleBtns) filters_panel_state.setValue(properties.savedFilterState);
+		else filters_panel_state.setValue(1);
+        break;
+    case (idx == 4990):
+		saveFilterState();
+		filters_panel_state.setValue(0);
+        break;
+    case (idx == 4991):
+		filters_panel_state.decrement(1);
+        break;
+    case (idx == 4992):
+		filters_panel_state.increment(1);
+        break;
+    case (idx == 4993):
+		if(!filter2_state.isActive() && !filter3_state.isActive()) filters_panel_state.setValue(0);
+		else filter1_state.toggleValue();
+        break;
+    case (idx == 4994):
+		if(!filter1_state.isActive() && !filter3_state.isActive()) filters_panel_state.setValue(0);
+		else filter2_state.toggleValue();
+        break;
+    case (idx == 4995):
+		if(!filter1_state.isActive() && !filter2_state.isActive()) filters_panel_state.setValue(0);
+		else filter3_state.toggleValue();
+        break;
+    case (idx == 4996):
+		saveFilterState();
+		filters_panel_state.setValue(filters_panel_state.max_value);
+        break;
+    case (idx == 4997):
+		if(properties.savedFilterState>=0) filters_panel_state.setValue(properties.savedFilterState);
+		else filters_panel_state.setValue(1);
+        break;
+    case (idx == 4998):
+		lyrics_state.decrement(1);
+        break;
+    case (idx == 4999):
+		lyrics_state.increment(1);
+        break;
+    case (idx == 5000):
+		lyrics_state.setValue(0);
+        break;
+    case (idx >= 5001 && idx < 5010):
+		Lightswitch(true,false);
+		globalProperties.colorsMainPanel = idx-5001;
+		window.SetProperty("GLOBAL colorsMainPanel",globalProperties.colorsMainPanel);
+		window.NotifyOthers("colors",globalProperties.colorsMainPanel);
+        break;
+    case (idx >= 5011 && idx < 5020):
+		Lightswitch(true,true);
+		globalProperties.colorsMainPanel = idx-5011;
+		window.SetProperty("GLOBAL colorsMainPanel",globalProperties.colorsMainPanel);
+		window.NotifyOthers("colors",globalProperties.colorsMainPanel);
+        break;
+    case (idx >= 5101 && idx <= 5105):
+		globalProperties.colorsControls = idx-5101;
+		window.SetProperty("GLOBAL colorsControls",globalProperties.colorsControls);
+		window.NotifyOthers("colorsControls",globalProperties.colorsControls);
+        break;
+    case (idx >= 5201 && idx < 5205):
+		globalProperties.colorsMiniPlayer = idx-5201;
+		properties.minimode_dark_theme = (globalProperties.colorsMiniPlayer>=2);
+        window.NotifyOthers("minimode_dark_theme",globalProperties.colorsMiniPlayer);
+		globalProperties.colorsMiniPlayer = globalProperties.colorsMiniPlayer-(properties.minimode_dark_theme?2:0);
+
+		window.SetProperty("GLOBAL colorsMiniPlayer",globalProperties.colorsMiniPlayer);
+		window.SetProperty("MINIMODE dark theme", properties.minimode_dark_theme);
+		get_colors();g_searchbox.adapt_look_to_layout();
+		window.Repaint();
+        break;
+	case (idx == 5301):
+		properties.darklayout_follow_cui = !properties.darklayout_follow_cui;
+		window.SetProperty("_DISPLAY: Dark layout follow CUI", properties.darklayout_follow_cui);
+		on_colours_changed();
+		break;
+    }
+
+    basemenu = undefined;
+    contextman = undefined;
+    menuman1 = undefined;
+    menuman2 = undefined;
+    menuman3 = undefined;
+    menuman4 = undefined;
+    menuman5 = undefined;
+    menuman6 = undefined;
+	minimode_menu = undefined;
+	font_size = undefined;
+	if(FiltersMenu) FiltersMenu = undefined;
+	//schedulerMenu = undefined;
+    library_menu = undefined;
+    playlists_menu = undefined;
+    bio_menu = undefined;
+    wallpaper_visibility = undefined;
+    wallpaper_blur = undefined;
+	return true;
+}
+function on_font_changed() {
+	get_font();
+	g_searchbox.onFontChanged();
+    all_btns.calculateSize(true);
+	adapt_buttons_to_layout();
+	window.Repaint();
+};
+function on_metadb_changed(metadbs, fromhook) {
+	if(fromhook) return;
+	try{
+		var nowplaying_rawpath = fb.GetNowPlaying().RawPath;
+		for(var i=0; i < metadbs.Count; i++) {
+			if(fb.IsPlaying && metadbs[i].RawPath==nowplaying_rawpath) {
+				eval_caption_title(fb.GetNowPlaying());
+				window.Repaint();
+				return;
+			}
+		}
+	} catch(e){}
+}
+function on_key_up(vkey) {
+	g_searchbox.on_key("up", vkey);
+}
+function on_char(code) {
+	g_searchbox.on_char(code);
+
+}
+function on_key_down(vkey) {
+	g_searchbox.on_key("down", vkey);
+	switch (vkey) {
+	case VK_ESCAPE:
+		if(g_uihacks.getFullscreenState()) g_uihacks.toggleFullscreen();
+		break;
+	};
+}
+function on_focus(is_focused) {
+	if(!is_focused && g_searchbox.inputbox.text.length > 3){
+		g_searchHistory.add(g_searchbox.inputbox.text);
+		g_searchHistory.writeSearchHistoryIni();
+	}
+	g_searchbox.on_focus(is_focused)
+}
+function on_notify_data(name, info) {
+    switch(name) {
+		case "use_ratings_file_tags":
+			globalProperties.use_ratings_file_tags = info;
+			window.SetProperty("GLOBAL use ratings in file tags", globalProperties.use_ratings_file_tags);
+			window.Reload();
+		break;
+		case "toggleLayoutMode":
+			toggleLayoutMode();get_colors();g_searchbox.adapt_look_to_layout();
+		break;
+		case "enableResizableBorders":
+			globalProperties.enableResizableBorders = info;
+			window.SetProperty("GLOBAL enableResizableBorders", globalProperties.enableResizableBorders);
+		break;
+		case "MemSolicitation":
+			globalProperties.enableDiskCache = info;
+			window.SetProperty("GLOBAL memory solicitation", globalProperties.mem_solicitation);
+		break;
+		case "thumbnailWidthMax":
+			globalProperties.thumbnailWidthMax = Number(info);
+			window.SetProperty("GLOBAL thumbnail width max", globalProperties.thumbnailWidthMax);
+		break;
+		case "coverCacheWidthMax":
+			globalProperties.coverCacheWidthMax = Number(info);
+			window.SetProperty("GLOBAL cover cache width max", globalProperties.coverCacheWidthMax);
+		break;
+		case "history_previous":
+			g_searchbox.clearInputbox(false);
+			window.Repaint();
+		break;
+		case "libraryfilter_width":
+			libraryfilter_width.value=info;
+		break;
+		case "rightplaylist_width":
+			rightplaylist_width.value = info;
+			break;
+		case "playlistpanel_width":
+			playlistpanel_width.value = info;
+			break;
+		case "nowplayinglib_state":
+			nowplayinglib_state.value=info;
+			build_buttons();
+			window.Repaint();
+		break;
+		case "nowplayingplaylist_state":
+			nowplayingplaylist_state.value=info;
+			build_buttons();
+			window.Repaint();
+		break;
+		case "nowplayingbio_state":
+			nowplayingbio_state.value=info;
+			build_buttons();
+			window.Repaint();
+		break;
+		case "nowplayingvisu_state":
+			nowplayingvisu_state.value=info;
+			build_buttons();
+			window.Repaint();
+		break;
+		case "lyrics_state":
+			lyrics_state.value = info;
+		break;
+		case "wallpaperVisibility":
+			toggleWallpaper(info);
+		break;
+		case "wallpaperBlur":
+			toggleBlurWallpaper(info);
+		break;
+		case "WSH_panels_reload":
+			window.Reload();
+		break;
+		case "mini_controlbar":
+			mini_controlbar.value = info;
+		break;
+		case "set_font":
+			globalProperties.fontAdjustement = info;
+			window.SetProperty("GLOBAL Font Adjustement", globalProperties.fontAdjustement),
+			on_font_changed();
+			window.Repaint();
+		break;
+		case "library_dark_theme":
+			properties.library_dark_theme=info;
+			window.SetProperty("LIBRARY dark theme", properties.library_dark_theme);
+			darklib_state.setValue((properties.library_dark_theme)?1:0);
+			get_colors()
+			g_searchbox.adapt_look_to_layout();
+			window.Repaint();
+		break;
+		case "bio_stick_to_dark_theme":
+			properties.bio_stick2darklayout=info;
+			window.SetProperty("BIO stick to Dark layout", properties.bio_stick2darklayout);
+			darkbiostick_state.setValue((properties.bio_stick2darklayout)?1:0);
+			window.Repaint();
+		break;
+		case "libraryfilter_state":
+			libraryfilter_state.value=info;
+		break;
+		case "playlists_dark_theme":
+			properties.playlists_dark_theme=info;
+			window.SetProperty("PLAYLISTS dark theme", properties.playlists_dark_theme);
+			darkplaylist_state.setValue((properties.playlists_dark_theme)?1:0);
+			get_colors()
+			g_searchbox.adapt_look_to_layout();
+			window.Repaint();
+		break;
+		case "bio_dark_theme":
+			properties.bio_dark_theme=info;
+			window.SetProperty("BIO dark theme", properties.bio_dark_theme);
+			darkbio_state.setValue((properties.bio_dark_theme)?1:0);
+			get_colors();
+			g_searchbox.adapt_look_to_layout();
+			window.Repaint();
+		break;	
+		case "visualization_dark_theme":
+			properties.visualization_dark_theme=info;
+			window.SetProperty("VISUALIZATION dark theme", properties.visualization_dark_theme);
+			darkvisu_state.setValue((properties.visualization_dark_theme)?1:0);
+			get_colors();
+			g_searchbox.adapt_look_to_layout();
+			window.Repaint();
+		break;
+		case "layout_state":
+			layout_state = info;
+			g_searchbox.adapt_look_to_layout();
+			get_colors()
+			window.Repaint();
+		break;
+		case "filters_panel_state":
+			filters_panel_state.value=info;
+			window.Repaint();
+		break;
+		case "save_filter_state":
+			properties.savedFilterState = info;
+			window.SetProperty("_PROPERTY: Saved filter state", properties.savedFilterState);
+		break;
+		case "filter1_state":
+			filter1_state.value=info;
+		break;
+		case "filter2_state":
+			filter2_state.value=info;
+		break;
+		case "filter3_state":
+			filter3_state.value=info;
+		break;
+		case"DiskCacheState":
+			globalProperties.enableDiskCache = info;
+			window.SetProperty("COVER Disk Cache", globalProperties.enableDiskCache);
+		break;
+		case"LoadAllCoversState":
+			globalProperties.load_covers_at_startup = info;
+			window.SetProperty("COVER Load all at startup", globalProperties.load_covers_at_startup);
+		break;
+		case"LoadAllArtistImgState":
+			globalProperties.load_artist_img_at_startup = info;
+			window.SetProperty("ARTIST IMG Load all at startup", globalProperties.load_artist_img_at_startup);
+		break;
+		case "pmanager_height":
+			if(!g_uihacks.getFullscreenState() && g_uihacks.getMainWindowState()==0){
+				properties.fullMode_pmanagerheight=info;
+				window.SetProperty("Full mode pmanager saved height", properties.fullMode_pmanagerheight);
+			}
+		break;
+		case "schedulerState":
+			setScheduler(info,true);
+		break;
+		case "playlist_height":
+			if(!g_uihacks.getFullscreenState() && g_uihacks.getMainWindowState()==0){
+				properties.miniMode_playlistheight=info;
+				window.SetProperty("Mini mode playlist saved height", properties.miniMode_playlistheight);
+			}
+		break;
+		case "minimode_dark_theme":
+			if(layout_state.isEqual(1)){
+				properties.minimode_dark_theme=info;
+				window.SetProperty("MINIMODE dark theme", properties.minimode_dark_theme);
+				darkmini_state.setValue((properties.minimode_dark_theme)?1:0);
+				get_colors()
+				window.Repaint();
+			}
+		break;
+		case "main_panel_state":
+			if(main_panel_state!=info) {
+				main_panel_state.value = info;
+				get_colors()
+				window.Repaint();
+			}
+		break;
+		case "giveMeGenreList":
+			if(!g_genre_cache.isEmpty()){
+				window.NotifyOthers("hereIsGenreList",JSON_stringify(g_genre_cache));
+			}
+		break;
+	}
+}
+
+// ----------------------- Search Object ---------------------------
+oSearch = function() {
+	this.w = 0;
+	this.h = 0;
+	this.x = 0;
+	this.y = 0;
+	this.isHover = false;
+	this.hide = false;
+	this.images = {
+        magnify: null,
+        resetIcon_off: null,
+        resetIcon_ov: null
+	};
+	this.repaint = function() {window.Repaint()}
+    this.getImages = function() {
+		var gb;
+        var button_size = 18;
+		this.images.search_icon = gdi.Image(theme_img_path  + "\\icons\\"+colors.icons_folder+"\\search_icon.png");
+		this.search_bt = new button(this.images.search_icon, this.images.search_icon, this.images.search_icon,"search_bt","搜索全部媒体库");
+
+		this.images.search_history_icon = gdi.Image(theme_img_path  + "\\icons\\"+colors.icons_folder+"\\search_history.png");
+		this.images.search_history_hover_icon = gdi.Image(theme_img_path  + "\\icons\\"+colors.icons_folder+"\\search_history_hover.png");
+		this.search_history_bt = new button(this.images.search_history_icon, this.images.search_history_hover_icon, this.images.search_history_hover_icon,"search_history_bt","搜索历史");
+
+        this.images.resetIcon_off = gdi.CreateImage(button_size, button_size);
+        gb = this.images.resetIcon_off.GetGraphics();
+            gb.SetSmoothingMode(2);
+			var resetIcon_off_size=5;
+            gb.DrawLine(resetIcon_off_size, resetIcon_off_size, button_size-resetIcon_off_size, button_size-resetIcon_off_size, 1.0, colors.search_reset_icon);
+            gb.DrawLine(resetIcon_off_size, button_size-resetIcon_off_size, button_size-resetIcon_off_size, resetIcon_off_size, 1.0, colors.search_reset_icon);
+            gb.SetSmoothingMode(0);
+        this.images.resetIcon_off.ReleaseGraphics(gb);
+
+        this.images.resetIcon_ov = gdi.CreateImage(button_size, button_size);
+        gb = this.images.resetIcon_ov.GetGraphics();
+            gb.SetSmoothingMode(2);
+			var resetIcon_ov_size=3;
+            gb.DrawLine(resetIcon_ov_size, resetIcon_ov_size, button_size-resetIcon_ov_size, button_size-resetIcon_ov_size, 1.0, colors.search_reset_icon);
+            gb.DrawLine(resetIcon_ov_size, button_size-resetIcon_ov_size, button_size-resetIcon_ov_size, resetIcon_ov_size, 1.0, colors.search_reset_icon);
+            gb.SetSmoothingMode(0);
+        this.images.resetIcon_ov.ReleaseGraphics(gb);
+
+        this.images.resetIcon_dn = gdi.CreateImage(button_size, button_size);
+        gb = this.images.resetIcon_dn.GetGraphics();
+            gb.SetSmoothingMode(2);
+			var resetIcon_dn_size=5;
+            gb.DrawLine(resetIcon_dn_size, resetIcon_dn_size, button_size-resetIcon_dn_size, button_size-resetIcon_dn_size, 1.0, RGB(255,50,50));
+            gb.DrawLine(resetIcon_dn_size, button_size-resetIcon_dn_size, button_size-resetIcon_dn_size, resetIcon_dn_size, 1.0, RGB(255,50,50));
+            gb.SetSmoothingMode(0);
+        this.images.resetIcon_dn.ReleaseGraphics(gb);
+
+        this.reset_bt = new button(this.images.resetIcon_off, this.images.resetIcon_ov, this.images.resetIcon_dn,"reset_bt","重置搜索");
+	};
+	this.getImages();
+    this.reset_colors = function() {
+        this.inputbox.textcolor = colors.normal_txt;
+        this.inputbox.backselectioncolor = colors.selected_bg;
+		this.getImages();
+    };
+
+    this.setSize = function(w, h, font_size) {
+		this.w = w;
+		this.h = h;
+        this.inputbox.setSize(w-this.images.search_history_icon.Width*4.5, h-cSearchBox.paddingTop-cSearchBox.paddingBottom, font_size);
+    };
+	this.on_size = function() {
+		if(layout_state.isEqual(0) && compact_titlebar.isActive()){
+			var btns_width = ((properties.showLightswitchBtn)?buttons.Lightswitch.w:0) + ((properties.showConfigLayoutBtn)?buttons.ConfigLayout.w:0) + ((properties.showRightSidebarBtn)?buttons.RightSidebar.w:0) + ((properties.showFullscreenBtn)?buttons.Fullscreen.w:0) + ((properties.showNowPlayingBtn)?buttons.NowPlaying.w:0);
+			this.setSize(ww - window_btns.getWidth() - buttons.Settings.w - 10 - btns_width, wh-cSearchBox.marginTop-cSearchBox.marginBottom, g_fsize);
+		} else if(layout_state.isEqual(0)){
+			this.setSize(cSearchBox.width, wh-cSearchBox.marginTop-cSearchBox.marginBottom, g_fsize);
+		} else {
+			this.setSize(ww-cSearchBox.marginRight-cSearchBox.marginLeft, wh-cSearchBox.marginTop-cSearchBox.marginBottom, g_fsize);
+		}
+	}
+	this.onFontChanged = function() {
+		this.inputbox.onFontChanged();
+		this.on_size();
+	}
+	this.toggleVisibility = function(new_state) {
+		if(typeof new_state !== 'undefined') this.hide = !new_state;
+		else this.hide = !this.hide;
+		if(!this.hide) {
+			buttons.ShowSearch.setVisibility(false);
+		} else {
+			if(this.hide && !properties.alwaysShowSearch) g_cursor.setCursor(IDC_ARROW,1);
+			buttons.ShowSearch.setVisibility(true);
+			this.clearInputbox(true);
+		}
+		if(compact_titlebar.isActive())	g_panel.on_size_changed();
+		set_main_btns_visibility();
+		g_searchbox.repaint();
+	}
+    this.adapt_look_to_layout = function() {
+		this.reset_colors();
+		if(layout_state.isEqual(1)){
+			for (var c in cSearchBoxMini)
+				if(cSearchBoxMini.hasOwnProperty(c))
+					cSearchBox[c] = cSearchBoxMini[c]
+		} else {
+			switch(true){
+				case (compact_titlebar.isActive()):
+					for (var c in cSearchBoxCompact)
+						if(cSearchBoxCompact.hasOwnProperty(c))
+							cSearchBox[c] = cSearchBoxCompact[c];
+					if(compact_titlebar.isEqual(2))
+							cSearchBox.marginRight = cSearchBoxCompact.marginRightBig;
+					else
+							cSearchBox.marginRight = cSearchBoxCompact.marginRightSmall;						
+				break;
+				case (main_panel_state.isEqual(0) && properties.library_dark_theme):
+				case (main_panel_state.isEqual(1) && properties.playlists_dark_theme):
+				case (main_panel_state.isEqual(2) && properties.bio_dark_theme):
+				case (main_panel_state.isEqual(3) && properties.visualization_dark_theme):
+					for (var c in cSearchBoxMainDark)
+						if(cSearchBoxMainDark.hasOwnProperty(c))
+							cSearchBox[c] = cSearchBoxMainDark[c]
+				break;
+				default:
+					for (var c in cSearchBoxMainLight)
+						if(cSearchBoxMainLight.hasOwnProperty(c))
+							cSearchBox[c] = cSearchBoxMainLight[c]
+				break;
+			}
+		}
+		this.on_size();
+	}
+    this.clearInputbox = function(reset_filters) {
+        if(this.inputbox.text.length > 0) {
+			this.inputbox.text = "";
+			this.inputbox.offset = 0;
+			this.reset_bt.state=ButtonStates.normal;
+			if(reset_filters) window.NotifyOthers("reset_filters",0);
+        };
+    };
+
+	this.draw = function(gr, x, y) {
+		this.x = x;
+		this.y = y;
+		if(this.hide) return;
+
+		/*if(this.isHoverHistory){
+			gr.DrawImage(this.images.search_history_hover_icon, this.x+this.w-Math.round(cSearchBox.paddingRight/2 + this.images.search_history_icon.Width/2), this.y+Math.round(this.h/2 - this.images.search_history_icon.Height/2), this.images.search_history_hover_icon.Width, this.images.search_history_hover_icon.Height, 0, 0, this.images.search_history_hover_icon.Width, this.images.search_history_hover_icon.Height,0,255);
+		} else {
+			gr.DrawImage(this.images.search_history_icon, this.x+this.w-Math.round(cSearchBox.paddingRight/2 + this.images.search_history_icon.Width/2), this.y+Math.round(this.h/2 - this.images.search_history_icon.Height/2), this.images.search_history_icon.Width, this.images.search_history_icon.Height, 0, 0, this.images.search_history_icon.Width, this.images.search_history_hover_icon.Height,0,255);
+		}*/
+		this.search_history_bt.draw(gr, this.x+this.w-Math.round(cSearchBox.paddingRight/2 + this.images.search_history_icon.Width/2), this.y+Math.round(this.h/2 - this.images.search_history_icon.Height/2)-2, 255);
+
+        if(this.inputbox.text.length > 0 || (!(properties.alwaysShowSearch && !compact_titlebar.isActive()) && layout_state.isEqual(0))) {
+            this.reset_bt.draw(gr, this.x+cSearchBox.paddingLeft-this.images.search_icon.Width-1, this.y+Math.floor((this.h-cSearchBox.paddingBottom)/2-this.reset_bt.img[0].Height/2)+2 + (compact_titlebar.isActive()?1:0), 255);
+        } else {
+			this.search_bt.draw(gr, this.x+cSearchBox.paddingLeft-this.images.search_icon.Width-4, this.y+Math.floor((this.h-cSearchBox.paddingBottom)/2-this.images.search_icon.Height/2)+2, 255);
+        };
+
+		this.inputbox.draw(gr, this.x+cSearchBox.paddingLeft, this.y+cSearchBox.paddingTop, 0, 0);
+		if(layout_state.isEqual(0)){
+			//gr.FillSolidRect(this.x, this.y-2, this.w, 1, colors.search_line); //top line
+			//gr.FillSolidRect(this.x, this.y+this.h - 1, this.w, 1, colors.search_line); //bottom line
+			//gr.FillSolidRect(this.x, this.y, 1, this.h-1, colors.search_line); //left line
+			var grad_width = 10;
+			var grad_hadd = 2;
+			gr.FillSolidRect(this.x+this.w-1, this.y+1+grad_width-grad_hadd, 1, this.h-2-grad_width+grad_hadd, colors.search_line); //right line
+			gr.FillGradRect(this.x+this.w-1, this.y+1-grad_hadd, 1, grad_width, 90, colors.normal_bg, colors.search_line, 1.0); //right line
+		}
+    };
+	this.resetSearch = function() {
+		if(fb.IsPlaying && this.inputbox.text.length > 0) showNowPlaying();
+		this.clearInputbox(true);
+		if(!(properties.alwaysShowSearch && !compact_titlebar.isActive()) && layout_state.isEqual(0)) g_searchbox.toggleVisibility(false);
+		g_searchbox.repaint();
+	}
+    this.on_mouse = function(event, x, y, delta) {
+        switch(event) {
+            case "lbtn_down":
+				if(this.isHover){
+					var reset_btn_state = this.reset_bt.checkstate("down", x, y);
+					var search_btn_state = this.search_bt.checkstate("down", x, y);
+					var search_history_btn_state = this.search_history_bt.checkstate("down", x, y);
+					if(reset_btn_state!=ButtonStates.down && !search_history_btn_state) this.inputbox.check("down", x, y);
+					if(search_history_btn_state) draw_searchHistory_menu(this.x+this.w,this.h+this.y-1);
+				}
+				else if(!(properties.alwaysShowSearch && !compact_titlebar.isActive()) && this.inputbox.text.length == 0 && layout_state.isEqual(0) && !this.hide){
+					this.toggleVisibility(false);
+				} else {
+					this.on_focus(false);
+				}
+                break;
+            case "lbtn_up":
+                if((this.inputbox.text.length > 0 || (!(properties.alwaysShowSearch && !compact_titlebar.isActive()) && layout_state.isEqual(0))) &&  !this.hide) {
+                    if(this.reset_bt.checkstate("up", x, y) == ButtonStates.hover && !this.inputbox.drag) {
+						this.resetSearch();
+                    };
+                } else if((properties.alwaysShowSearch && !compact_titlebar.isActive())) {
+					if(this.search_bt.checkstate("up", x, y) == ButtonStates.hover && !this.inputbox.drag) {
+						this.inputbox.activate(x,y);
+						this.inputbox.repaint();
+					};
+				}
+				this.inputbox.check("up", x, y);
+                break;
+            case "lbtn_dblclk":
+				if(!this.hide)
+					this.inputbox.check("dblclk", x, y);
+                break;
+            case "rbtn_down":
+				if(!this.hide)
+					this.inputbox.check("right", x, y);
+                break;
+            case "move":
+				this.isHoverHistoryOld = this.isHoverHistory;
+				this.checkHover(x,y);
+				if(!this.hide) this.inputbox.check("move", x, y);
+
+				this.search_history_bt.checkstate("move", x, y);
+                if((this.inputbox.text.length > 0 || (!(properties.alwaysShowSearch && !compact_titlebar.isActive()) && layout_state.isEqual(0))) && !this.hide) this.reset_bt.checkstate("move", x, y);
+				else this.search_bt.checkstate("move", x, y);
+
+				/*//if(x > this.x+this.w-cSearchBox.paddingRight && x<this.x+this.w && y>cSearchBox.marginTop && !this.hide) this.isHoverHistory = true;
+				var x_start =this.x+this.w-Math.round(cSearchBox.paddingRight/2 + this.images.search_history_icon.Width/2)-5;
+				if(x > x_start && x < x_start + this.images.search_history_icon.Width+8) this.isHoverHistory = true;
+				else this.isHoverHistory = false;
+				if(this.isHoverHistoryOld!=this.isHoverHistory) this.repaint();*/
+
+                break;
+            case "leave":
+				this.search_history_bt.changeState(ButtonStates.normal);
+				/*if(this.isHoverHistory) {
+					this.isHoverHistory = false;
+					this.repaint();
+				}*/
+                break;
+        };
+    };
+    this.checkHover = function(x, y) {
+		this.isHover = (x < this.x+this.w && x > this.x && y <  this.y+this.h &&  y > this.y && !this.hide);
+	}
+    this.on_key = function(event, vkey) {
+        switch(event) {
+            case "down":
+				if(!this.hide) {
+					switch (vkey) {
+							case VK_ESCAPE:
+								this.resetSearch();
+								break;
+							default:
+								this.inputbox.on_key_down(vkey);
+								break;
+							}
+				}
+                break;
+        };
+    };
+
+    this.on_char = function(code) {
+		if(this.hide) return;
+		if(code==13) {
+			if(this.inputbox.text.length < 3)
+				return;
+			g_launchSearch(properties.autosearch);
+			g_searchHistory.add(this.inputbox.text);
+			g_searchHistory.writeSearchHistoryIni();
+		} else if(code!="")	{
+			this.inputbox.on_char(code);
+			if(this.inputbox.text.length==0) window.NotifyOthers("reset_filters",0);
+		}
+		if(properties.autosearch || code==13) this.showSearchResults();
+    };
+    this.showSearchResults = function() {
+		if(!main_panel_state.isEqual(0) && !main_panel_state.isEqual(1) && layout_state.isEqual(0)){
+			main_panel_state.setValue(0);
+			get_colors();g_searchbox.adapt_look_to_layout();
+		}
+	}
+	this.on_focus = function(is_focused) {
+		this.inputbox.on_focus(is_focused);
+		if(!is_focused && (!properties.alwaysShowSearch || compact_titlebar.isActive()) && this.inputbox.text.length == 0 && layout_state.isEqual(0)){
+			this.toggleVisibility(false);
+		}
+		if(is_focused && this.isHover && this.inputbox.edit && (!main_panel_state.isEqual(0) && !main_panel_state.isEqual(1)) && layout_state.isEqual(0)){
+			main_panel_state.setValue(0);
+			get_colors();g_searchbox.adapt_look_to_layout();
+		}
+	};
+	this.on_init = function() {
+		this.inputbox = new oInputbox(this.w, this.h, "", "搜索...", colors.search_txt , 0, 0, colors.selected_bg, g_launchSearch, "g_searchbox", undefined, "g_font.min2");
+        this.inputbox.autovalidation = properties.autosearch;
+		this.adapt_look_to_layout();
+    };
+	this.on_init();
+};
+function g_launchSearch(play_results) {
+	var library_list = fb.GetLibraryItems();
+	var play_results = typeof play_results !== 'undefined' ? play_results : false;
+	if(g_searchbox.inputbox.text.length < 3)
+		return;
+	try {
+		var search_results = fb.GetQueryItems(library_list, g_searchbox.inputbox.text);
+	}
+	catch {
+	var search_results = fb.GetQueryItems(library_list, g_searchbox.inputbox.text.toLowerCase());
+	}
+	//window.NotifyOthers("search_launched",0);
+	apply_playlist(search_results,play_results,true,false);
+	search_results = undefined;
+	window.NotifyOthers("refresh_filters",0);
+	g_searchbox.repaint();
+	if (library_list) library_list = undefined;
+
+	return;
+};
+
+// ---------- Search history ------------------
+searchHistory = function () {
+    this.historyList = Array();
+    this.searchExist = function (search_item) {
+		for (var i = 0; i < this.historyList.length; i++) {
+			if(this.historyList[i][0]==search_item) return true;
+		}
+		return false;
+    };
+    this.add = function (search_item, datetime) {
+		if(!this.searchExist(search_item)) {
+			var currentdate = new Date();
+			datetime = typeof datetime !== 'undefined' ? datetime : currentdate.getDate() + "/"	+ (currentdate.getMonth()+1)  + "/"	+ currentdate.getFullYear() + " @ "
+							+ currentdate.getHours() + ":" + currentdate.getMinutes() + ":" + currentdate.getSeconds();
+			this.historyList[this.historyList.length] = Array(search_item,datetime);
+			if(this.historyList.length>properties.searchHistory_max_items) this.historyList.shift();
+			return true;
+		}
+		return false;
+    };
+	this.onFinish = function (genre) {
+		this.sort();
+	}
+	this.sort = function () {
+		//this.historyList.sort();
+	}
+	this.reset = function () {
+		this.historyList = Array();
+		try {
+			if(g_files.FileExists(SettingsPath + "SearchHistory.ini")) g_files.DeleteFile(SettingsPath + "SearchHistory.ini");
+		} catch(e) {}
+	}
+    this.trace = function (genre) {
+		for (var i = 0; i < this.historyList.length; i++) {
+			console.log(this.historyList[i][0])
+		}
+    };
+    this.readSearchHistoryIni = function () {
+		if(g_files.FileExists(SettingsPath + "SearchHistory.ini")) {
+			historyFile = g_files.OpenTextFile(SettingsPath + "SearchHistory.ini", 1);
+			// Read from the file and add the results.
+			while (!historyFile.AtEndOfStream){
+				read_history = historyFile.ReadLine();
+				var args = read_history.split(" ## ");
+				this.add(args[0],args[1]);
+			}
+			this.onFinish();
+			historyFile.Close();
+		}
+	}
+    this.writeSearchHistoryIni = function () {
+		if(this.historyList.length>0){
+			try {
+				//if(g_files.FileExists(SettingsPath + "SearchHistory.ini")) g_files.DeleteFile(SettingsPath + "SearchHistory.ini");
+				var MyFile = g_files.CreateTextFile(SettingsPath+"SearchHistory.ini", true);
+				for (var i = 0; i <this.historyList.length; i++) {
+					MyFile.WriteLine(this.historyList[i][0]+" ## "+this.historyList[i][1]);
+					if(i==properties.searchHistory_max_items) break;
+				}
+				MyFile.Close();
+			} catch(e) {}
+		}
+	}
+}
+
+function draw_searchHistory_menu(x, y) {
+    var basemenu = window.CreatePopupMenu();
+	if (typeof x == "undefined") x=ww;
+	if (typeof y == "undefined") y=30;
+
+    basemenu.AppendMenuItem(MF_GRAYED, 0, "搜索历史 :");
+	basemenu.AppendMenuSeparator();
+
+	for (var i = g_searchHistory.historyList.length-1; i >=0; i--) {
+		basemenu.AppendMenuItem(MF_STRING, i+1, g_searchHistory.historyList[i][0].replace("&","&&"));
+	}
+	if(g_searchHistory.historyList.length==0) {
+		basemenu.AppendMenuItem(MF_GRAYED, 0, "搜索历史为空");
+	} else {
+		basemenu.AppendMenuSeparator();
+		basemenu.AppendMenuItem(MF_STRING, properties.searchHistory_max_items+10, "清除历史记录");
+	}
+	basemenu.AppendMenuItem(MF_STRING, 1000, "输入的同时搜索");
+	basemenu.CheckMenuItem(1000, properties.autosearch);
+	
+    idx = 0;
+    idx = basemenu.TrackPopupMenu(x, y, 0x0008);
+
+    switch (true) {
+		case (idx==1000):
+			properties.autosearch = !properties.autosearch;
+			window.SetProperty("_DISPLAY: autosearch", properties.autosearch);
+			g_searchbox.on_init();
+		break;
+		case (idx > 0 && idx <= properties.searchHistory_max_items+1):
+			g_searchbox.inputbox.text = g_searchHistory.historyList[idx-1][0];
+			g_searchbox.inputbox.Cpos = g_searchbox.inputbox.text.length;
+			g_launchSearch(false);
+			g_searchbox.showSearchResults();
+			window.Repaint();
+		break;
+		case (idx == properties.searchHistory_max_items+10):
+			g_searchHistory.reset();
+		break;
+    }
+    basemenu = undefined;
+}
+function toggleWallpaper(wallpaper_state){
+	wallpaper_state = typeof wallpaper_state !== 'undefined' ? wallpaper_state : !properties.showwallpaper;
+	properties.showwallpaper = wallpaper_state;
+	window.SetProperty("_DISPLAY: Show Wallpaper", properties.showwallpaper);
+	if(properties.showwallpaper) {
+		g_wallpaperImg = setWallpaperImg(globalProperties.default_wallpaper, fb.IsPlaying ? fb.GetNowPlaying() : null);
+	};
+	get_colors();
+	window.Repaint();
+}
+function toggleBlurWallpaper(wallpaper_blur_state){
+	wallpaper_blur_state = typeof wallpaper_blur_state !== 'undefined' ? wallpaper_blur_state : !properties.wallpaperblurred;
+	properties.wallpaperblurred = !properties.wallpaperblurred;
+	window.SetProperty("_DISPLAY: Wallpaper Blurred", properties.wallpaperblurred);
+	g_wallpaperImg = setWallpaperImg(globalProperties.default_wallpaper, fb.GetNowPlaying());
+	window.Repaint();
+}
+function on_init(){
+	if(properties.Remember_previous_state && main_panel_state.isEqual(3)) {
+		main_panel_state.setValue(0);
+	} else if(!properties.Remember_previous_state){
+		main_panel_state.setValue(0);
+	}
+	get_font();
+	get_colors();
+	g_panel = new oPanel(properties.panelName,function(){
+		SetPseudoCaption();
+		SetCaptionTitleSize();
+		g_searchbox.on_size();
+	});
+	g_cursor = new oCursor();
+	g_tooltip = new oTooltip();
+    g_searchbox = new oSearch();
+	g_searchHistory = new searchHistory;
+	g_searchHistory.readSearchHistoryIni();
+	adapt_buttons_to_layout();
+	g_genre_cache = new oGenreCache();
+	g_genre_cache.build_from_library();
+	g_uihacks.setFrameStyle(3);
+	g_uihacks.setAeroEffect(2);
+	g_uihacks.setAero(0,0,1,0);
+	
+	if(fb.IsPlaying) caption_title = fb.TitleFormat("[%artist%  -  ][%album%[  -  %tracknumber%] : ]%title%[  -  %date%]").Eval();
+	if(settings_file_not_found){
+		var welcome_msg_timer = setTimeout(function(){
+			chooseMemorySettings(" ", "<div class='titleBig'>您是否第一次安装这个主题?</div><div class='separator'></div><br/>fcl 主题文件路径> foobar2000>themes>eole>columnsUI_eole.fcl\n可视化默认路径> C:>Program Files (x86)>foobar2000>plugins>winamp\n请仔细阅读弹出窗口, 特别是底部文字, 以了解 Eole 图像缓存的工作原理.\n\n下面的设置影响皮肤的性能, 封面分辨率和内存占用率.\n\n如果遇到性能问题或内存不足的错误\n可以通过进入 Foobar > 皮肤设置 > 封面 & 内存使用率 来降低. 反之, 如果一切工作正常, 那么可以提高. 如果不了解详细情况, 请保持默认设置.",'<br/>提示: 大多数面板都有一个设置菜单可通过点击右键获得.<br/><br/>注意: Eole 使用封面缓存. 封面缓存是逐渐建立起来的: 当显示一个封面时, 如果这时还没有建立缓存, 将被添加到缓存中, 所以第一次显示封面都会有些缓慢, 但第二次显示时将会变快很多.<br/><br/>这个缓存基于 %album artist% & %album% 标签.<br/><br/>如果更新现有封面, 需要刷新缓存. 在封面上点击右键, 会弹出一个相关的菜单项.<br/><br/>','MemoryDialog','可以减少内存中储存封面的宽度, 如下所示. 数字越低, 皮肤内存占用就越低. 注意: 如果减少太多, 封面看起来会很模糊.');
+			theme_version.setValue(globalProperties.theme_version);
+			clearTimeout(welcome_msg_timer);
+			welcome_msg_timer=false;
+		}, 200);
+		RefreshPSS();
+	} else if(versionCompare(theme_version.getValue(),globalProperties.lastest_breaking_version)<0) {
+		var welcome_msg_timer = setTimeout(function(){
+			NoticeBox(" ","<div class='titleBig'>导入 fcl 文件, Eole v"+(globalProperties.lastest_breaking_version)+" 之后</div><div class='separator'></div><br/>看来您的分栏用户界面配置文件已经过期, 需要导入新的配置文件, 可能会失去一些这个主题的定制元素. 但很快就可以设置回来.<br/><br/>在参数选项页面 (Foobar > 文件 > 参数选项), 进入<br/>显示 > 分栏用户界面 > 主窗口 > 导入配置...<br/><br/>然后导入 fcl 文件: [YOUR_FOOBAR_DIRECTORY]/themes/eole/columnsUI_eole.fcl", "知道了, 打开参数选项","现在不行",'fb.RunMainMenuCommand("文件/参数选项")');
+			clearTimeout(welcome_msg_timer);
+			welcome_msg_timer=false;
+		}, 200);
+	}
+	// 延迟同步 CUI 颜色，确保所有组件初始化完成
+	setTimeout(function() {
+		on_colours_changed();
+	}, 100);
+}
+on_init();
+
+// 监听 CUI 颜色变化事件
+function on_colours_changed() {
+	if (!properties.darklayout_follow_cui) return;
+    var col = window.GetColourCUI(3);
+    var r = (col >> 16) & 0xFF;
+    var g = (col >> 8) & 0xFF;
+    var b = col & 0xFF;
+    var cuiDark = r + g + b < 383;
+    if (cuiDark !== properties.darklayout) {
+        Lightswitch(true);
+    }
+}
