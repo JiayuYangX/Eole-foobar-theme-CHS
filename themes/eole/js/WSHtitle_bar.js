@@ -300,7 +300,7 @@ function Lightswitch(switch_all,new_state){
 	switch_all = typeof switch_all !== 'undefined' ? switch_all : false;
 	new_state = typeof new_state !== 'undefined' ? new_state : !properties.darklayout;
 
-	if(layout_state.isEqual(1)){
+	if(layout_state.isEqual(1) || switch_all){
 		if(switch_all) properties.minimode_dark_theme=new_state;
 		else properties.minimode_dark_theme=!properties.minimode_dark_theme;
         window.NotifyOthers("minimode_dark_theme",properties.minimode_dark_theme);
