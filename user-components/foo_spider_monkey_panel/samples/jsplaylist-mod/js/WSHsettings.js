@@ -10,13 +10,13 @@ function settings_checkboxes_action(id, status, parentId) {
 		switch (id) {
 		case 0:
 			eval(p.settings.pages[parentId].elements[id].linkedVariable + " = " + status);
-			window.SetProperty("SYSTEM.TopBar.Visible", status);
+			window.SetProperty("SYSTEM.顶栏.显示", status);
 			resize_panels();
 			full_repaint();
 			break;
 		case 1:
 			eval(p.settings.pages[parentId].elements[id].linkedVariable + " = " + status);
-			window.SetProperty("SYSTEM.HeaderBar.Locked", status);
+			window.SetProperty("SYSTEM.标题栏.锁", status);
 			if (!cHeaderBar.locked) {
 				p.headerBar.visible = false;
 			}
@@ -25,31 +25,31 @@ function settings_checkboxes_action(id, status, parentId) {
 			break;
 		case 2:
 			eval(p.settings.pages[parentId].elements[id].linkedVariable + " = " + status);
-			window.SetProperty("SYSTEM.PlaylistManager.Visible", status);
+			window.SetProperty("SYSTEM.播放列表管理.显示", status);
 			resize_panels();
 			full_repaint();
 			break;
 		case 3:
 			eval(p.settings.pages[parentId].elements[id].linkedVariable + " = " + status);
-			window.SetProperty("CUSTOM Show Scrollbar", status);
+			window.SetProperty("自定义显示滚动条", status);
 			resize_panels();
 			full_repaint();
 			break;
 		case 4:
 			eval(p.settings.pages[parentId].elements[id].linkedVariable + " = " + status);
-			window.SetProperty("SYSTEM.Media Library Playlist", status);
+			window.SetProperty("SYSTEM.整个媒体库", status);
 			if (status) {
 				checkMediaLibrayPlaylist();
 				plman.ActivePlaylist = 0;
 			} else {
-				if (plman.GetPlaylistName(0) == "Media Library") {
+				if (plman.GetPlaylistName(0) == "整个媒体库") {
 					plman.RemovePlaylistSwitch(0);
 				}
 			}
 			break;
 		case 5:
 			eval(p.settings.pages[parentId].elements[id].linkedVariable + " = " + status);
-			window.SetProperty("CUSTOM Historic Playlist enabled", status);
+			window.SetProperty("自定义启用历史播放列表", status);
 			if (status) {
 				addToHistoricPlaylist(null);
 			} else {
@@ -60,15 +60,15 @@ function settings_checkboxes_action(id, status, parentId) {
 			}
 		case 6:
 			eval(p.settings.pages[parentId].elements[id].linkedVariable + " = " + status);
-			window.SetProperty("CUSTOM.Enable Statistics (write to file)", status);
+			window.SetProperty("CUSTOM.启用统计 (写入文件)", status);
 			break;
 		case 7:
 			eval(p.settings.pages[parentId].elements[id].linkedVariable + " = " + status);
-			window.SetProperty("CUSTOM Enable Smooth Scrolling", status);
+			window.SetProperty("自定义启用平滑滚动条", status);
 			break;
 		case 8:
 			eval(p.settings.pages[parentId].elements[id].linkedVariable + " = " + status);
-			window.SetProperty("SYSTEM.Enable Touch Scrolling", status);
+			window.SetProperty("SYSTEM.启用触模滚动条", status);
 			break;
 		};
 		break;
@@ -186,7 +186,7 @@ function settings_checkboxes_action(id, status, parentId) {
 		switch (id) {
 		case 0:
 			eval(p.settings.pages[parentId].elements[id].linkedVariable + " = " + status);
-			window.SetProperty("CUSTOM Show Wallpaper", status);
+			window.SetProperty("自定义显示墙纸", status);
 			// refresh wallpaper
 			if (fb.IsPlaying) {
 				p.wallpaperImg = setWallpaperImg(properties.wallpaperpath, fb.GetNowPlaying());
@@ -196,7 +196,7 @@ function settings_checkboxes_action(id, status, parentId) {
 			break;
 		case 4:
 			eval(p.settings.pages[parentId].elements[id].linkedVariable + " = " + status);
-			window.SetProperty("CUSTOM Wallpaper Blurred", status);
+			window.SetProperty("自定义墙纸模糊", status);
 			// refresh wallpaper
 			if (fb.IsPlaying) {
 				p.wallpaperImg = setWallpaperImg(properties.wallpaperpath, fb.GetNowPlaying());
@@ -206,7 +206,7 @@ function settings_checkboxes_action(id, status, parentId) {
 			break;
 		case 11:
 			eval(p.settings.pages[parentId].elements[id].linkedVariable + " = " + status);
-			window.SetProperty("SYSTEM.Enable Custom Colors", status);
+			window.SetProperty("SYSTEM.启用自定义颜色", status);
 			p.settings.refreshColors();
 			p.list.setItemColors();
 			p.playlistManager.setColors();
@@ -225,13 +225,13 @@ function settings_radioboxes_action(id, status, parentId) {
 			p.settings.pages[pid].elements[9].status = true;
 			p.settings.pages[pid].elements[10].status = false;
 			properties.defaultPlaylistItemAction = "Play";
-			window.SetProperty("SYSTEM.Default Playlist Action", properties.defaultPlaylistItemAction);
+			window.SetProperty("SYSTEM.默认播放列表操作", properties.defaultPlaylistItemAction);
 			break;
 		case 10:
 			p.settings.pages[pid].elements[9].status = false;
 			p.settings.pages[pid].elements[10].status = true;
 			properties.defaultPlaylistItemAction = "Add to playback queue";
-			window.SetProperty("SYSTEM.Default Playlist Action", properties.defaultPlaylistItemAction);
+			window.SetProperty("SYSTEM.默认播放列表操作", properties.defaultPlaylistItemAction);
 			break;
 		};
 		full_repaint();
@@ -461,21 +461,21 @@ function settings_radioboxes_action(id, status, parentId) {
 			p.settings.pages[pid].elements[2].status = false;
 			p.settings.pages[pid].elements[3].status = false;
 			properties.wallpapermode = 0;
-			window.SetProperty("CUSTOM Wallpaper Type", properties.wallpapermode);
+			window.SetProperty("自定义墙纸类型", properties.wallpapermode);
 			break;
 		case 2:
 			p.settings.pages[pid].elements[1].status = false;
 			p.settings.pages[pid].elements[2].status = true;
 			p.settings.pages[pid].elements[3].status = false;
 			properties.wallpapermode = 4;
-			window.SetProperty("CUSTOM Wallpaper Type", properties.wallpapermode);
+			window.SetProperty("自定义墙纸类型", properties.wallpapermode);
 			break;
 		case 3:
 			p.settings.pages[pid].elements[1].status = false;
 			p.settings.pages[pid].elements[2].status = false;
 			p.settings.pages[pid].elements[3].status = true;
 			properties.wallpapermode = -1;
-			window.SetProperty("CUSTOM Wallpaper Type", properties.wallpapermode);
+			window.SetProperty("自定义墙纸类型", properties.wallpapermode);
 			break;
 			// wpp alpha shading
 		case 5:
@@ -485,7 +485,7 @@ function settings_radioboxes_action(id, status, parentId) {
 			p.settings.pages[pid].elements[8].status = false;
 			p.settings.pages[pid].elements[9].status = false;
 			properties.wallpaperalpha = 125;
-			window.SetProperty("CUSTOM Wallpaper Alpha", properties.wallpaperalpha);
+			window.SetProperty("自定义墙纸透明", properties.wallpaperalpha);
 			break;
 		case 6:
 			p.settings.pages[pid].elements[5].status = false;
@@ -494,7 +494,7 @@ function settings_radioboxes_action(id, status, parentId) {
 			p.settings.pages[pid].elements[8].status = false;
 			p.settings.pages[pid].elements[9].status = false;
 			properties.wallpaperalpha = 150;
-			window.SetProperty("CUSTOM Wallpaper Alpha", properties.wallpaperalpha);
+			window.SetProperty("自定义墙纸透明", properties.wallpaperalpha);
 			break;
 		case 7:
 			p.settings.pages[pid].elements[5].status = false;
@@ -503,7 +503,7 @@ function settings_radioboxes_action(id, status, parentId) {
 			p.settings.pages[pid].elements[8].status = false;
 			p.settings.pages[pid].elements[9].status = false;
 			properties.wallpaperalpha = 175;
-			window.SetProperty("CUSTOM Wallpaper Alpha", properties.wallpaperalpha);
+			window.SetProperty("自定义墙纸透明", properties.wallpaperalpha);
 			break;
 		case 8:
 			p.settings.pages[pid].elements[5].status = false;
@@ -512,7 +512,7 @@ function settings_radioboxes_action(id, status, parentId) {
 			p.settings.pages[pid].elements[8].status = true;
 			p.settings.pages[pid].elements[9].status = false;
 			properties.wallpaperalpha = 200;
-			window.SetProperty("CUSTOM Wallpaper Alpha", properties.wallpaperalpha);
+			window.SetProperty("自定义墙纸透明", properties.wallpaperalpha);
 			break;
 		case 9:
 			p.settings.pages[pid].elements[5].status = false;
@@ -521,7 +521,7 @@ function settings_radioboxes_action(id, status, parentId) {
 			p.settings.pages[pid].elements[8].status = false;
 			p.settings.pages[pid].elements[9].status = true;
 			properties.wallpaperalpha = 225;
-			window.SetProperty("CUSTOM Wallpaper Alpha", properties.wallpaperalpha);
+			window.SetProperty("自定义墙纸透明", properties.wallpaperalpha);
 			break;
 		};
 		// set wallpaper
@@ -899,7 +899,7 @@ function settings_textboxes_action(pageId, elementId) {
 				new_label = label;
 			if (new_label) {
 				properties.wallpaperpath = new_label;
-				window.SetProperty("CUSTOM Default Wallpaper Path", properties.wallpaperpath);
+				window.SetProperty("自定义默认的墙纸路径", properties.wallpaperpath);
 				// refresh wallpaper
 				if (fb.IsPlaying) {
 					p.wallpaperImg = setWallpaperImg(properties.wallpaperpath, fb.GetNowPlaying());
@@ -1429,19 +1429,19 @@ oWidget = function (id, x, y, w, h, label, color_id, func, parentPageId) {
 	case 3:
 		switch (this.color_id) {
 		case 0:
-			var arr = window.GetProperty("SYSTEM.COLOR TEXT NORMAL", "180-180-180").split("-");
+			var arr = window.GetProperty("SYSTEM.通用文本颜色", "180-180-180").split("-");
 			break;
 		case 1:
-			var arr = window.GetProperty("SYSTEM.COLOR TEXT SELECTED", "200-210-255").split("-");
+			var arr = window.GetProperty("SYSTEM.选择文本颜色", "200-210-255").split("-");
 			break;
 		case 2:
-			var arr = window.GetProperty("SYSTEM.COLOR BACKGROUND NORMAL", "25-25-35").split("-");
+			var arr = window.GetProperty("SYSTEM.通用背景颜色", "25-25-35").split("-");
 			break;
 		case 3:
-			var arr = window.GetProperty("SYSTEM.COLOR BACKGROUND SELECTED", "130-150-255").split("-");
+			var arr = window.GetProperty("SYSTEM.选择背景颜色", "130-150-255").split("-");
 			break;
 		case 4:
-			var arr = window.GetProperty("SYSTEM.COLOR HIGHLIGHT", "255-175-50").split("-");
+			var arr = window.GetProperty("SYSTEM.高亮颜色", "255-175-50").split("-");
 			break;
 		};
 		break;
@@ -1460,19 +1460,19 @@ oWidget = function (id, x, y, w, h, label, color_id, func, parentPageId) {
 		case 3:
 			switch (this.color_id) {
 			case 0:
-				var arr = window.GetProperty("SYSTEM.COLOR TEXT NORMAL", "180-180-180").split("-");
+				var arr = window.GetProperty("SYSTEM.通用文本颜色", "180-180-180").split("-");
 				break;
 			case 1:
-				var arr = window.GetProperty("SYSTEM.COLOR TEXT SELECTED", "200-210-255").split("-");
+				var arr = window.GetProperty("SYSTEM.选择文本颜色", "200-210-255").split("-");
 				break;
 			case 2:
-				var arr = window.GetProperty("SYSTEM.COLOR BACKGROUND NORMAL", "25-25-35").split("-");
+				var arr = window.GetProperty("SYSTEM.通用背景颜色", "25-25-35").split("-");
 				break;
 			case 3:
-				var arr = window.GetProperty("SYSTEM.COLOR BACKGROUND SELECTED", "130-150-255").split("-");
+				var arr = window.GetProperty("SYSTEM.选择背景颜色", "130-150-255").split("-");
 				break;
 			case 4:
-				var arr = window.GetProperty("SYSTEM.COLOR HIGHLIGHT", "255-175-50").split("-");
+				var arr = window.GetProperty("SYSTEM.高亮颜色", "255-175-50").split("-");
 				break;
 			};
 			break;
@@ -1569,35 +1569,35 @@ oWidget = function (id, x, y, w, h, label, color_id, func, parentPageId) {
 					g_color_normal_txt = RGB(this.sliders[0].value, this.sliders[1].value, this.sliders[2].value);
 				};
 				var rgb_str = this.sliders[0].value + "-" + this.sliders[1].value + "-" + this.sliders[2].value;
-				window.SetProperty("SYSTEM.COLOR TEXT NORMAL", rgb_str);
+				window.SetProperty("SYSTEM.通用文本颜色", rgb_str);
 				break;
 			case 1:
 				if (properties.enableCustomColors) {
 					g_color_selected_txt = RGB(this.sliders[0].value, this.sliders[1].value, this.sliders[2].value);
 				};
 				var rgb_str = this.sliders[0].value + "-" + this.sliders[1].value + "-" + this.sliders[2].value;
-				window.SetProperty("SYSTEM.COLOR TEXT SELECTED", rgb_str);
+				window.SetProperty("SYSTEM.选择文本颜色", rgb_str);
 				break;
 			case 2:
 				if (properties.enableCustomColors) {
 					g_color_normal_bg = RGB(this.sliders[0].value, this.sliders[1].value, this.sliders[2].value);
 				};
 				var rgb_str = this.sliders[0].value + "-" + this.sliders[1].value + "-" + this.sliders[2].value;
-				window.SetProperty("SYSTEM.COLOR BACKGROUND NORMAL", rgb_str);
+				window.SetProperty("SYSTEM.通用背景颜色", rgb_str);
 				break;
 			case 3:
 				if (properties.enableCustomColors) {
 					g_color_selected_bg = RGB(this.sliders[0].value, this.sliders[1].value, this.sliders[2].value);
 				};
 				var rgb_str = this.sliders[0].value + "-" + this.sliders[1].value + "-" + this.sliders[2].value;
-				window.SetProperty("SYSTEM.COLOR BACKGROUND SELECTED", rgb_str);
+				window.SetProperty("SYSTEM.选择背景颜色", rgb_str);
 				break;
 			case 4:
 				if (properties.enableCustomColors) {
 					g_color_highlight = RGB(this.sliders[0].value, this.sliders[1].value, this.sliders[2].value);
 				};
 				var rgb_str = this.sliders[0].value + "-" + this.sliders[1].value + "-" + this.sliders[2].value;
-				window.SetProperty("SYSTEM.COLOR HIGHLIGHT", rgb_str);
+				window.SetProperty("SYSTEM.高亮颜色", rgb_str);
 				break;
 			};
 			p.settings.refreshColors();
@@ -1855,13 +1855,13 @@ oListBox = function (id, object_name, x, y, w, h, row_height, label, arr, select
 			if (p.headerBar.totalColumns < properties.max_columns) {
 				var source_ref = p.headerBar.columns[id].ref;
 				if (source_ref != "Cover" && source_ref != "State" && source_ref != "Mood" && source_ref != "Rating") {
-					_menu.AppendMenuItem(MF_STRING, 10, "Duplicate this Column");
+					_menu.AppendMenuItem(MF_STRING, 10, "复制该列");
 				};
 			};
 			break;
 		case 2:
 			if (p.list.totalGroupBy < properties.max_patterns) {
-				_menu.AppendMenuItem(MF_STRING, 20, "Duplicate this Pattern");
+				_menu.AppendMenuItem(MF_STRING, 20, "复制该样式");
 			};
 			break;
 		};
@@ -1898,7 +1898,7 @@ oListBox = function (id, object_name, x, y, w, h, row_height, label, arr, select
 
 			p.headerBar.columns.push(new oColumn("copy of " + c0, c1, c2, 0, "Custom " + num(no_user, 2), c3, c4, c5, c6));
 			p.headerBar.totalColumns++;
-			window.SetProperty("SYSTEM.HeaderBar.TotalColumns", p.headerBar.totalColumns);
+			window.SetProperty("SYSTEM.标题栏.所有列", p.headerBar.totalColumns);
 			var arr = [];
 			fin = p.headerBar.columns.length;
 			for (var i = 0; i < fin; i++) {
@@ -1927,7 +1927,7 @@ oListBox = function (id, object_name, x, y, w, h, row_height, label, arr, select
 
 			p.list.groupby.push(new oGroupBy("copy of " + c0, c1, c2, "Custom", c3, c4, c5, c6, c7, c8, c9, c10, c11, c12));
 			p.list.totalGroupBy++;
-			window.SetProperty("SYSTEM.Groups.TotalGroupBy", p.list.totalGroupBy);
+			window.SetProperty("SYSTEM.组.所有组", p.list.totalGroupBy);
 			var arr = [];
 			fin = p.list.groupby.length;
 			for (var i = 0; i < fin; i++) {
@@ -1971,23 +1971,23 @@ oPage = function (id, objectName, label, nbrows) {
 		case 0: // General
 			var rh = cSettings.rowHeight;
 			// Layout options
-			this.elements.push(new oCheckBox(0, 20, cSettings.topBarHeight + rh * 2.25, "Show Information Panel (toggle = CTRL+I)", "cTopBar.visible", "settings_checkboxes_action", this.id));
-			this.elements.push(new oCheckBox(1, 20, cSettings.topBarHeight + rh * 3.25, "Show Header Toolbar (toggle = CTRL+T)", "cHeaderBar.locked", "settings_checkboxes_action", this.id));
-			this.elements.push(new oCheckBox(2, 20, cSettings.topBarHeight + rh * 4.25, "Show Playlist Manager (toggle = TAB key)", "cPlaylistManager.visible", "settings_checkboxes_action", this.id));
-			this.elements.push(new oCheckBox(3, 20, cSettings.topBarHeight + rh * 5.25, "Show Playlist Scrollbar", "properties.showscrollbar", "settings_checkboxes_action", this.id));
+			this.elements.push(new oCheckBox(0, 20, cSettings.topBarHeight + rh * 2.25, "显示信息面板 (toggle = CTRL+I)", "cTopBar.visible", "settings_checkboxes_action", this.id));
+			this.elements.push(new oCheckBox(1, 20, cSettings.topBarHeight + rh * 3.25, "显示标题栏 (toggle = CTRL+T)", "cHeaderBar.locked", "settings_checkboxes_action", this.id));
+			this.elements.push(new oCheckBox(2, 20, cSettings.topBarHeight + rh * 4.25, "显示播放列表管理 (toggle = TAB key)", "cPlaylistManager.visible", "settings_checkboxes_action", this.id));
+			this.elements.push(new oCheckBox(3, 20, cSettings.topBarHeight + rh * 5.25, "显示播放列表滚动条", "properties.showscrollbar", "settings_checkboxes_action", this.id));
 			// Playlists options
-			this.elements.push(new oCheckBox(4, 20, cSettings.topBarHeight + rh * 7.25, "Show Media Library (always on top)", "cPlaylistManager.mediaLibraryPlaylist", "settings_checkboxes_action", this.id));
-			this.elements.push(new oCheckBox(5, 20, cSettings.topBarHeight + rh * 8.25, "Show Plays Historic", "cPlaylistManager.enableHistoricPlaylist", "settings_checkboxes_action", this.id));
+			this.elements.push(new oCheckBox(4, 20, cSettings.topBarHeight + rh * 7.25, "显示媒体库 (总在最上)", "cPlaylistManager.mediaLibraryPlaylist", "settings_checkboxes_action", this.id));
+			this.elements.push(new oCheckBox(5, 20, cSettings.topBarHeight + rh * 8.25, "显示播放历史", "cPlaylistManager.enableHistoricPlaylist", "settings_checkboxes_action", this.id));
 			// Tagging options
-			this.elements.push(new oCheckBox(6, 20, cSettings.topBarHeight + rh * 10.25, "Enable Playback Statistics (write to file)", "opt_stats", "settings_checkboxes_action", this.id));
+			this.elements.push(new oCheckBox(6, 20, cSettings.topBarHeight + rh * 10.25, "启用播放统计 (写入文件)", "opt_stats", "settings_checkboxes_action", this.id));
 			// Behaviour options
-			this.elements.push(new oCheckBox(7, 20, cSettings.topBarHeight + rh * 12.25, "Smooth Scrolling", "properties.smoothscrolling", "settings_checkboxes_action", this.id));
-			this.elements.push(new oCheckBox(8, 20, cSettings.topBarHeight + rh * 13.25, "Touch Scrolling Control (disable drag'n drop)", "properties.enableTouchControl", "settings_checkboxes_action", this.id));
+			this.elements.push(new oCheckBox(7, 20, cSettings.topBarHeight + rh * 12.25, "平滑滚动", "properties.smoothscrolling", "settings_checkboxes_action", this.id));
+			this.elements.push(new oCheckBox(8, 20, cSettings.topBarHeight + rh * 13.25, "触模滚动控制 (禁用拖放)", "properties.enableTouchControl", "settings_checkboxes_action", this.id));
 
 			// Create radio buttons
 			var spaceBetween_w = zoom(70, g_dpi);
-			this.elements.push(new oRadioButton(9, txtbox_x, cSettings.topBarHeight + rh * 15.25, "Play", (properties.defaultPlaylistItemAction == "Play"), "settings_radioboxes_action", this.id));
-			this.elements.push(new oRadioButton(10, txtbox_x + spaceBetween_w, cSettings.topBarHeight + rh * 15.25, "Enqueue", (properties.defaultPlaylistItemAction == "Add to playback queue"), "settings_radioboxes_action", this.id));
+			this.elements.push(new oRadioButton(9, txtbox_x, cSettings.topBarHeight + rh * 15.25, "播放", (properties.defaultPlaylistItemAction == "Play"), "settings_radioboxes_action", this.id));
+			this.elements.push(new oRadioButton(10, txtbox_x + spaceBetween_w, cSettings.topBarHeight + rh * 15.25, "队列", (properties.defaultPlaylistItemAction == "Add to playback queue"), "settings_radioboxes_action", this.id));
 
 			break;
 		case 1: // Columns
@@ -2002,26 +2002,26 @@ oPage = function (id, objectName, label, nbrows) {
 			var listBoxHeight = Math.floor(wh - (cSettings.topBarHeight + rh * 1.75 + p.settings.txtHeight) - 25);
 			var listBoxWidth = zoom(100, g_dpi);
 			var listBoxCurrentId = 0;
-			this.elements.push(new oListBox(0, "p.settings.pages[" + this.id.toString() + "].elements[0]", 20, Math.floor(cSettings.topBarHeight + rh * 1.75 + p.settings.txtHeight), listBoxWidth + cScrollBar.width, listBoxHeight, listBoxRowHeight, "Columns", arr, listBoxCurrentId, "settings_listboxes_action", "p.settings.pages[" + this.id.toString() + "]", this.id, 0));
+			this.elements.push(new oListBox(0, "p.settings.pages[" + this.id.toString() + "].elements[0]", 20, Math.floor(cSettings.topBarHeight + rh * 1.75 + p.settings.txtHeight), listBoxWidth + cScrollBar.width, listBoxHeight, listBoxRowHeight, "列", arr, listBoxCurrentId, "settings_listboxes_action", "p.settings.pages[" + this.id.toString() + "]", this.id, 0));
 
 			// Create TextBoxes
 			var txtbox_value = p.headerBar.columns[listBoxCurrentId].label;
-			this.elements.push(new oTextBox(1, txtbox_x, Math.ceil(cSettings.topBarHeight + rh * 6.25), ww - txtbox_x - 20 - this.scrollbarWidth, cHeaderBar.height, "Label", txtbox_value, "settings_textboxes_action", this.id));
+			this.elements.push(new oTextBox(1, txtbox_x, Math.ceil(cSettings.topBarHeight + rh * 6.25), ww - txtbox_x - 20 - this.scrollbarWidth, cHeaderBar.height, "标签", txtbox_value, "settings_textboxes_action", this.id));
 			txtbox_value = p.headerBar.columns[listBoxCurrentId].tf;
-			this.elements.push(new oTextBox(2, txtbox_x, Math.ceil(cSettings.topBarHeight + rh * 8.25), ww - txtbox_x - 20 - this.scrollbarWidth, cHeaderBar.height, "Title Format (enter 'null' for nothing)", txtbox_value, "settings_textboxes_action", this.id));
+			this.elements.push(new oTextBox(2, txtbox_x, Math.ceil(cSettings.topBarHeight + rh * 8.25), ww - txtbox_x - 20 - this.scrollbarWidth, cHeaderBar.height, "标题格式化语言 (输入 'null' 为无效)", txtbox_value, "settings_textboxes_action", this.id));
 			txtbox_value = p.headerBar.columns[listBoxCurrentId].tf2;
-			this.elements.push(new oTextBox(3, txtbox_x, Math.ceil(cSettings.topBarHeight + rh * 10.25), ww - txtbox_x - 20 - this.scrollbarWidth, cHeaderBar.height, "Extra Line Title Format (enter 'null' for nothing)", txtbox_value, "settings_textboxes_action", this.id));
+			this.elements.push(new oTextBox(3, txtbox_x, Math.ceil(cSettings.topBarHeight + rh * 10.25), ww - txtbox_x - 20 - this.scrollbarWidth, cHeaderBar.height, "扩展行标题格式化语言 (输入 'null' 为无效)", txtbox_value, "settings_textboxes_action", this.id));
 			txtbox_value = p.headerBar.columns[listBoxCurrentId].sortOrder;
-			this.elements.push(new oTextBox(4, txtbox_x, Math.ceil(cSettings.topBarHeight + rh * 12.25), ww - txtbox_x - 20 - this.scrollbarWidth, cHeaderBar.height, "Sort Order (enter 'null' for nothing)", txtbox_value, "settings_textboxes_action", this.id));
+			this.elements.push(new oTextBox(4, txtbox_x, Math.ceil(cSettings.topBarHeight + rh * 12.25), ww - txtbox_x - 20 - this.scrollbarWidth, cHeaderBar.height, "排序顺序 (输入 'null' 为无效)", txtbox_value, "settings_textboxes_action", this.id));
 
 			// Create radio buttons
 			var spaceBetween_w = zoom(80, g_dpi);
-			this.elements.push(new oRadioButton(5, txtbox_x, cSettings.topBarHeight + rh * 15.25, "Left", (p.headerBar.columns[listBoxCurrentId].align == 0), "settings_radioboxes_action", this.id));
-			this.elements.push(new oRadioButton(6, txtbox_x + spaceBetween_w, cSettings.topBarHeight + rh * 15.25, "Center", (p.headerBar.columns[listBoxCurrentId].align == 1), "settings_radioboxes_action", this.id));
-			this.elements.push(new oRadioButton(7, txtbox_x + spaceBetween_w * 2, cSettings.topBarHeight + rh * 15.25, "Right", (p.headerBar.columns[listBoxCurrentId].align == 2), "settings_radioboxes_action", this.id));
+			this.elements.push(new oRadioButton(5, txtbox_x, cSettings.topBarHeight + rh * 15.25, "左", (p.headerBar.columns[listBoxCurrentId].align == 0), "settings_radioboxes_action", this.id));
+			this.elements.push(new oRadioButton(6, txtbox_x + spaceBetween_w, cSettings.topBarHeight + rh * 15.25, "中", (p.headerBar.columns[listBoxCurrentId].align == 1), "settings_radioboxes_action", this.id));
+			this.elements.push(new oRadioButton(7, txtbox_x + spaceBetween_w * 2, cSettings.topBarHeight + rh * 15.25, "右", (p.headerBar.columns[listBoxCurrentId].align == 2), "settings_radioboxes_action", this.id));
 
 			// checkbox : activate columns Y/N
-			this.elements.push(new oCheckBox(0, txtbox_x, cSettings.topBarHeight + rh * 5.25, "Visible", "p.headerBar.columns[p.settings.pages[1].elements[0].selectedId].percent == 0 ? false : true", "settings_checkboxes_action", this.id));
+			this.elements.push(new oCheckBox(0, txtbox_x, cSettings.topBarHeight + rh * 5.25, "显示", "p.headerBar.columns[p.settings.pages[1].elements[0].selectedId].percent == 0 ? false : true", "settings_checkboxes_action", this.id));
 
 			break;
 		case 2: // Groups
@@ -2036,20 +2036,20 @@ oPage = function (id, objectName, label, nbrows) {
 			var listBoxHeight = Math.floor(wh - (cSettings.topBarHeight + rh * 1.75 + p.settings.txtHeight) - 25);
 			var listBoxWidth = zoom(170, g_dpi);
 			var listBoxCurrentId = cGroup.pattern_idx;
-			this.elements.push(new oListBox(0, "p.settings.pages[" + this.id.toString() + "].elements[0]", 20, Math.floor(cSettings.topBarHeight + rh * 1.75 + p.settings.txtHeight), listBoxWidth + cScrollBar.width, listBoxHeight, listBoxRowHeight, "Group by", arr, listBoxCurrentId, "settings_listboxes_action", "p.settings.pages[" + this.id.toString() + "]", this.id, 0));
+			this.elements.push(new oListBox(0, "p.settings.pages[" + this.id.toString() + "].elements[0]", 20, Math.floor(cSettings.topBarHeight + rh * 1.75 + p.settings.txtHeight), listBoxWidth + cScrollBar.width, listBoxHeight, listBoxRowHeight, "组", arr, listBoxCurrentId, "settings_listboxes_action", "p.settings.pages[" + this.id.toString() + "]", this.id, 0));
 
 			// Create TextBoxes
 			var txtbox_value = p.list.groupby[listBoxCurrentId].label;
-			this.elements.push(new oTextBox(1, txtbox_x, Math.ceil(cSettings.topBarHeight + rh * 4.5), ww - txtbox_x - 20 - this.scrollbarWidth, cHeaderBar.height, "Label", txtbox_value, "settings_textboxes_action", this.id));
+			this.elements.push(new oTextBox(1, txtbox_x, Math.ceil(cSettings.topBarHeight + rh * 4.5), ww - txtbox_x - 20 - this.scrollbarWidth, cHeaderBar.height, "标签", txtbox_value, "settings_textboxes_action", this.id));
 			txtbox_value = p.list.groupby[listBoxCurrentId].tf;
-			this.elements.push(new oTextBox(2, txtbox_x, Math.ceil(cSettings.topBarHeight + rh * 6.5), ww - txtbox_x - 20 - this.scrollbarWidth, cHeaderBar.height, "Title Format (enter 'null' for nothing)", txtbox_value, "settings_textboxes_action", this.id));
+			this.elements.push(new oTextBox(2, txtbox_x, Math.ceil(cSettings.topBarHeight + rh * 6.5), ww - txtbox_x - 20 - this.scrollbarWidth, cHeaderBar.height, "标题格式化语言 (输入 'null' 为无效)", txtbox_value, "settings_textboxes_action", this.id));
 			txtbox_value = p.list.groupby[listBoxCurrentId].sortOrder;
-			this.elements.push(new oTextBox(3, txtbox_x, Math.ceil(cSettings.topBarHeight + rh * 8.5), ww - txtbox_x - 20 - this.scrollbarWidth, cHeaderBar.height, "Sort Order (enter 'null' for nothing)", txtbox_value, "settings_textboxes_action", this.id));
+			this.elements.push(new oTextBox(3, txtbox_x, Math.ceil(cSettings.topBarHeight + rh * 8.5), ww - txtbox_x - 20 - this.scrollbarWidth, cHeaderBar.height, "排序顺序 (输入 'null' 为无效)", txtbox_value, "settings_textboxes_action", this.id));
 
 			txtbox_value = p.list.groupby[listBoxCurrentId].playlistFilter;
-			this.elements.push(new oTextBox(4, txtbox_x, Math.ceil(cSettings.topBarHeight + rh * 11.0), ww - txtbox_x - 20 - this.scrollbarWidth, cHeaderBar.height, "Playlist Filter ('*' = default pattern, 'null' = nothing)", txtbox_value, "settings_textboxes_action", this.id));
+			this.elements.push(new oTextBox(4, txtbox_x, Math.ceil(cSettings.topBarHeight + rh * 11.0), ww - txtbox_x - 20 - this.scrollbarWidth, cHeaderBar.height, "播放列表过滤 ('*' = 默认模式, 'null' = 无效)", txtbox_value, "settings_textboxes_action", this.id));
 			txtbox_value = p.list.groupby[listBoxCurrentId].extraRows;
-			this.elements.push(new oTextBox(5, txtbox_x, Math.ceil(cSettings.topBarHeight + rh * 13.0), 30, cHeaderBar.height, "Extra Rows To Add", txtbox_value, "settings_textboxes_action", this.id));
+			this.elements.push(new oTextBox(5, txtbox_x, Math.ceil(cSettings.topBarHeight + rh * 13.0), 30, cHeaderBar.height, "增加扩展行", txtbox_value, "settings_textboxes_action", this.id));
 			// Create radio buttons / group header COLLAPSED height
 			var spaceBetween_w = zoom(50, g_dpi);
 			// force value if set to an unauthirized one [0;4]
@@ -2077,51 +2077,51 @@ oPage = function (id, objectName, label, nbrows) {
 			this.elements.push(new oRadioButton(14, txtbox_x + spaceBetween_w * 3, cSettings.topBarHeight + rh * 17.5, "3", (v == 3), "settings_radioboxes_action", this.id));
 			this.elements.push(new oRadioButton(15, txtbox_x + spaceBetween_w * 4, cSettings.topBarHeight + rh * 17.5, "4", (v == 4), "settings_radioboxes_action", this.id));
 			// Create checkbox Cover Art in Group Header ON/OFF
-			this.elements.push(new oCheckBox(16, txtbox_x, cSettings.topBarHeight + rh * 19.5, "Enable Cover", "p.list.groupby[p.settings.pages[2].elements[0].selectedId].showCover == 0 ? false : true", "settings_checkboxes_action", this.id));
+			this.elements.push(new oCheckBox(16, txtbox_x, cSettings.topBarHeight + rh * 19.5, "启用封面", "p.list.groupby[p.settings.pages[2].elements[0].selectedId].showCover == 0 ? false : true", "settings_checkboxes_action", this.id));
 			// Create checkbox Auto-Collpase ON/OFF
-			this.elements.push(new oCheckBox(17, txtbox_x, cSettings.topBarHeight + rh * 21.25, "Enable Auto-Collapse", "p.list.groupby[p.settings.pages[2].elements[0].selectedId].autoCollapse == 0 ? false : true", "settings_checkboxes_action", this.id));
+			this.elements.push(new oCheckBox(17, txtbox_x, cSettings.topBarHeight + rh * 21.25, "启用自动折叠", "p.list.groupby[p.settings.pages[2].elements[0].selectedId].autoCollapse == 0 ? false : true", "settings_checkboxes_action", this.id));
 
 			var GHF_delta = 13.0;
 			var txtbox_value = p.list.groupby[listBoxCurrentId].l1;
-			this.elements.push(new oTextBox(18, txtbox_x, Math.ceil(cSettings.topBarHeight + rh * (12.0 + GHF_delta)), ww - txtbox_x - 20 - this.scrollbarWidth, cHeaderBar.height, "Header line 1, left field", txtbox_value, "settings_textboxes_action", this.id));
+			this.elements.push(new oTextBox(18, txtbox_x, Math.ceil(cSettings.topBarHeight + rh * (12.0 + GHF_delta)), ww - txtbox_x - 20 - this.scrollbarWidth, cHeaderBar.height, "标题行1，左侧字段", txtbox_value, "settings_textboxes_action", this.id));
 			txtbox_value = p.list.groupby[listBoxCurrentId].r1;
-			this.elements.push(new oTextBox(19, txtbox_x, Math.ceil(cSettings.topBarHeight + rh * (14.0 + GHF_delta)), ww - txtbox_x - 20 - this.scrollbarWidth, cHeaderBar.height, "Header line 1, right field", txtbox_value, "settings_textboxes_action", this.id));
+			this.elements.push(new oTextBox(19, txtbox_x, Math.ceil(cSettings.topBarHeight + rh * (14.0 + GHF_delta)), ww - txtbox_x - 20 - this.scrollbarWidth, cHeaderBar.height, "标题行1，右侧字段", txtbox_value, "settings_textboxes_action", this.id));
 			txtbox_value = p.list.groupby[listBoxCurrentId].l2;
-			this.elements.push(new oTextBox(20, txtbox_x, Math.ceil(cSettings.topBarHeight + rh * (16.0 + GHF_delta)), ww - txtbox_x - 20 - this.scrollbarWidth, cHeaderBar.height, "Header line 2, left field", txtbox_value, "settings_textboxes_action", this.id));
+			this.elements.push(new oTextBox(20, txtbox_x, Math.ceil(cSettings.topBarHeight + rh * (16.0 + GHF_delta)), ww - txtbox_x - 20 - this.scrollbarWidth, cHeaderBar.height, "标题行2，左侧字段", txtbox_value, "settings_textboxes_action", this.id));
 			txtbox_value = p.list.groupby[listBoxCurrentId].r2;
-			this.elements.push(new oTextBox(21, txtbox_x, Math.ceil(cSettings.topBarHeight + rh * (18.0 + GHF_delta)), ww - txtbox_x - 20 - this.scrollbarWidth, cHeaderBar.height, "Header line 2, right field", txtbox_value, "settings_textboxes_action", this.id));
+			this.elements.push(new oTextBox(21, txtbox_x, Math.ceil(cSettings.topBarHeight + rh * (18.0 + GHF_delta)), ww - txtbox_x - 20 - this.scrollbarWidth, cHeaderBar.height, "标题行2，右侧字段", txtbox_value, "settings_textboxes_action", this.id));
 
 			// Create radio buttons for Defaul Group Status (Collapsed OR Expanded)
 			var spaceBetween_w = zoom(90, g_dpi);
-			this.elements.push(new oRadioButton(22, txtbox_x, cSettings.topBarHeight + rh * 23.0, "Collapsed", (p.list.groupby[p.settings.pages[2].elements[0].selectedId].collapseGroupsByDefault == "1"), "settings_radioboxes_action", this.id));
-			this.elements.push(new oRadioButton(23, txtbox_x + spaceBetween_w, cSettings.topBarHeight + rh * 23.0, "Expanded", (p.list.groupby[p.settings.pages[2].elements[0].selectedId].collapseGroupsByDefault == "0"), "settings_radioboxes_action", this.id));
+			this.elements.push(new oRadioButton(22, txtbox_x, cSettings.topBarHeight + rh * 23.0, "折叠", (p.list.groupby[p.settings.pages[2].elements[0].selectedId].collapseGroupsByDefault == "1"), "settings_radioboxes_action", this.id));
+			this.elements.push(new oRadioButton(23, txtbox_x + spaceBetween_w, cSettings.topBarHeight + rh * 23.0, "展开", (p.list.groupby[p.settings.pages[2].elements[0].selectedId].collapseGroupsByDefault == "0"), "settings_radioboxes_action", this.id));
 
 			break;
 		case 3: // Appearance
 			var rh = cSettings.rowHeight;
 			// Create checkbox enable wpp
-			this.elements.push(new oCheckBox(0, 20, cSettings.topBarHeight + rh * 2.25, "Enabled", "properties.showwallpaper", "settings_checkboxes_action", this.id));
+			this.elements.push(new oCheckBox(0, 20, cSettings.topBarHeight + rh * 2.25, "启用", "properties.showwallpaper", "settings_checkboxes_action", this.id));
 
 			// Create radio buttons / Wpp Image
 			var spaceBetween_w = zoom(80, g_dpi);
 			// force value if set to an unauthirized one (default = 0 <=> front album cover)
 			if (properties.wallpapermode != 0 && properties.wallpapermode != 4 && properties.wallpapermode != -1) {
 				properties.wallpapermode = 0;
-				window.SetProperty("CUSTOM Wallpaper Type", properties.wallpapermode);
+				window.SetProperty("自定义墙纸类型", properties.wallpapermode);
 			};
-			this.elements.push(new oRadioButton(1, txtbox_x, cSettings.topBarHeight + rh * 4.0, "Album", (properties.wallpapermode == 0), "settings_radioboxes_action", this.id));
-			this.elements.push(new oRadioButton(2, txtbox_x + spaceBetween_w, cSettings.topBarHeight + rh * 4.0, "Artist", (properties.wallpapermode == 4), "settings_radioboxes_action", this.id));
-			this.elements.push(new oRadioButton(3, txtbox_x + spaceBetween_w * 2, cSettings.topBarHeight + rh * 4.0, "Default", (properties.wallpapermode == -1), "settings_radioboxes_action", this.id));
+			this.elements.push(new oRadioButton(1, txtbox_x, cSettings.topBarHeight + rh * 4.0, "专辑", (properties.wallpapermode == 0), "settings_radioboxes_action", this.id));
+			this.elements.push(new oRadioButton(2, txtbox_x + spaceBetween_w, cSettings.topBarHeight + rh * 4.0, "艺术家", (properties.wallpapermode == 4), "settings_radioboxes_action", this.id));
+			this.elements.push(new oRadioButton(3, txtbox_x + spaceBetween_w * 2, cSettings.topBarHeight + rh * 4.0, "默认", (properties.wallpapermode == -1), "settings_radioboxes_action", this.id));
 
 			// Create checkbox blur effect
-			this.elements.push(new oCheckBox(4, 20, cSettings.topBarHeight + rh * 5.75, "Blurred", "properties.wallpaperblurred", "settings_checkboxes_action", this.id));
+			this.elements.push(new oCheckBox(4, 20, cSettings.topBarHeight + rh * 5.75, "模糊", "properties.wallpaperblurred", "settings_checkboxes_action", this.id));
 
 			// Create radio buttons / Wpp alpha shading
 			var spaceBetween_w = zoom(65, g_dpi);
 			// force alpha value to an authorized value (default = 175 <=> 70%)
 			if (properties.wallpaperalpha != 125 && properties.wallpaperalpha != 150 && properties.wallpaperalpha != 172 && properties.wallpaperalpha != 200 && properties.wallpaperalpha != 225) {
 				properties.wallpaperalpha = 175;
-				window.SetProperty("CUSTOM Wallpaper Alpha", properties.wallpaperalpha);
+				window.SetProperty("自定义墙纸透明", properties.wallpaperalpha);
 			};
 			this.elements.push(new oRadioButton(5, txtbox_x, cSettings.topBarHeight + rh * 7.5, "50%", (properties.wallpaperalpha == 125), "settings_radioboxes_action", this.id));
 			this.elements.push(new oRadioButton(6, txtbox_x + spaceBetween_w, cSettings.topBarHeight + rh * 7.5, "60%", (properties.wallpaperalpha == 150), "settings_radioboxes_action", this.id));
@@ -2131,20 +2131,20 @@ oPage = function (id, objectName, label, nbrows) {
 
 			// Create TextBox Wpp path of default image
 			var txtbox_value = properties.wallpaperpath;
-			this.elements.push(new oTextBox(10, txtbox_x, Math.ceil(cSettings.topBarHeight + rh * 8.25), ww - txtbox_x - 20 - this.scrollbarWidth, cHeaderBar.height, "Default Wallpaper Path", txtbox_value, "settings_textboxes_action", this.id));
+			this.elements.push(new oTextBox(10, txtbox_x, Math.ceil(cSettings.topBarHeight + rh * 8.25), ww - txtbox_x - 20 - this.scrollbarWidth, cHeaderBar.height, "默认墙纸路径", txtbox_value, "settings_textboxes_action", this.id));
 
 			// Create checkbox Use custom colors
-			this.elements.push(new oCheckBox(11, 20, cSettings.topBarHeight + rh * 11.0, "Enable Custom Colors", "properties.enableCustomColors", "settings_checkboxes_action", this.id));
+			this.elements.push(new oCheckBox(11, 20, cSettings.topBarHeight + rh * 11.0, "启用自定义颜色", "properties.enableCustomColors", "settings_checkboxes_action", this.id));
 
 			// Color Widgets for Custom Colors
 			var wgt_w = zoom(300, g_dpi);
 			var wgt_h = zoom(65, g_dpi)
 				var left_padding = zoom(20, g_dpi);
-			this.elements.push(new oWidget(12, txtbox_x + left_padding, Math.floor(cSettings.topBarHeight + rh * 12.00), wgt_w, wgt_h, "Custom Color - Normal Text", 0, "settings_HSLwidgets_action", this.id));
-			this.elements.push(new oWidget(13, txtbox_x + left_padding, Math.floor(cSettings.topBarHeight + rh * 15.25), wgt_w, wgt_h, "Custom Color - Selected Text", 1, "settings_HSLwidgets_action", this.id));
-			this.elements.push(new oWidget(14, txtbox_x + left_padding, Math.floor(cSettings.topBarHeight + rh * 18.50), wgt_w, wgt_h, "Custom Color - Normal Background", 2, "settings_HSLwidgets_action", this.id));
-			this.elements.push(new oWidget(15, txtbox_x + left_padding, Math.floor(cSettings.topBarHeight + rh * 21.75), wgt_w, wgt_h, "Custom Color - Selected Background", 3, "settings_HSLwidgets_action", this.id));
-			this.elements.push(new oWidget(16, txtbox_x + left_padding, Math.floor(cSettings.topBarHeight + rh * 25.00), wgt_w, wgt_h, "Custom Color - Highlight", 4, "settings_HSLwidgets_action", this.id));
+			this.elements.push(new oWidget(12, txtbox_x + left_padding, Math.floor(cSettings.topBarHeight + rh * 12.00), wgt_w, wgt_h, "自定义颜色 - 通用文本", 0, "settings_HSLwidgets_action", this.id));
+			this.elements.push(new oWidget(13, txtbox_x + left_padding, Math.floor(cSettings.topBarHeight + rh * 15.25), wgt_w, wgt_h, "自定义颜色 - 选择文本", 1, "settings_HSLwidgets_action", this.id));
+			this.elements.push(new oWidget(14, txtbox_x + left_padding, Math.floor(cSettings.topBarHeight + rh * 18.50), wgt_w, wgt_h, "自定义颜色 - 通用背景", 2, "settings_HSLwidgets_action", this.id));
+			this.elements.push(new oWidget(15, txtbox_x + left_padding, Math.floor(cSettings.topBarHeight + rh * 21.75), wgt_w, wgt_h, "自定义颜色 - 选择背景", 3, "settings_HSLwidgets_action", this.id));
+			this.elements.push(new oWidget(16, txtbox_x + left_padding, Math.floor(cSettings.topBarHeight + rh * 25.00), wgt_w, wgt_h, "自定义颜色 - 高亮颜色", 4, "settings_HSLwidgets_action", this.id));
 			break;
 		};
 	};
@@ -2194,16 +2194,16 @@ oPage = function (id, objectName, label, nbrows) {
 
 		switch (this.id) {
 		case 0:
-			gr.GdiDrawText("Layout", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 1.5 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
-			gr.GdiDrawText("Playlist Manager", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 6.5 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
-			gr.GdiDrawText("Tagging", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 9.5 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
-			gr.GdiDrawText("Behaviour", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 11.5 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
-			gr.GdiDrawText("Default Playlist Action", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 14.5 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText("布局", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 1.5 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText("播放列表管理", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 6.5 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText("标记", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 9.5 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText("行为", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 11.5 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText("默认播放列表操作", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 14.5 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
 			break;
 		case 1:
 			var listBoxWidth = zoom(100, g_dpi);
-			gr.GdiDrawText("Status", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 4.5 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
-			gr.GdiDrawText("Text Alignment", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 14.5 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText("状态", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 4.5 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText("文本对齐", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 14.5 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
 
 			// new column button
 			var nx = 20 + listBoxWidth + zoom(30, g_dpi);
@@ -2249,22 +2249,22 @@ oPage = function (id, objectName, label, nbrows) {
 
 			gr.FillSolidRect(txtbox_x, cSettings.topBarHeight + rh * 10.75 - (this.offset * cSettings.rowHeight), p.settings.w - 20 * 2 - cScrollBar.width, cHeaderBar.borderWidth, p.settings.color1);
 
-			gr.GdiDrawText("Collapsed Row Height", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 15.25 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
-			gr.GdiDrawText("Expanded Row Height", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 16.75 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
-			gr.GdiDrawText("Cover Art Status", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 18.75 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
-			gr.GdiDrawText("Auto-Collapse Status", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 20.5 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
-			gr.GdiDrawText("Default Group Status", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 22.25 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText("折叠行高", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 15.25 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText("扩展行高", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 16.75 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText("封面艺术家状态", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 18.75 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText("自动折叠状态", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 20.5 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText("默认组状态", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 22.25 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
 
 			var GHF_delta = 13.0;
-			gr.GdiDrawText("Group Header Fields", gdi_font(p.settings.fontname, p.settings.txtHeight * 1.5, 5), p.settings.color2, txtbox_x, cSettings.topBarHeight + rh * (11.0 + GHF_delta) - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText("组标题字段", gdi_font(p.settings.fontname, p.settings.txtHeight * 1.5, 5), p.settings.color2, txtbox_x, cSettings.topBarHeight + rh * (11.0 + GHF_delta) - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
 
 			break;
 		case 3:
-			gr.GdiDrawText("Wallpaper Status", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 1.5 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
-			gr.GdiDrawText("Wallpaper Image", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 3.25 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
-			gr.GdiDrawText("Wallpaper Effects", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 5.0 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
-			gr.GdiDrawText("Wallpaper Alpha Shading", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 6.75 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
-			gr.GdiDrawText("Customize Panel Colors", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 10.25 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText("墙纸状态", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 1.5 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText("墙纸图像", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 3.25 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText("墙纸特效", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 5.0 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText("墙纸透明着色", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 6.75 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
+			gr.GdiDrawText("自定义面板颜色", gdi_font(p.settings.fontname, p.settings.txtHeight, 5), p.settings.color1, txtbox_x, cSettings.topBarHeight + rh * 10.25 - (this.offset * cSettings.rowHeight), p.settings.w - 10, p.settings.txtHeight + 10, g_LDT);
 			break;
 		};
 
@@ -2305,7 +2305,7 @@ oPage = function (id, objectName, label, nbrows) {
 
 				p.headerBar.columns.push(new oColumn("Custom " + num(no_user, 2), "null", "null", 0, "Custom " + num(no_user, 2), 0, "null"));
 				p.headerBar.totalColumns++;
-				window.SetProperty("SYSTEM.HeaderBar.TotalColumns", p.headerBar.totalColumns);
+				window.SetProperty("SYSTEM.标题栏.所有列", p.headerBar.totalColumns);
 				var arr = [];
 				fin = p.headerBar.columns.length;
 				for (var i = 0; i < fin; i++) {
@@ -2385,7 +2385,7 @@ oPage = function (id, objectName, label, nbrows) {
 					};
 					//
 					p.headerBar.totalColumns--;
-					window.SetProperty("SYSTEM.HeaderBar.TotalColumns", p.headerBar.totalColumns);
+					window.SetProperty("SYSTEM.标题栏.所有列", p.headerBar.totalColumns);
 					var arr = [];
 					fin = p.headerBar.columns.length;
 					for (var i = 0; i < fin; i++) {
@@ -2419,7 +2419,7 @@ oPage = function (id, objectName, label, nbrows) {
 				// action
 				p.list.groupby.push(new oGroupBy("Pattern to customize", "null", "null", "Custom", "null", "0", "2", "3", "1", "0", "-", "-", "-", "-", "0"));
 				p.list.totalGroupBy++;
-				window.SetProperty("SYSTEM.Groups.TotalGroupBy", p.list.totalGroupBy);
+				window.SetProperty("SYSTEM.组.所有组", p.list.totalGroupBy);
 				var arr = [];
 				fin = p.list.groupby.length;
 				for (var i = 0; i < fin; i++) {
@@ -2458,7 +2458,7 @@ oPage = function (id, objectName, label, nbrows) {
 						};
 					};
 					p.list.totalGroupBy--;
-					window.SetProperty("SYSTEM.Groups.TotalGroupBy", p.list.totalGroupBy);
+					window.SetProperty("SYSTEM.组.所有组", p.list.totalGroupBy);
 					var arr = [];
 					fin = p.list.groupby.length;
 					for (var i = 0; i < fin; i++) {
@@ -2472,7 +2472,7 @@ oPage = function (id, objectName, label, nbrows) {
 					// reset pattern index after removing the selected one
 					if (idx == cGroup.pattern_idx) {
 						cGroup.pattern_idx = 0;
-						window.SetProperty("SYSTEM.Groups.Pattern Index", cGroup.pattern_idx);
+						window.SetProperty("SYSTEM.组.模式索引", cGroup.pattern_idx);
 						plman.SortByFormatV2(plman.ActivePlaylist, p.list.groupby[cGroup.pattern_idx].sortOrder, 1);
 						p.list.updateHandleList(plman.ActivePlaylist, false);
 						p.list.setItems(true);
@@ -2599,7 +2599,7 @@ oSettings = function () {
 		gb.SetSmoothingMode(2);
 		gb.FillRoundRect(1, 1, rect_w - lineWidth * 2, zoom(28, g_dpi), zoom(5, g_dpi), zoom(5, g_dpi), this.color1);
 		gb.SetTextRenderingHint(5);
-		gb.DrawString("New Column", this.font, this.color2, 1, 1, rect_w - lineWidth * 2, zoom(28, g_dpi), cc_stringformat);
+		gb.DrawString("新建列", this.font, this.color2, 1, 1, rect_w - lineWidth * 2, zoom(28, g_dpi), cc_stringformat);
 		this.newColumn_off.ReleaseGraphics(gb);
 
 		rect_w = gpic.CalcTextWidth("Delete Column", this.font) + zoom(30, g_dpi);
@@ -2608,7 +2608,7 @@ oSettings = function () {
 		gb.SetSmoothingMode(2);
 		gb.DrawRoundRect(1, 1, rect_w - lineWidth * 2, zoom(28, g_dpi), zoom(5, g_dpi), zoom(5, g_dpi), lineWidth, this.color1);
 		gb.SetTextRenderingHint(3);
-		gb.DrawString("New Column", this.font, this.color2, 1, 1, rect_w - lineWidth * 2, zoom(28, g_dpi), cc_stringformat);
+		gb.DrawString("新建列", this.font, this.color2, 1, 1, rect_w - lineWidth * 2, zoom(28, g_dpi), cc_stringformat);
 		this.newColumn_ov.ReleaseGraphics(gb);
 
 		rect_w = gpic.CalcTextWidth("Delete Column", this.font) + zoom(30, g_dpi);
@@ -2617,7 +2617,7 @@ oSettings = function () {
 		gb.SetSmoothingMode(2);
 		gb.FillRoundRect(1, 1, rect_w - lineWidth * 2, zoom(28, g_dpi), zoom(5, g_dpi), zoom(5, g_dpi), this.color0);
 		gb.SetTextRenderingHint(5);
-		gb.DrawString("New Column", this.font, this.color3, 1, 1, rect_w - lineWidth * 2, zoom(28, g_dpi), cc_stringformat);
+		gb.DrawString("新建列", this.font, this.color3, 1, 1, rect_w - lineWidth * 2, zoom(28, g_dpi), cc_stringformat);
 		this.newColumn_no.ReleaseGraphics(gb);
 
 		this.newbutton = new button(this.newColumn_off, this.newColumn_ov, this.newColumn_ov);
@@ -2629,7 +2629,7 @@ oSettings = function () {
 		gb.SetSmoothingMode(2);
 		gb.FillRoundRect(1, 1, rect_w - lineWidth * 2, zoom(28, g_dpi), zoom(5, g_dpi), zoom(5, g_dpi), this.color1);
 		gb.SetTextRenderingHint(5);
-		gb.DrawString("Delete Column", this.font, this.color2, 1, 1, rect_w - lineWidth * 2, zoom(28, g_dpi), cc_stringformat);
+		gb.DrawString("删除列", this.font, this.color2, 1, 1, rect_w - lineWidth * 2, zoom(28, g_dpi), cc_stringformat);
 		this.delColumn_off.ReleaseGraphics(gb);
 
 		rect_w = gpic.CalcTextWidth("Delete Column", this.font) + zoom(30, g_dpi);
@@ -2638,7 +2638,7 @@ oSettings = function () {
 		gb.SetSmoothingMode(2);
 		gb.DrawRoundRect(1, 1, rect_w - lineWidth * 2, zoom(28, g_dpi), zoom(5, g_dpi), zoom(5, g_dpi), lineWidth, this.color1);
 		gb.SetTextRenderingHint(3);
-		gb.DrawString("Delete Column", this.font, this.color2, 1, 1, rect_w - lineWidth * 2, zoom(28, g_dpi), cc_stringformat);
+		gb.DrawString("删除列", this.font, this.color2, 1, 1, rect_w - lineWidth * 2, zoom(28, g_dpi), cc_stringformat);
 		this.delColumn_ov.ReleaseGraphics(gb);
 
 		rect_w = gpic.CalcTextWidth("Delete Column", this.font) + zoom(30, g_dpi);
@@ -2647,7 +2647,7 @@ oSettings = function () {
 		gb.SetSmoothingMode(2);
 		gb.FillRoundRect(1, 1, rect_w - lineWidth * 2, zoom(28, g_dpi), zoom(5, g_dpi), zoom(5, g_dpi), this.color0);
 		gb.SetTextRenderingHint(5);
-		gb.DrawString("Delete Column", this.font, this.color3, 1, 1, rect_w - lineWidth * 2, zoom(28, g_dpi), cc_stringformat);
+		gb.DrawString("删除列", this.font, this.color3, 1, 1, rect_w - lineWidth * 2, zoom(28, g_dpi), cc_stringformat);
 		this.delColumn_no.ReleaseGraphics(gb);
 
 		this.delbutton = new button(this.delColumn_off, this.delColumn_ov, this.delColumn_ov);
@@ -2659,7 +2659,7 @@ oSettings = function () {
 		gb.SetSmoothingMode(2);
 		gb.FillRoundRect(1, 1, rect_w - lineWidth * 2, zoom(28, g_dpi), zoom(5, g_dpi), zoom(5, g_dpi), this.color1);
 		gb.SetTextRenderingHint(5);
-		gb.DrawString("New Pattern", this.font, this.color2, 1, 1, rect_w - lineWidth * 2, zoom(28, g_dpi), cc_stringformat);
+		gb.DrawString("新建样式", this.font, this.color2, 1, 1, rect_w - lineWidth * 2, zoom(28, g_dpi), cc_stringformat);
 		this.newPattern_off.ReleaseGraphics(gb);
 
 		rect_w = gpic.CalcTextWidth("Delete Pattern", this.font) + zoom(30, g_dpi);
@@ -2668,7 +2668,7 @@ oSettings = function () {
 		gb.SetSmoothingMode(2);
 		gb.DrawRoundRect(1, 1, rect_w - lineWidth * 2, zoom(28, g_dpi), zoom(5, g_dpi), zoom(5, g_dpi), lineWidth, this.color1);
 		gb.SetTextRenderingHint(3);
-		gb.DrawString("New Pattern", this.font, this.color2, 1, 1, rect_w - lineWidth * 2, zoom(28, g_dpi), cc_stringformat);
+		gb.DrawString("新建样式", this.font, this.color2, 1, 1, rect_w - lineWidth * 2, zoom(28, g_dpi), cc_stringformat);
 		this.newPattern_ov.ReleaseGraphics(gb);
 
 		rect_w = gpic.CalcTextWidth("Delete Pattern", this.font) + zoom(30, g_dpi);
@@ -2677,7 +2677,7 @@ oSettings = function () {
 		gb.SetSmoothingMode(2);
 		gb.FillRoundRect(1, 1, rect_w - lineWidth * 2, zoom(28, g_dpi), zoom(5, g_dpi), zoom(5, g_dpi), this.color0);
 		gb.SetTextRenderingHint(5);
-		gb.DrawString("New Pattern", this.font, this.color3, 1, 1, rect_w - lineWidth * 2, zoom(28, g_dpi), cc_stringformat);
+		gb.DrawString("新建样式", this.font, this.color3, 1, 1, rect_w - lineWidth * 2, zoom(28, g_dpi), cc_stringformat);
 		this.newPattern_no.ReleaseGraphics(gb);
 
 		this.newbuttonPattern = new button(this.newPattern_off, this.newPattern_ov, this.newPattern_ov);
@@ -2689,7 +2689,7 @@ oSettings = function () {
 		gb.SetSmoothingMode(2);
 		gb.FillRoundRect(1, 1, rect_w - lineWidth * 2, zoom(28, g_dpi), zoom(5, g_dpi), zoom(5, g_dpi), this.color1);
 		gb.SetTextRenderingHint(5);
-		gb.DrawString("Delete Pattern", this.font, this.color2, 1, 1, rect_w - lineWidth * 2, zoom(28, g_dpi), cc_stringformat);
+		gb.DrawString("删除样式", this.font, this.color2, 1, 1, rect_w - lineWidth * 2, zoom(28, g_dpi), cc_stringformat);
 		this.delPattern_off.ReleaseGraphics(gb);
 
 		rect_w = gpic.CalcTextWidth("Delete Pattern", this.font) + zoom(30, g_dpi);
@@ -2698,7 +2698,7 @@ oSettings = function () {
 		gb.SetSmoothingMode(2);
 		gb.DrawRoundRect(1, 1, rect_w - lineWidth * 2, zoom(28, g_dpi), zoom(5, g_dpi), zoom(5, g_dpi), lineWidth, this.color1);
 		gb.SetTextRenderingHint(3);
-		gb.DrawString("Delete Pattern", this.font, this.color2, 1, 1, rect_w - lineWidth * 2, zoom(28, g_dpi), cc_stringformat);
+		gb.DrawString("删除样式", this.font, this.color2, 1, 1, rect_w - lineWidth * 2, zoom(28, g_dpi), cc_stringformat);
 		this.delPattern_ov.ReleaseGraphics(gb);
 
 		rect_w = gpic.CalcTextWidth("Delete Pattern", this.font) + zoom(30, g_dpi);
@@ -2707,7 +2707,7 @@ oSettings = function () {
 		gb.SetSmoothingMode(2);
 		gb.FillRoundRect(1, 1, rect_w - lineWidth * 2, zoom(28, g_dpi), zoom(5, g_dpi), zoom(5, g_dpi), this.color0);
 		gb.SetTextRenderingHint(5);
-		gb.DrawString("Delete Pattern", this.font, this.color3, 1, 1, rect_w - lineWidth * 2, zoom(28, g_dpi), cc_stringformat);
+		gb.DrawString("删除样式", this.font, this.color3, 1, 1, rect_w - lineWidth * 2, zoom(28, g_dpi), cc_stringformat);
 		this.delPattern_no.ReleaseGraphics(gb);
 
 		this.delbuttonPattern = new button(this.delPattern_off, this.delPattern_ov, this.delPattern_ov);
@@ -2776,10 +2776,10 @@ oSettings = function () {
 		this.setButtons();
 
 		if (this.pages.length <= 0) {
-			this.pages.push(new oPage(0, "p.settings.pages[0]", "General", 16));
-			this.pages.push(new oPage(1, "p.settings.pages[1]", "Columns", 16));
-			this.pages.push(new oPage(2, "p.settings.pages[2]", "Groups", 33));
-			this.pages.push(new oPage(3, "p.settings.pages[3]", "Appearance", 28));
+			this.pages.push(new oPage(0, "p.settings.pages[0]", "通用", 16));
+			this.pages.push(new oPage(1, "p.settings.pages[1]", "列", 16));
+			this.pages.push(new oPage(2, "p.settings.pages[2]", "组", 33));
+			this.pages.push(new oPage(3, "p.settings.pages[3]", "外观", 28));
 		};
 		var fin = this.pages.length;
 		for (var i = 0; i < fin; i++) {
@@ -2818,7 +2818,7 @@ oSettings = function () {
 		// draw Panel Title
 		var title_x = this.x + this.closebutton.w + 20;
 		gr.SetTextRenderingHint(3);
-		gr.DrawString("Panel Settings", gdi_font(this.fontname, titleTxtHeight, 3), this.color2, title_x, this.y + 6, this.w - 50, cSettings.topBarHeight + 10, lt_stringformat);
+		gr.DrawString("面板设置", gdi_font(this.fontname, titleTxtHeight, 3), this.color2, title_x, this.y + 6, this.w - 50, cSettings.topBarHeight + 10, lt_stringformat);
 		// draw panel version
 		var version_x = this.x;
 		gr.DrawString("v" + g_script_version, gdi_font(g_fname, g_fsize - 1, 0), this.color1, version_x, this.y, this.w - 4, ty + th - 4, rb_stringformat);

@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 
 window.DefineScript('Last.fm Lover', {author:'marc2003', options:{grab_focus:false}});
 include(fb.ComponentPath + 'samples\\complete\\js\\lodash.min.js');
@@ -103,7 +103,7 @@ function on_mouse_rbtn_up(x, y) {
 		m.AppendMenuSeparator();
 		m.AppendMenuItem(MF_STRING, 4, 'Show loved tracks');
 		m.AppendMenuSeparator();
-		m.AppendMenuItem(MF_STRING, 5, '配置...');
+		m.AppendMenuItem(MF_STRING, 5, 'Configure...');
 		const idx = m.TrackPopupMenu(x, y);
 		switch (idx) {
 		case 1:

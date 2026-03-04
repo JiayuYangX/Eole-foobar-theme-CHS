@@ -143,27 +143,27 @@ function _text(mode, x, y, w, h) {
 			panel.m.AppendMenuSeparator();
 			break;
 		case 'lastfm_bio':
-			panel.m.AppendMenuItem(panel.metadb ? MF_STRING : MF_GRAYED, 1100, 'Force update');
+			panel.m.AppendMenuItem(panel.metadb ? MF_STRING : MF_GRAYED, 1100, '强制更新');
 			panel.m.AppendMenuSeparator();
 			_.forEach(this.langs, (item, i) => {
 				panel.s10.AppendMenuItem(MF_STRING, i + 1110, item);
 			});
 			panel.s10.CheckMenuRadioItem(1110, 1121, this.properties.lang.value + 1110);
-			panel.s10.AppendTo(panel.m, MF_STRING, 'Last.fm language');
+			panel.s10.AppendTo(panel.m, MF_STRING, 'Last.fm 语言');
 			panel.m.AppendMenuSeparator();
 			break;
 		case 'text_reader':
-			panel.m.AppendMenuItem(MF_STRING, 1200, 'Refresh');
+			panel.m.AppendMenuItem(MF_STRING, 1200, '刷新');
 			panel.m.AppendMenuSeparator();
-			panel.m.AppendMenuItem(MF_STRING, 1210, 'Custom title...');
-			panel.m.AppendMenuItem(MF_STRING, 1220, 'Custom path...');
+			panel.m.AppendMenuItem(MF_STRING, 1210, '自定义标题...');
+			panel.m.AppendMenuItem(MF_STRING, 1220, '自定义路径...');
 			panel.m.AppendMenuSeparator();
-			panel.m.AppendMenuItem(MF_STRING, 1230, 'Fixed width font');
+			panel.m.AppendMenuItem(MF_STRING, 1230, '字距');
 			panel.m.CheckMenuItem(1230, this.properties.fixed.enabled);
 			panel.m.AppendMenuSeparator();
 			break;
 		}
-		panel.m.AppendMenuItem(_isFile(this.filename) || _isFolder(this.filename) ? MF_STRING : MF_GRAYED, 1999, '打开包含文件夹');
+		panel.m.AppendMenuItem(_isFile(this.filename) || _isFolder(this.filename) ? MF_STRING : MF_GRAYED, 1999, '打开所在文件夹');
 		panel.m.AppendMenuSeparator();
 	}
 	
@@ -198,11 +198,11 @@ function _text(mode, x, y, w, h) {
 			panel.item_focus_change();
 			break;
 		case 1210:
-			this.properties.title_tf.value = utils.InputBox(window.ID, 'You can use full title formatting here.', window.ScriptInfo.Name, this.properties.title_tf.value);
+			this.properties.title_tf.value = utils.InputBox(window.ID, '你可以在这里使用完整的标题格式.', window.ScriptInfo.Name, this.properties.title_tf.value);
 			window.Repaint();
 			break;
 		case 1220:
-			this.properties.filename_tf.value = utils.InputBox(window.ID, 'Use title formatting to specify a path to a text file. eg: $directory_path(%path%)\\info.txt\n\nIf you prefer, you can specify just the path to a folder and the first txt or log file will be used.', window.ScriptInfo.Name, this.properties.filename_tf.value);
+			this.properties.filename_tf.value = utils.InputBox(window.ID, '使用标题格式指定文本文件的路径. eg: $directory_path(%path%)\\info.txt\n\ntxt\n\n如果愿意，可以只指定文件夹的路径，并使用第一个txt或日志文件。.', window.ScriptInfo.Name, this.properties.filename_tf.value);
 			panel.item_focus_change();
 			break;
 		case 1230:
@@ -367,7 +367,7 @@ function _text(mode, x, y, w, h) {
 			_createFolder(folders.data);
 			_createFolder(folders.artists);
 			this.langs = ['en', 'de', 'es', 'fr', 'it', 'ja', 'pl', 'pt', 'ru', 'sv', 'tr', 'zh'];
-			this.properties.lang = new _p('2K3.TEXT.BIO.LANG', 0);
+			this.properties.lang = new _p('2K3.TEXT.BIO.语言', 0);
 			break;
 		case 'text_reader':
 			this.properties.filename_tf = new _p('2K3.TEXT.FILENAME.TF', '$directory_path(%path%)');

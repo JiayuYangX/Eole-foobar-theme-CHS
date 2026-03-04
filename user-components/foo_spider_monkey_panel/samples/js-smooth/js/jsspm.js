@@ -1,24 +1,24 @@
 ﻿var need_repaint = false;
 
 ppt = {
-	defaultRowHeight: window.GetProperty("_PROPERTY: Row Height", 35),
-	rowHeight: window.GetProperty("_PROPERTY: Row Height", 35),
+	defaultRowHeight: window.GetProperty("_PROPERTY: 默认行高", 35),
+	rowHeight: window.GetProperty("_PROPERTY: 行高", 35),
 	rowScrollStep: 3,
 	scrollSmoothness: 3.0,
 	refreshRate: 40,
-	showHeaderBar: window.GetProperty("_DISPLAY: Show Top Bar", true),
+	showHeaderBar: window.GetProperty("_DISPLAY: 显示顶栏", true),
 	defaultHeaderBarHeight: 25,
 	headerBarHeight: 25,
-	enableCustomColors: window.GetProperty("_PROPERTY: Custom Colors", false),
-	showwallpaper: window.GetProperty("_DISPLAY: Show Wallpaper", false),
+	enableCustomColors: window.GetProperty("_PROPERTY: 自定义颜色", false),
+	showwallpaper: window.GetProperty("_DISPLAY: 显示墙纸", false),
 	wallpaperalpha: 150,
-	wallpaperblurred: window.GetProperty("_DISPLAY: Wallpaper Blurred", true),
+	wallpaperblurred: window.GetProperty("_DISPLAY: 墙纸模糊", true),
 	wallpaperblurvalue: 1.05,
-	wallpapermode: window.GetProperty("_SYSTEM: Wallpaper Mode", 0),
-	wallpaperpath: window.GetProperty("_PROPERTY: Default Wallpaper Path", ".\\user-components\\foo_spider_monkey_panel\\samples\\js-smooth\\images\\default.png"),
-	extra_font_size: window.GetProperty("_SYSTEM: Extra font size value", 0),
-	showFilterBox: window.GetProperty("_PROPERTY: Enable Playlist Filterbox in Top Bar", true),
-	enableTouchControl: window.GetProperty("_PROPERTY: Touch control", true)
+	wallpapermode: window.GetProperty("_SYSTEM: 墙纸模式", 0),
+	wallpaperpath: window.GetProperty("_PROPERTY: 默认的墙纸路径", ".\\user-components\\foo_spider_monkey_panel\\samples\\js-smooth\\images\\default.png"),
+	extra_font_size: window.GetProperty("_SYSTEM: 扩展字体大小", 0),
+	showFilterBox: window.GetProperty("_PROPERTY: 打开顶栏播放列表过滤器", true),
+	enableTouchControl: window.GetProperty("_PROPERTY: 触模控制", true)
 };
 
 cPlaylistManager = {
@@ -52,7 +52,7 @@ cSettings = {
 };
 
 cFilterBox = {
-	enabled: window.GetProperty("_PROPERTY: Enable Filter Box", true),
+	enabled: window.GetProperty("_PROPERTY: 打开过滤器", true),
 	default_w: 120,
 	default_h: 20,
 	x: 5,
@@ -69,7 +69,7 @@ cColumns = {
 };
 
 cScrollBar = {
-	enabled: window.GetProperty("_DISPLAY: Show Scrollbar", true),
+	enabled: window.GetProperty("_DISPLAY: 显示滚动条", true),
 	visible: true,
 	themed: false,
 	defaultWidth: get_system_scrollbar_width(),
@@ -185,7 +185,7 @@ oFilterBox = function () {
 	this.getImages();
 
 	this.on_init = function () {
-		this.inputbox = new oInputbox(cFilterBox.w, cFilterBox.h, "", "Filter", g_color_normal_txt, 0, 0, g_color_selected_bg, g_sendResponse, "brw");
+		this.inputbox = new oInputbox(cFilterBox.w, cFilterBox.h, "", "过滤", g_color_normal_txt, 0, 0, g_color_selected_bg, g_sendResponse, "brw");
 		this.inputbox.autovalidation = true;
 	};
 	this.on_init();
@@ -1062,7 +1062,7 @@ oBrowser = function (name) {
 
 			// draw header
 			if (ppt.showHeaderBar) {
-				var boxText = this.rows.length + " playlist" + (this.rows.length > 1 ? "s  " : "  ");
+				var boxText = this.rows.length + " 列表" + (this.rows.length > 1 ? "  " : "  ");
 
 				// draw background part above playlist (headerbar)
 				if (fb.IsPlaying && g_wallpaperImg && ppt.showwallpaper) {
@@ -1368,39 +1368,39 @@ oBrowser = function (name) {
 
 		if (!add_mode) {
 			var pl_idx = this.rows[id].idx;
-			_newplaylist.AppendTo(_menu, (g_filterbox.inputbox.text.length > 0 ? MF_GRAYED | MF_DISABLED : MF_STRING), "Insert ...");
+			_newplaylist.AppendTo(_menu, (g_filterbox.inputbox.text.length > 0 ? MF_GRAYED | MF_DISABLED : MF_STRING), "插入 ...");
 		} else {
 			id = this.rowsCount;
 			var pl_idx = total;
-			_newplaylist.AppendTo(_menu, (g_filterbox.inputbox.text.length > 0 ? MF_GRAYED | MF_DISABLED : MF_STRING), "Add ...");
+			_newplaylist.AppendTo(_menu, (g_filterbox.inputbox.text.length > 0 ? MF_GRAYED | MF_DISABLED : MF_STRING), "增加 ...");
 		};
-		_newplaylist.AppendMenuItem(MF_STRING, 100, "New Playlist");
-		_newplaylist.AppendMenuItem(MF_STRING, 101, "New Autoplaylist");
-		_autoplaylist.AppendTo(_newplaylist, MF_STRING, "Preset AutoPlaylists");
-		_autoplaylist.AppendMenuItem(MF_STRING, 200, "Media Library (full)");
-		_autoplaylist.AppendMenuItem(MF_STRING, 205, "Tracks never played");
-		_autoplaylist.AppendMenuItem(MF_STRING, 206, "Tracks played in the last 5 days");
+		_newplaylist.AppendMenuItem(MF_STRING, 100, "新建播放列表");
+		_newplaylist.AppendMenuItem(MF_STRING, 101, "新建自动播放列表");
+		_autoplaylist.AppendTo(_newplaylist, MF_STRING, "预置自动播放列表");
+		_autoplaylist.AppendMenuItem(MF_STRING, 200, "媒体库(全部)");
+		_autoplaylist.AppendMenuItem(MF_STRING, 205, "从未播放");
+		_autoplaylist.AppendMenuItem(MF_STRING, 206, "最后5天播放");
 		_autoplaylist.AppendMenuItem(MF_SEPARATOR, 0, "");
-		_autoplaylist.AppendMenuItem(MF_STRING, 210, "Tracks unrated");
-		_autoplaylist.AppendMenuItem(MF_STRING, 211, "Tracks rated 1");
-		_autoplaylist.AppendMenuItem(MF_STRING, 212, "Tracks rated 2");
-		_autoplaylist.AppendMenuItem(MF_STRING, 213, "Tracks rated 3");
-		_autoplaylist.AppendMenuItem(MF_STRING, 214, "Tracks rated 4");
-		_autoplaylist.AppendMenuItem(MF_STRING, 215, "Tracks rated 5");
+		_autoplaylist.AppendMenuItem(MF_STRING, 210, "未评级");
+		_autoplaylist.AppendMenuItem(MF_STRING, 211, "评级为 1");
+		_autoplaylist.AppendMenuItem(MF_STRING, 212, "评级为 2");
+		_autoplaylist.AppendMenuItem(MF_STRING, 213, "评级为 3");
+		_autoplaylist.AppendMenuItem(MF_STRING, 214, "评级为 4");
+		_autoplaylist.AppendMenuItem(MF_STRING, 215, "评级为 5");
 		_autoplaylist.AppendMenuItem(MF_SEPARATOR, 0, "");
-		_autoplaylist.AppendMenuItem(MF_STRING, 250, "Loved Tracks");
+		_autoplaylist.AppendMenuItem(MF_STRING, 250, "喜欢");
 		_menu.AppendMenuItem(MF_SEPARATOR, 0, "");
-		_menu.AppendMenuItem(MF_STRING, 2, "Load a Playlist");
+		_menu.AppendMenuItem(MF_STRING, 2, "载入播放列表");
 		if (!add_mode) {
-			_menu.AppendMenuItem(MF_STRING, 5, "Duplicate this playlist");
+			_menu.AppendMenuItem(MF_STRING, 5, "复制播放列表");
 
-			_menu.AppendMenuItem(MF_STRING, 3, "Rename this playlist");
-			_menu.AppendMenuItem(MF_STRING, 8, "Remove this playlist");
-
+			_menu.AppendMenuItem(MF_STRING, 3, "重命名该播放列表");
+			_menu.AppendMenuItem(MF_STRING, 8, "删除该播放列表");
+			
 			if (plman.IsAutoPlaylist(id)) {
 				_menu.AppendMenuItem(MF_SEPARATOR, 0, "");
-				_menu.AppendMenuItem(MF_STRING, 6, "Autoplaylist properties...");
-				_menu.AppendMenuItem(MF_STRING, 7, "Convert to a normal playlist");
+				_menu.AppendMenuItem(MF_STRING, 6, "自动播放列表属性...");
+				_menu.AppendMenuItem(MF_STRING, 7, "转换为普通播放列表");
 			};
 
 		};
@@ -1409,7 +1409,7 @@ oBrowser = function (name) {
 
 		switch (true) {
 		case (idx == 100):
-			plman.CreatePlaylist(total, "");
+			plman.CreatePlaylist(total, "新建播放列表");
 			plman.MovePlaylist(total, pl_idx);
 			plman.ActivePlaylist = pl_idx;
 			// set rename it
@@ -1437,7 +1437,7 @@ oBrowser = function (name) {
 			break;
 		case (idx == 101):
 			var total = plman.PlaylistCount;
-			plman.CreateAutoPlaylist(total, "", "enter your query here", "", 0);
+			plman.CreateAutoPlaylist(total, "", "在此处输入查询", "", 0);
 			plman.MovePlaylist(total, pl_idx);
 			plman.ActivePlaylist = pl_idx;
 			plman.ShowAutoPlaylistUI(pl_idx);
@@ -1492,7 +1492,7 @@ oBrowser = function (name) {
 			this.repaint();
 			break;
 		case (idx == 5):
-			plman.DuplicatePlaylist(pl_idx, "Copy of " + plman.GetPlaylistName(pl_idx));
+			plman.DuplicatePlaylist(pl_idx, "复制于 " + plman.GetPlaylistName(pl_idx));
 			plman.ActivePlaylist = pl_idx + 1;
 			break;
 		case (idx == 6):
@@ -1509,70 +1509,70 @@ oBrowser = function (name) {
 		case (idx == 200):
 			var total = plman.PlaylistCount;
 			//p.playlistManager.inputboxID = -1;
-			plman.CreateAutoPlaylist(total, "Media Library", "ALL", "%album artist% | $if(%album%,%date%,'9999') | %album% | %discnumber% | %tracknumber% | %title%", 0);
+			plman.CreateAutoPlaylist(total, "媒体库", "ALL", "%album artist% | $if(%album%,%date%,'9999') | %album% | %discnumber% | %tracknumber% | %title%", 0);
 			plman.MovePlaylist(total, pl_idx);
 			plman.ActivePlaylist = pl_idx;
 			break;
 		case (idx == 205):
 			var total = plman.PlaylistCount;
 			//p.playlistManager.inputboxID = -1;
-			plman.CreateAutoPlaylist(total, "Tracks never played", "%play_counter% MISSING", "%album artist% | $if(%album%,%date%,'9999') | %album% | %discnumber% | %tracknumber% | %title%", 0);
+			plman.CreateAutoPlaylist(total, "从未播放", "%play_counter% MISSING", "%album artist% | $if(%album%,%date%,'9999') | %album% | %discnumber% | %tracknumber% | %title%", 0);
 			plman.MovePlaylist(total, pl_idx);
 			plman.ActivePlaylist = pl_idx;
 			break;
 		case (idx == 206):
 			var total = plman.PlaylistCount;
 			//p.playlistManager.inputboxID = -1;
-			plman.CreateAutoPlaylist(total, "Tracks played in the last 5 days", "%last_played% DURING LAST 5 DAYS", "%last_played%", 0);
+			plman.CreateAutoPlaylist(total, "最后5天播放", "%last_played% DURING LAST 5 DAYS", "%last_played%", 0);
 			plman.MovePlaylist(total, pl_idx);
 			plman.ActivePlaylist = pl_idx;
 			break;
 		case (idx == 210):
 			var total = plman.PlaylistCount;
 			//p.playlistManager.inputboxID = -1;
-			plman.CreateAutoPlaylist(total, "Tracks unrated", "%rating% MISSING", "%album artist% | $if(%album%,%date%,'9999') | %album% | %discnumber% | %tracknumber% | %title%", 0);
+			plman.CreateAutoPlaylist(total, "未评级", "%rating% MISSING", "%album artist% | $if(%album%,%date%,'9999') | %album% | %discnumber% | %tracknumber% | %title%", 0);
 			plman.MovePlaylist(total, pl_idx);
 			plman.ActivePlaylist = pl_idx;
 			break;
 		case (idx == 211):
 			var total = plman.PlaylistCount;
 			//brw.inputboxID = -1;
-			plman.CreateAutoPlaylist(total, "Tracks rated 1", "%rating% IS 1", "%album artist% | $if(%album%,%date%,'9999') | %album% | %discnumber% | %tracknumber% | %title%", 0);
+			plman.CreateAutoPlaylist(total, "评级为 1", "%rating% IS 1", "%album artist% | $if(%album%,%date%,'9999') | %album% | %discnumber% | %tracknumber% | %title%", 0);
 			plman.MovePlaylist(total, pl_idx);
 			plman.ActivePlaylist = pl_idx;
 			break;
 		case (idx == 212):
 			var total = plman.PlaylistCount;
 			//p.playlistManager.inputboxID = -1;
-			plman.CreateAutoPlaylist(total, "Tracks rated 2", "%rating% IS 2", "%album artist% | $if(%album%,%date%,'9999') | %album% | %discnumber% | %tracknumber% | %title%", 0);
+			plman.CreateAutoPlaylist(total, "评级为 2", "%rating% IS 2", "%album artist% | $if(%album%,%date%,'9999') | %album% | %discnumber% | %tracknumber% | %title%", 0);
 			plman.MovePlaylist(total, pl_idx);
 			plman.ActivePlaylist = pl_idx;
 			break;
 		case (idx == 213):
 			var total = plman.PlaylistCount;
 			//p.playlistManager.inputboxID = -1;
-			plman.CreateAutoPlaylist(total, "Tracks rated 3", "%rating% IS 3", "%album artist% | $if(%album%,%date%,'9999') | %album% | %discnumber% | %tracknumber% | %title%", 0);
+			plman.CreateAutoPlaylist(total, "评级为 3", "%rating% IS 3", "%album artist% | $if(%album%,%date%,'9999') | %album% | %discnumber% | %tracknumber% | %title%", 0);
 			plman.MovePlaylist(total, pl_idx);
 			plman.ActivePlaylist = pl_idx;
 			break;
 		case (idx == 214):
 			var total = plman.PlaylistCount;
 			//p.playlistManager.inputboxID = -1;
-			plman.CreateAutoPlaylist(total, "Tracks rated 4", "%rating% IS 4", "%album artist% | $if(%album%,%date%,'9999') | %album% | %discnumber% | %tracknumber% | %title%", 0);
+			plman.CreateAutoPlaylist(total, "评级为 4", "%rating% IS 4", "%album artist% | $if(%album%,%date%,'9999') | %album% | %discnumber% | %tracknumber% | %title%", 0);
 			plman.MovePlaylist(total, pl_idx);
 			plman.ActivePlaylist = pl_idx;
 			break;
 		case (idx == 215):
 			var total = plman.PlaylistCount;
 			//p.playlistManager.inputboxID = -1;
-			plman.CreateAutoPlaylist(total, "Tracks rated 5", "%rating% IS 5", "%album artist% | $if(%album%,%date%,'9999') | %album% | %discnumber% | %tracknumber% | %title%", 0);
+			plman.CreateAutoPlaylist(total, "评级为 5", "%rating% IS 5", "%album artist% | $if(%album%,%date%,'9999') | %album% | %discnumber% | %tracknumber% | %title%", 0);
 			plman.MovePlaylist(total, pl_idx);
 			plman.ActivePlaylist = pl_idx;
 			break;
 		case (idx == 250):
 			var total = plman.PlaylistCount;
 			//p.playlistManager.inputboxID = -1;
-			plman.CreateAutoPlaylist(total, "Loved Tracks", "%mood% GREATER 0", "%album artist% | $if(%album%,%date%,'9999') | %album% | %discnumber% | %tracknumber% | %title%", 0);
+			plman.CreateAutoPlaylist(total, "喜欢", "%mood% GREATER 0", "%album artist% | $if(%album%,%date%,'9999') | %album% | %discnumber% | %tracknumber% | %title%", 0);
 			plman.MovePlaylist(total, pl_idx);
 			plman.ActivePlaylist = pl_idx;
 			break;
@@ -1588,49 +1588,49 @@ oBrowser = function (name) {
 		var _menu3 = window.CreatePopupMenu();
 		var idx;
 
-		_menu.AppendMenuItem(MF_STRING, 910, "Header Bar");
+		_menu.AppendMenuItem(MF_STRING, 910, "标题栏");
 		_menu.CheckMenuItem(910, ppt.showHeaderBar);
 
-		_menu2.AppendMenuItem(MF_STRING, 200, "Enable");
+		_menu2.AppendMenuItem(MF_STRING, 200, "打开");
 		_menu2.CheckMenuItem(200, ppt.showwallpaper);
-		_menu2.AppendMenuItem(MF_STRING, 220, "Blur");
+		_menu2.AppendMenuItem(MF_STRING, 220, "模糊");
 		_menu2.CheckMenuItem(220, ppt.wallpaperblurred);
 		_menu2.AppendMenuSeparator();
-		_menu2.AppendMenuItem(MF_STRING, 210, "Playing Album Cover");
-		_menu2.AppendMenuItem(MF_STRING, 211, "Default");
+		_menu2.AppendMenuItem(MF_STRING, 210, "正在播放专辑封面");
+		_menu2.AppendMenuItem(MF_STRING, 211, "默认");
 		_menu2.CheckMenuRadioItem(210, 211, ppt.wallpapermode + 210);
 
-		_menu2.AppendTo(_menu, MF_STRING, "Background Wallpaper");
+		_menu2.AppendTo(_menu, MF_STRING, "背景墙纸");
 
 		_menu.AppendMenuSeparator();
-		_menu.AppendMenuItem(MF_STRING, 991, "Panel Properties");
-		_menu.AppendMenuItem(MF_STRING, 992, "Configure...");
+		_menu.AppendMenuItem(MF_STRING, 991, "面板属性");
+		_menu.AppendMenuItem(MF_STRING, 992, "配置...");
 
 		idx = _menu.TrackPopupMenu(x, y);
 
 		switch (true) {
 		case (idx == 200):
 			ppt.showwallpaper = !ppt.showwallpaper;
-			window.SetProperty("_DISPLAY: Show Wallpaper", ppt.showwallpaper);
+			window.SetProperty("_DISPLAY: 显示墙纸", ppt.showwallpaper);
 			g_wallpaperImg = setWallpaperImg();
 			brw.repaint();
 			break;
 		case (idx == 210):
 		case (idx == 211):
 			ppt.wallpapermode = idx - 210;
-			window.SetProperty("_SYSTEM: Wallpaper Mode", ppt.wallpapermode);
+			window.SetProperty("_SYSTEM: 墙纸模式", ppt.wallpapermode);
 			g_wallpaperImg = setWallpaperImg();
 			brw.repaint();
 			break;
 		case (idx == 220):
 			ppt.wallpaperblurred = !ppt.wallpaperblurred;
-			window.SetProperty("_DISPLAY: Wallpaper Blurred", ppt.wallpaperblurred);
+			window.SetProperty("_DISPLAY: 墙纸模糊", ppt.wallpaperblurred);
 			g_wallpaperImg = setWallpaperImg();
 			brw.repaint();
 			break;
 		case (idx == 910):
 			ppt.showHeaderBar = !ppt.showHeaderBar;
-			window.SetProperty("_DISPLAY: Show Top Bar", ppt.showHeaderBar);
+			window.SetProperty("_DISPLAY: 显示顶栏", ppt.showHeaderBar);
 			get_metrics();
 			brw.repaint();
 			break;
@@ -2131,15 +2131,15 @@ function get_colors() {
 	g_syscolor_button_bg = utils.GetSysColour(COLOR_BTNFACE);
 	g_syscolor_button_txt = utils.GetSysColour(COLOR_BTNTEXT);
 
-	arr = window.GetProperty("CUSTOM COLOR TEXT NORMAL", "180-180-180").split("-");
+	arr = window.GetProperty("自定义通用文本颜色", "180-180-180").split("-");
 	g_color_normal_txt = RGB(arr[0], arr[1], arr[2]);
-	arr = window.GetProperty("CUSTOM COLOR TEXT SELECTED", "000-000-000").split("-");
+	arr = window.GetProperty("自定义选择文本颜色", "000-000-000").split("-");
 	g_color_selected_txt = RGB(arr[0], arr[1], arr[2]);
-	arr = window.GetProperty("CUSTOM COLOR BACKGROUND NORMAL", "025-025-035").split("-");
+	arr = window.GetProperty("自定义通用背景颜色", "025-025-034").split("-");
 	g_color_normal_bg = RGB(arr[0], arr[1], arr[2]);
-	arr = window.GetProperty("CUSTOM COLOR BACKGROUND SELECTED", "015-177-255").split("-");
+	arr = window.GetProperty("自定义选择背景颜色", "015-177-255").split("-");
 	g_color_selected_bg = RGB(arr[0], arr[1], arr[2]);
-	arr = window.GetProperty("CUSTOM COLOR HIGHLIGHT", "255-175-050").split("-");
+	arr = window.GetProperty("自定义高亮颜色", "255-175-050").split("-");
 	g_color_highlight = RGB(arr[0], arr[1], arr[2]);
 
 	// get custom colors from window ppt first
@@ -2364,13 +2364,13 @@ function on_key_down(vkey) {
 				case KMask.ctrl:
 					if (vkey == 66) { // CTRL+B
 						cScrollBar.enabled = !cScrollBar.enabled;
-						window.SetProperty("_DISPLAY: Show Scrollbar", cScrollBar.enabled);
+						window.SetProperty("_DISPLAY: 显示滚动条", cScrollBar.enabled);
 						get_metrics();
 						brw.repaint();
 					};
 					if (vkey == 84) { // CTRL+T
 						ppt.showHeaderBar = !ppt.showHeaderBar;
-						window.SetProperty("_DISPLAY: Show Top Bar", ppt.showHeaderBar);
+						window.SetProperty("_DISPLAY: 显示顶栏", ppt.showHeaderBar);
 						get_metrics();
 						brw.repaint();
 					};
@@ -2380,7 +2380,7 @@ function on_key_down(vkey) {
 							ppt.extra_font_size = 0;
 							if (previous != ppt.extra_font_size) {
 								timers.mouseWheel = window.SetTimeout(function () {
-										window.SetProperty("_SYSTEM: Extra font size value", ppt.extra_font_size);
+										window.SetProperty("_SYSTEM: 扩展字体大小", ppt.extra_font_size);
 										get_font();
 										get_metrics();
 										get_images();
@@ -2549,7 +2549,7 @@ function on_drag_drop(action, x, y, mask) {
 			// blank area, drop to new playlist
 			drop_done = true;
 			var total_pl = plman.PlaylistCount;
-			plman.CreatePlaylist(total_pl, "Dropped Items");
+			plman.CreatePlaylist(total_pl, "拖入的项目 (" + total_pl + ")");
 			action.Playlist = total_pl;
 			action.Base = plman.PlaylistItemCount(total_pl);
 			action.ToSelect = plman.PlaylistCount == 1; // switch to and set focus if only playlist

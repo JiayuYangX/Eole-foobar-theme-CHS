@@ -270,33 +270,33 @@ function _list(mode, x, y, w, h) {
 			panel.m.CheckMenuRadioItem(1200, 1201, this.properties.mode.value + 1200);
 			panel.m.AppendMenuSeparator();
 			if (!_isUUID(this.mb_id)) {
-				panel.m.AppendMenuItem(MF_GRAYED, 1203, 'Artist MBID missing. Use Musicbrainz Picard or foo_musicbrainz to tag your files.');
+				panel.m.AppendMenuItem(MF_GRAYED, 1203, '艺术家 MBID 缺失. 使用 Musicbrainz Picard 或 foo_musicbrainz 来标记你的文件.');
 				panel.m.AppendMenuSeparator();
 			}
 			break;
 		case 'properties':
-			panel.m.AppendMenuItem(MF_STRING, 1300, 'Metadata');
+			panel.m.AppendMenuItem(MF_STRING, 1300, '元数据');
 			panel.m.CheckMenuItem(1300, this.properties.meta.enabled);
-			panel.m.AppendMenuItem(MF_STRING, 1301, 'Location');
+			panel.m.AppendMenuItem(MF_STRING, 1301, '位置');
 			panel.m.CheckMenuItem(1301, this.properties.location.enabled);
-			panel.m.AppendMenuItem(MF_STRING, 1302, 'Tech Info');
+			panel.m.AppendMenuItem(MF_STRING, 1302, '技术信息');
 			panel.m.CheckMenuItem(1302, this.properties.tech.enabled);
-			panel.m.AppendMenuItem(this.foo_playcount ? MF_STRING : MF_GRAYED, 1303, 'Playback Statistics (foo_playcount)');
+			panel.m.AppendMenuItem(this.foo_playcount ? MF_STRING : MF_GRAYED, 1303, '播放统计信息 (foo_playcount)');
 			panel.m.CheckMenuItem(1303, this.foo_playcount && this.properties.playcount.enabled);
-			panel.m.AppendMenuItem(MF_STRING, 1304, 'Spider Monkey Panel Stats');
+			panel.m.AppendMenuItem(MF_STRING, 1304, '蜘蛛猴面板统计');
 			panel.m.CheckMenuItem(1304, this.properties.stats.enabled);
-			panel.m.AppendMenuItem(MF_STRING, 1305, 'Replaygain');
+			panel.m.AppendMenuItem(MF_STRING, 1305, '回放增益');
 			panel.m.CheckMenuItem(1305, this.properties.rg.enabled);
 			panel.m.AppendMenuSeparator();
 			break;
 		case 'queue_viewer':
-			panel.m.AppendMenuItem(MF_STRING, 1400, 'Item display title formatting...');
-			panel.m.AppendMenuItem(this.data.length ? MF_STRING : MF_GRAYED, 1401, 'Flush playback queue');
+			panel.m.AppendMenuItem(MF_STRING, 1400, '项目显示标题格式...');
+			panel.m.AppendMenuItem(this.data.length ? MF_STRING : MF_GRAYED, 1401, '刷新播放队列');
 			panel.m.AppendMenuSeparator();
 			break;
 		}
 		if (this.mode != 'queue_viewer') {
-			panel.m.AppendMenuItem(_isFile(this.filename) ? MF_STRING : MF_GRAYED, 1999, '打开包含文件夹');
+			panel.m.AppendMenuItem(_isFile(this.filename) ? MF_STRING : MF_GRAYED, 1999, '打开所在文件夹');
 			panel.m.AppendMenuSeparator();
 		}
 	}
@@ -984,7 +984,7 @@ function _list(mode, x, y, w, h) {
 			}
 			
 			this.add_location = () => {
-				let names = ['FILE NAME', 'FOLDER NAME', 'FILE PATH', 'SUBSONG INDEX', 'FILE SIZE', 'LAST MODIFIED'];
+				let names = ['文件名称', '文件夹名', '文件路径', '子曲目索引', '文件大小', '修改日期'];
 				let values = [panel.tf('%filename_ext%'), panel.tf('$directory_path(%path%)'), this.filename, panel.metadb.SubSong, panel.tf('[%filesize_natural%]'), panel.tf('[%last_modified%]')];
 				let urls = ['%filename_ext% IS ', '"$directory_path(%path%)" IS ', '%path% IS ', '%subsong% IS ', '%filesize_natural% IS ', '%last_modified% IS '];
 				for (let i = 0; i < 6; i++) {
@@ -1001,7 +1001,7 @@ function _list(mode, x, y, w, h) {
 				const duration = utils.FormatDuration(Math.max(0, panel.metadb.Length));
 				const samples = _formatNumber(panel.tf('%length_samples%'), ' ');
 				this.data.push({
-					name : 'DURATION',
+					name : '持续时间',
 					value : duration + ' (' + samples + ' samples)',
 					url : '%length% IS ' + duration
 				});
@@ -1052,12 +1052,12 @@ function _list(mode, x, y, w, h) {
 			}
 			
 			this.properties = {
-				meta : new _p('2K3.LIST.PROPERTIES.META', true),
-				location : new _p('2K3.LIST.PROPERTIES.LOCATION', true),
-				tech : new _p('2K3.LIST.PROPERTIES.TECH', true),
-				playcount : new _p('2K3.LIST.PROPERTIES.PLAYCOUNT', true),
-				stats: new _p('2K3.LIST.PROPERTIES.STATS', true),
-				rg : new _p('2K3.LIST.PROPERTIES.RG', true)
+				meta : new _p('2K3.LIST.属性.元', true),
+				location : new _p('2K3.LIST.属性.位置', true),
+				tech : new _p('2K3.LIST.属性.技术', true),
+				playcount : new _p('2K3.LIST.属性.播放次数', true),
+				stats: new _p('2K3.LIST.属性.统计数据', true),
+				rg : new _p('2K3.LIST.属性.RG', true)
 			};
 			
 			this.foo_playcount = _cc('foo_playcount');

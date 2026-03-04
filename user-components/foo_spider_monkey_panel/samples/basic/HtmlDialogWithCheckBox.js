@@ -1,4 +1,4 @@
-﻿window.DefineScript('Html window with checkbox', {author: 'TheQwertiest'});
+window.DefineScript('Html window with checkbox', {author: 'TheQwertiest'});
 
 include('docs/Flags.js');
 

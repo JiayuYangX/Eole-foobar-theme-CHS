@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 
 window.DefineScript('Last.fm Similar Artists + User Charts + Recent Tracks', {author:'marc2003'});
 include(fb.ComponentPath + 'samples\\complete\\js\\lodash.min.js');

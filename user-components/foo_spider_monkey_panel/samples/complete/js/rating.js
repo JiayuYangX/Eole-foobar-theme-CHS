@@ -15,7 +15,7 @@ function _rating(x, y, size, colour) {
 			this.hover = false;
 			this.rating = this.get_rating();
 			this.hrating = this.rating;
-			this.tiptext = this.properties.mode.value == 0 ? 'Choose a mode first.' : panel.tf('Rate "%title%" by "%artist%".');
+			this.tiptext = this.properties.mode.value == 0 ? '先选择模式.' : panel.tf('评级 "%title%" 来自 "%artist%".');
 		}
 		window.Repaint();
 	}
@@ -63,9 +63,9 @@ function _rating(x, y, size, colour) {
 			panel.s10.AppendMenuItem(i == 1 && !this.foo_playcount ? MF_GRAYED : MF_STRING, i + 1000, item);
 		});
 		panel.s10.CheckMenuRadioItem(1000, 1003, this.properties.mode.value + 1000);
-		panel.s10.AppendTo(panel.m, MF_STRING, 'Mode');
-		panel.m.AppendMenuItem(this.properties.mode.value == 2 ? MF_STRING : MF_GRAYED, 1004, 'Tag name');
-		panel.m.AppendMenuItem(this.properties.mode.value > 1 ? MF_STRING : MF_GRAYED, 1005, 'Max value...');
+		panel.s10.AppendTo(panel.m, MF_STRING, '模式');
+		panel.m.AppendMenuItem(this.properties.mode.value == 2 ? MF_STRING : MF_GRAYED, 1004, '标签名称');
+		panel.m.AppendMenuItem(this.properties.mode.value > 1 ? MF_STRING : MF_GRAYED, 1005, '最大值...');
 		panel.m.AppendMenuSeparator();
 	}
 	
@@ -76,11 +76,11 @@ function _rating(x, y, size, colour) {
 			this.properties.mode.value = idx - 1000;
 			break;
 		case idx == 1004:
-			tmp = utils.InputBox(window.ID, 'Enter a custom tag name. Do not use %%. Defaults to "rating" if left blank.', window.ScriptInfo.Name, this.properties.tag.value);
+			tmp = utils.InputBox(window.ID, '输入自定义标签名. 不要使用 %%. 如果留空，则默认为 "rating".', window.ScriptInfo.Name, this.properties.tag.value);
 			this.properties.tag.value = tmp || this.properties.tag.default_;
 			break;
 		case idx == 1005:
-			tmp = utils.InputBox(window.ID, 'Enter a maximum value. Defaults to "5" if left blank.', window.ScriptInfo.Name, this.properties.max.value);
+			tmp = utils.InputBox(window.ID, '输入最大值。如果留空，则默认为“5”.', window.ScriptInfo.Name, this.properties.max.value);
 			this.properties.max.value = tmp || this.properties.max.default_;
 			break;
 		}
@@ -107,7 +107,7 @@ function _rating(x, y, size, colour) {
 	this.set_rating = () => {
 		switch (this.properties.mode.value) {
 		case 1: // foo_playcount
-			fb.RunContextCommandWithMetadb('Playback Statistics/Rating/' + (this.hrating == this.rating ? '<not set>' : this.hrating), panel.metadb, 8);
+			fb.RunContextCommandWithMetadb('播放统计信息/等级/' + (this.hrating == this.rating ? '<未设置>' : this.hrating), panel.metadb, 8);
 			break;
 		case 2: // file tag
 			const tmp = this.hrating == this.rating ? '' : this.hrating;
@@ -128,9 +128,9 @@ function _rating(x, y, size, colour) {
 	}
 	
 	this.properties = {
-		mode : new _p('2K3.RATING.MODE', 0), // 0 not set 1 foo_playcount 2 file tag 3 Spider Monkey Panel DB
-		max : new _p('2K3.RATING.MAX', 5), // only use for file tag/Spider Monkey Panel DB
-		tag: new _p('2K3.RATING.TAG', 'rating')
+		mode : new _p('2K3.评级.模式', 0), // 0 not set 1 foo_playcount 2 file tag 3 Spider Monkey Panel DB
+		max : new _p('2K3.评级.最大值', 5), // only use for file tag/Spider Monkey Panel DB
+		tag: new _p('2K3.评级.标签', 'rating')
 	};
 	this.x = x;
 	this.y = y;
@@ -141,14 +141,14 @@ function _rating(x, y, size, colour) {
 	this.rating = 0;
 	this.hrating = 0;
 	this.font = gdi.Font('FontAwesome', this.h - 2);
-	this.modes = ['Not Set', 'foo_playcount', 'File Tag', 'Spider Monkey Panel DB'];
+	this.modes = ['未设置', '播放统计信息（foo_playcount）', '文件标签', '蜘蛛猴面板 DB'];
 	this.foo_playcount = _cc('foo_playcount');
 	window.SetTimeout(() => {
 		if (this.properties.mode.value == 1 && !this.foo_playcount) { // if mode is set to 1 (foo_playcount) but component is missing, reset to 0.
 			this.properties.mode.value = 0;
 		}
 		if (this.properties.mode.value == 0) {
-			fb.ShowPopupMessage('This script has now been updated and supports 3 different modes.\n\nAs before, you can use foo_playcount which is limited to 5 stars.\n\nThe 2nd option is writing to your file tags. You can choose the tag name and a max value via the right click menu.\n\nLastly, a new "Playback Stats" database has been built into Spider Monkey Panel. It is bound to just "%artist% - %title%". This uses %smp_rating% which can be accessed via title formatting in all other components/search dialogs. This also supports a custom max value.\n\nAll options are available on the right click menu. If you do not see the new options when right clicking, make sure you have the latest "rating.txt" imported from the "samples\\complete" folder.', window.ScriptInfo.Name);
+			fb.ShowPopupMessage('这个脚本现在已经更新，支持3种不同的模式。\n\n第一个，您可以使用foo_playcount，它限制为5星。\n\n第二个选项是写入文件标签。可以通过右键单击菜单选择标记名和最大值。\n\n最后一个，新的“回放统计”数据库已内置到蜘蛛猴面板中。它只绑定到“%artist%-%title%”。它使用了%smp_rating%，可通过所有其他组件/搜索对话框中的标题格式访问。这也支持自定义最大值。\n\n右键单击菜单上有所有选项。如果右键单击时没有看到新选项，请确保已从“samples\\complete”文件夹导入最新的“rating.txt”', window.ScriptInfo.Name);
 		}
 	}, 500);
 }

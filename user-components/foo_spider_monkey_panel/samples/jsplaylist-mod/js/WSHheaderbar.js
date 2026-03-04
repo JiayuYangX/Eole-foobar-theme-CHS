@@ -67,7 +67,7 @@ oHeaderBar = function () {
 	this.visible = true;
 	this.columns = [];
 	this.borders = [];
-	this.totalColumns = window.GetProperty("SYSTEM.HeaderBar.TotalColumns", 0);
+	this.totalColumns = window.GetProperty("SYSTEM.标题栏.总计", 0);
 	this.borderDragged = false;
 	this.borderDraggedId = -1;
 	this.columnDragged = 0;
@@ -347,25 +347,25 @@ oHeaderBar = function () {
 			};
 			switch (j) {
 			case 0:
-				window.SetProperty("SYSTEM.HeaderBar.label", tmp);
+				window.SetProperty("SYSTEM.标题栏.标签", tmp);
 				break;
 			case 1:
-				window.SetProperty("SYSTEM.HeaderBar.tf", tmp);
+				window.SetProperty("SYSTEM.标题栏.tf", tmp);
 				break;
 			case 2:
-				window.SetProperty("SYSTEM.HeaderBar.tf2", tmp);
+				window.SetProperty("SYSTEM.标题栏.tf2", tmp);
 				break;
 			case 3:
-				window.SetProperty("SYSTEM.HeaderBar.percent", tmp);
+				window.SetProperty("SYSTEM.标题栏.百分比", tmp);
 				break;
 			case 4:
-				window.SetProperty("SYSTEM.HeaderBar.ref", tmp);
+				window.SetProperty("SYSTEM.标题栏.ref", tmp);
 				break;
 			case 5:
-				window.SetProperty("SYSTEM.HeaderBar.align", tmp);
+				window.SetProperty("SYSTEM.标题栏.对齐", tmp);
 				break;
 			case 6:
-				window.SetProperty("SYSTEM.HeaderBar.sort", tmp);
+				window.SetProperty("SYSTEM.标题栏.筛选", tmp);
 				break;
 			};
 		};
@@ -386,7 +386,7 @@ oHeaderBar = function () {
 			for (var i = 0; i < 7; i++) {
 				switch (i) {
 				case 0:
-					fields.push(new Array("Cover", "State", "Index", "#", "Title", "Year", "Artist", "Album", "Genre", "Mood", "Rating", "Plays", "Bitrate", "Time"));
+					fields.push(new Array("封面", "状态", "序号", "#", "标题", "日期", "艺术家", "专辑", "流派", "喜好", "评级", "统计", "比特率", "时长"));
 					break;
 				case 1:
 					fields.push(new Array("null", "null", "$num(%list_index%,$len(%list_total%))", "$if2(%tracknumber%,-)", "$if2(%title%,%filename_ext%)", "$if(%date%,$year($replace(%date%,/,-,.,-)),'-')", "$if(%length%,%artist%,'Stream')", "$if2(%album%,$if(%length%,'Single','Web radios'))", "$if2(%genre%,'Other')", "$rgb(255,120,170)$if(%mood%,1,0)", "$rgb(255,255,50)$if2(%rating%,0)", "$if2(%play_counter%,$if2(%play_count%,0))", "$if(%__bitrate_dynamic%, $if(%isplaying%,$select($add($mod(%_time_elapsed_seconds%,2),1),%__bitrate_dynamic%,%__bitrate_dynamic%)'K',$if($stricmp($left(%codec_profile%,3),'VBR'),%codec_profile%,%__bitrate%'K')),' '$if($stricmp($left(%codec_profile%,3),'VBR'),%codec_profile%,%__bitrate%'K'))", "$if(%isplaying%,$if(%length%,-%playback_time_remaining%,'0:00'),$if2(%length%,'00:00'))"));
@@ -398,7 +398,7 @@ oHeaderBar = function () {
 					fields.push(new Array("0", "5000", "0", "5000", "70000", "0", "0", "0", "0", "0", "10000", "0", "0", "10000"));
 					break;
 				case 4:
-					fields.push(new Array("Cover", "State", "Index", "Tracknumber", "Title", "Date", "Artist", "Album", "Genre", "Mood", "Rating", "Playcount", "Bitrate", "Duration"));
+					fields.push(new Array("封面", "状态", "序号", "#", "标题", "日期", "艺术家", "专辑", "流派", "喜好", "评级", "统计", "比特率", "时长"));
 					break;
 				case 5:
 					fields.push(new Array("0", "1", "1", "2", "0", "2", "0", "0", "0", "1", "1", "2", "1", "2"));
@@ -418,31 +418,31 @@ oHeaderBar = function () {
 				// save CSV string into window Properties
 				switch (i) {
 				case 0:
-					window.SetProperty("SYSTEM.HeaderBar.label", tmp);
+					window.SetProperty("SYSTEM.标题栏.标签", tmp);
 					break;
 				case 1:
-					window.SetProperty("SYSTEM.HeaderBar.tf", tmp);
+					window.SetProperty("SYSTEM.标题栏.tf", tmp);
 					break;
 				case 2:
-					window.SetProperty("SYSTEM.HeaderBar.tf2", tmp);
+					window.SetProperty("SYSTEM.标题栏.tf2", tmp);
 					break;
 				case 3:
-					window.SetProperty("SYSTEM.HeaderBar.percent", tmp);
+					window.SetProperty("SYSTEM.标题栏.百分比", tmp);
 					break;
 				case 4:
-					window.SetProperty("SYSTEM.HeaderBar.ref", tmp);
+					window.SetProperty("SYSTEM.标题栏.ref", tmp);
 					break;
 				case 5:
-					window.SetProperty("SYSTEM.HeaderBar.align", tmp);
+					window.SetProperty("SYSTEM.标题栏.对齐", tmp);
 					break;
 				case 6:
-					window.SetProperty("SYSTEM.HeaderBar.sort", tmp);
+					window.SetProperty("SYSTEM.标题栏.筛选", tmp);
 					break;
 				};
 			};
 			// create column Objects
 			this.totalColumns = fields[0].length;
-			window.SetProperty("SYSTEM.HeaderBar.TotalColumns", this.totalColumns);
+			window.SetProperty("SYSTEM.标题栏.总计", this.totalColumns);
 			for (var k = 0; k < this.totalColumns; k++) {
 				this.columns.push(new oColumn(fields[0][k], fields[1][k], fields[2][k], fields[3][k], fields[4][k], fields[5][k], fields[6][k]));
 				if (this.columns[k].percent > 0) {
@@ -461,25 +461,25 @@ oHeaderBar = function () {
 			for (var i = 0; i < 7; i++) {
 				switch (i) {
 				case 0:
-					tmp = window.GetProperty("SYSTEM.HeaderBar.label", "?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?");
+					tmp = window.GetProperty("SYSTEM.标题栏.标签", "?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?");
 					break;
 				case 1:
-					tmp = window.GetProperty("SYSTEM.HeaderBar.tf", "?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?");
+					tmp = window.GetProperty("SYSTEM.标题栏.tf", "?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?");
 					break;
 				case 2:
-					tmp = window.GetProperty("SYSTEM.HeaderBar.tf2", "?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?");
+					tmp = window.GetProperty("SYSTEM.标题栏.tf2", "?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?");
 					break;
 				case 3:
-					tmp = window.GetProperty("SYSTEM.HeaderBar.percent", "0^^0^^0^^0^^0^^0^^0^^0^^0^^0^^0^^0^^0^^0");
+					tmp = window.GetProperty("SYSTEM.标题栏.百分比", "0^^0^^0^^0^^0^^0^^0^^0^^0^^0^^0^^0^^0^^0");
 					break;
 				case 4:
-					tmp = window.GetProperty("SYSTEM.HeaderBar.ref", "?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?");
+					tmp = window.GetProperty("SYSTEM.标题栏.ref", "?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?");
 					break;
 				case 5:
-					tmp = window.GetProperty("SYSTEM.HeaderBar.align", "0^^0^^0^^0^^0^^0^^0^^0^^0^^0^^0^^0^^0^^0");
+					tmp = window.GetProperty("SYSTEM.标题栏.对齐", "0^^0^^0^^0^^0^^0^^0^^0^^0^^0^^0^^0^^0^^0");
 					break;
 				case 6:
-					tmp = window.GetProperty("SYSTEM.HeaderBar.sort", "?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?");
+					tmp = window.GetProperty("SYSTEM.标题栏.筛选", "?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?^^?");
 					break;
 				};
 				fields.push(tmp.split("^^"));
@@ -574,7 +574,7 @@ oHeaderBar = function () {
 						for (var i = 0; i < this.borders.length; i++) {
 							if (this.borders[i].drag) {
 								// save updated left & right columns 'percent' properties
-								tmp = window.GetProperty("SYSTEM.HeaderBar.percent", "0^^0^^0^^0^^0^^0^^0^^0^^0^^0^^0^^0^^0^^0");
+								tmp = window.GetProperty("SYSTEM.标题栏.百分比", "0^^0^^0^^0^^0^^0^^0^^0^^0^^0^^0^^0^^0^^0");
 								percents = tmp.split("^^");
 								percents[Math.round(this.borders[i].leftId)] = this.columns[this.borders[i].leftId].percent.toString();
 								percents[Math.round(this.borders[i].rightId)] = this.columns[this.borders[i].rightId].percent.toString();
@@ -586,7 +586,7 @@ oHeaderBar = function () {
 										tmp = tmp + "^^";
 									};
 								};
-								window.SetProperty("SYSTEM.HeaderBar.percent", tmp);
+								window.SetProperty("SYSTEM.标题栏.百分比", tmp);
 								// update border object status
 								this.borders[i].on_mouse(event, x, y);
 								this.repaint();
@@ -757,24 +757,24 @@ oHeaderBar = function () {
 
 		// main Menu entries
 		if (fb.IsPlaying) {
-			_menu.AppendMenuItem(MF_STRING, 10, "Show Now Playing Track");
+			_menu.AppendMenuItem(MF_STRING, 10, "显示正在播放的曲目");
 			_menu.AppendMenuSeparator();
 		};
-		_menu.AppendMenuItem(MF_STRING, 11, "Panel Settings...");
+		_menu.AppendMenuItem(MF_STRING, 11, "面板设置...");
 
 		// Groups submenu entries
 		_menu.AppendMenuSeparator();
-		_menu.AppendMenuItem(MF_STRING, 13, "Edit Groups...");
-		_groups.AppendTo(_menu, MF_STRING, "Groups");
-		_groups.AppendMenuItem(MF_STRING, 18, "Enable Groups");
+		_menu.AppendMenuItem(MF_STRING, 13, "编辑组...");
+		_groups.AppendTo(_menu, MF_STRING, "组");
+		_groups.AppendMenuItem(MF_STRING, 18, "开启组");
 		_groups.CheckMenuItem(18, properties.showgroupheaders);
 
 		if (properties.showgroupheaders) {
-			_groups.AppendMenuItem(MF_STRING, 19, "Enable Playlist Filter");
+			_groups.AppendMenuItem(MF_STRING, 19, "开启播放列表过滤器");
 			_groups.CheckMenuItem(19, properties.enablePlaylistFilter);
 
 			_groups.AppendMenuSeparator();
-			_patterns.AppendTo(_groups, MF_STRING, "Change Group Pattern");
+			_patterns.AppendTo(_groups, MF_STRING, "更改组模式");
 			var groupByMenuIdx = 20;
 			var totalGroupBy = p.list.groupby.length;
 			for (var i = 0; i < totalGroupBy; i++) {
@@ -786,23 +786,23 @@ oHeaderBar = function () {
 				_patterns.CheckMenuRadioItem(groupByMenuIdx, groupByMenuIdx + totalGroupBy - 1, playlist_pattern_index + groupByMenuIdx);
 			};
 
-			_sorts.AppendTo(_groups, MF_STRING, "Apply Group Sorting");
+			_sorts.AppendTo(_groups, MF_STRING, "应用组排序");
 			var sortByMenuIdx = 50;
 			for (var i = 0; i < totalGroupBy; i++) {
 				_sorts.AppendMenuItem((p.list.groupby[i].sortOrder != "null" && ((!found && default_pattern_index < 0) || playlist_pattern_index == i) ? MF_STRING : MF_GRAYED | MF_DISABLED), sortByMenuIdx + i, p.list.groupby[i].label);
 			};
 			_groups.AppendMenuSeparator();
-			_groups.AppendMenuItem(p.list.totalRows > 0 && !properties.autocollapse && cGroup.expanded_height > 0 && cGroup.collapsed_height > 0 ? MF_STRING : MF_GRAYED | MF_DISABLED, 80, "Collapse All");
-			_groups.AppendMenuItem(p.list.totalRows > 0 && !properties.autocollapse && cGroup.expanded_height > 0 && cGroup.collapsed_height > 0 ? MF_STRING : MF_GRAYED | MF_DISABLED, 90, "Expand All");
+			_groups.AppendMenuItem(p.list.totalRows > 0 && !properties.autocollapse && cGroup.expanded_height > 0 && cGroup.collapsed_height > 0 ? MF_STRING : MF_GRAYED | MF_DISABLED, 80, "折叠所有");
+			_groups.AppendMenuItem(p.list.totalRows > 0 && !properties.autocollapse && cGroup.expanded_height > 0 && cGroup.collapsed_height > 0 ? MF_STRING : MF_GRAYED | MF_DISABLED, 90, "展开所有");
 
 		};
 
 		// Columns submenu entries
 		var columnMenuIdx = 100;
 		_menu.AppendMenuSeparator();
-		_menu.AppendMenuItem(MF_STRING, 12, "Edit columns...");
-		_columns.AppendTo(_menu, MF_STRING, "Columns");
-		_columns.AppendMenuItem(MF_STRING, 99, "Show Row Extra-Line Infos");
+		_menu.AppendMenuItem(MF_STRING, 12, "编辑列...");
+		_columns.AppendTo(_menu, MF_STRING, "列");
+		_columns.AppendMenuItem(MF_STRING, 99, "显示扩展行信息");
 		_columns.CheckMenuItem(99, cList.enableExtraLine ? 1 : 0);
 		_columns.AppendMenuSeparator();
 		for (var i = 0; i < this.columns.length; i++) {
@@ -863,14 +863,14 @@ oHeaderBar = function () {
 			} else {
 				properties.showgroupheaders = true;
 			};
-			window.SetProperty("*GROUP: Show Group Headers", properties.showgroupheaders);
+			window.SetProperty("*GROUP:显示组标题栏", properties.showgroupheaders);
 
 			if (cGroup.collapsed_height > 0) {
 				cGroup.collapsed_height = 0;
 				cGroup.expanded_height = 0;
 				// disable autocollapse when there is no group!
 				properties.autocollapse = false;
-				window.SetProperty("SYSTEM.Auto-Collapse", properties.autocollapse);
+				window.SetProperty("SYSTEM.自动折叠", properties.autocollapse);
 			} else {
 				cGroup.collapsed_height = cGroup.default_collapsed_height;
 				cGroup.expanded_height = cGroup.default_expanded_height;
@@ -884,7 +884,7 @@ oHeaderBar = function () {
 			break;
 		case (idx == 19):
 			properties.enablePlaylistFilter = !properties.enablePlaylistFilter;
-			window.SetProperty("SYSTEM.Enable Playlist Filter", properties.enablePlaylistFilter);
+			window.SetProperty("SYSTEM.开启播放列表过滤器", properties.enablePlaylistFilter);
 			// refresh playlist
 			p.list.updateHandleList(plman.ActivePlaylist, false);
 			p.list.setItems(true);
@@ -893,7 +893,7 @@ oHeaderBar = function () {
 			break;
 		case (idx >= 20 && idx < 50):
 			cGroup.pattern_idx = idx - groupByMenuIdx;
-			window.SetProperty("SYSTEM.Groups.Pattern Index", cGroup.pattern_idx);
+			window.SetProperty("SYSTEM.组.索引方式", cGroup.pattern_idx);
 			// if a Playlist Filter is defined for the Active Playlist (current), DO NOT try to change current pattern!
 			if (!found && default_pattern_index < 0) { // no filter found, we can apply selected pattern and sort the playlist
 				plman.SortByFormatV2(plman.ActivePlaylist, p.list.groupby[cGroup.pattern_idx].sortOrder, 1);
@@ -922,7 +922,7 @@ oHeaderBar = function () {
 			break;
 		case (idx == 99):
 			cList.enableExtraLine = !cList.enableExtraLine;
-			window.SetProperty("SYSTEM.Enable Extra Line", cList.enableExtraLine);
+			window.SetProperty("SYSTEM.启用扩展行", cList.enableExtraLine);
 			resize_panels();
 			p.list.updateHandleList(plman.ActivePlaylist, false);
 			p.list.setItems(true);

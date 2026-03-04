@@ -93,18 +93,18 @@ function _panel(custom_background = false) {
 			this.m.AppendMenuSeparator();
 		}
 		if (this.custom_background) {
-			this.s2.AppendMenuItem(MF_STRING, 100, window.InstanceType ? 'Use default UI setting' : 'Use columns UI setting');
-			this.s2.AppendMenuItem(MF_STRING, 101, 'Splitter');
-			this.s2.AppendMenuItem(MF_STRING, 102, 'Custom');
+			this.s2.AppendMenuItem(MF_STRING, 100, window.InstanceType ? '使用默认的用户界面设置' : '使用分栏用户界面设置');
+			this.s2.AppendMenuItem(MF_STRING, 101, '分离器');
+			this.s2.AppendMenuItem(MF_STRING, 102, '自定义');
 			this.s2.CheckMenuRadioItem(100, 102, this.colours.mode.value + 100);
 			this.s2.AppendMenuSeparator();
-			this.s2.AppendMenuItem(this.colours.mode.value == 2 ? MF_STRING : MF_GRAYED, 103, 'Set custom colour...');
-			this.s2.AppendTo(this.m, window.IsTransparent ? MF_GRAYED : MF_STRING, 'Background');
+			this.s2.AppendMenuItem(this.colours.mode.value == 2 ? MF_STRING : MF_GRAYED, 103, '设置自定义颜色...');
+			this.s2.AppendTo(this.m, window.IsTransparent ? MF_GRAYED : MF_STRING, '背景');
 			this.m.AppendMenuSeparator();
 		}
 		if (this.metadb_func) {
-			this.s3.AppendMenuItem(MF_STRING, 110, '优先当前播放');
-			this.s3.AppendMenuItem(MF_STRING, 111, '关注所选音轨 (播放列表)');
+			this.s3.AppendMenuItem(MF_STRING, 110, '更喜欢正在播放');
+			this.s3.AppendMenuItem(MF_STRING, 111, '跟随所选曲目（播放列表）');
 			this.s3.CheckMenuRadioItem(110, 111, this.selection.value + 110);
 			this.s3.AppendTo(this.m, MF_STRING, '选择模式');
 			this.m.AppendMenuSeparator();
@@ -169,14 +169,14 @@ function _panel(custom_background = false) {
 	this.metadb = fb.GetFocusItem();
 	this.metadb_func = typeof on_metadb_changed == 'function';
 	this.fonts.sizes = [10, 12, 14, 16];
-	this.fonts.size = new _p('2K3.PANEL.FONTS.SIZE', 12);
+	this.fonts.size = new _p('2K3.面板.字体.大小', 12);
 	if (this.metadb_func) {
-		this.selection = new _p('2K3.PANEL.SELECTION', 0);
+		this.selection = new _p('2K3.面板.选择', 0);
 	}
 	if (custom_background) {
 		this.custom_background = true;
-		this.colours.mode = new _p('2K3.PANEL.COLOURS.MODE', 0);
-		this.colours.custom_background = new _p('2K3.PANEL.COLOURS.CUSTOM.BACKGROUND', _RGB(0, 0, 0));
+		this.colours.mode = new _p('2K3.面板.颜色.模式', 0);
+		this.colours.custom_background = new _p('2K3.面板.颜色.风格.背景', _RGB(0, 0, 0));
 	} else {
 		this.custom_background = false;
 	}

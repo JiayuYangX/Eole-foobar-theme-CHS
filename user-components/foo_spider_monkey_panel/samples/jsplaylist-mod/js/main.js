@@ -65,6 +65,7 @@ var ww = 0, wh = 0;
 var mouse_x = 0, mouse_y = 0;
 var g_metadb;
 var foo_playcount = utils.CheckComponent("foo_playcount", true);
+
 clipboard = {
 	selection: null
 };
@@ -82,7 +83,7 @@ var wpp_img_info = {
 // WSH statistics globals
 var tf_path = fb.TitleFormat("$left(%_path_raw%,4)");
 var g_path, g_track_type;
-var opt_stats = window.GetProperty("CUSTOM.Enable Statistics (write to file)", false);
+var opt_stats = window.GetProperty("CUSTOM.启用统计信息 (写入文件)", false);
 var wsh_time_elaps;
 var wsh_delay_stats;
 var wsh_limit_stats;
@@ -98,28 +99,28 @@ cStats = {
 
 //=================================================// main properties / parameters
 properties = {
-	showDPI: window.GetProperty("SYSTEM.Show DPI", false),
-	enableTouchControl: window.GetProperty("SYSTEM.Enable Touch Scrolling", false),
-	collapseGroupsByDefault: window.GetProperty("SYSTEM.Collapse Groups by default", false),
-	enablePlaylistFilter: window.GetProperty("SYSTEM.Enable Playlist Filter", false),
-	enableCustomColors: window.GetProperty("SYSTEM.Enable Custom Colors", false),
-	defaultPlaylistItemAction: window.GetProperty("SYSTEM.Default Playlist Action", "Play"), //"Add to playback queue",
-	autocollapse: window.GetProperty("SYSTEM.Auto-Collapse", false),
-	showgroupheaders: window.GetProperty("*GROUP: Show Group Headers", true),
-	showscrollbar: window.GetProperty("CUSTOM Show Scrollbar", true),
-	showwallpaper: window.GetProperty("CUSTOM Show Wallpaper", false),
-	wallpaperalpha: window.GetProperty("CUSTOM Wallpaper Alpha", 192),
-	wallpaperblurred: window.GetProperty("CUSTOM Wallpaper Blurred", true),
-	wallpaperblurvalue: window.GetProperty("CUSTOM Wallpaper Blur value", 1.05),
-	wallpapermode: window.GetProperty("CUSTOM Wallpaper Type", 0),
-	wallpaperpath: window.GetProperty("CUSTOM Default Wallpaper Path", ".\\user-components\\foo_spider_monkey_panel\\samples\\jsplaylist-mod\\images\\default.jpg"),
-	oddevenrowshighlight: window.GetProperty("CUSTOM Highlight Odd/Even Rows", true),
+	showDPI: window.GetProperty("SYSTEM.显示DPI", false),
+	enableTouchControl: window.GetProperty("SYSTEM.启用触模滚动条", false),
+	collapseGroupsByDefault: window.GetProperty("SYSTEM.默认折叠组", false),
+	enablePlaylistFilter: window.GetProperty("SYSTEM.启用播放列表过滤器", false),
+	enableCustomColors: window.GetProperty("SYSTEM.启用自定义颜色", true),
+	defaultPlaylistItemAction: window.GetProperty("SYSTEM.默认播放列表操作", "Play"), //"Add to playback queue",
+	autocollapse: window.GetProperty("SYSTEM.自动折叠", false),
+	showgroupheaders: window.GetProperty("*GROUP:显示组标题栏", true),
+	showscrollbar: window.GetProperty("自定义显示滚动条", true),
+	showwallpaper: window.GetProperty("自定义显示墙纸", false),
+	wallpaperalpha: window.GetProperty("自定义墙纸透明", 192),
+	wallpaperblurred: window.GetProperty("自定义墙纸模糊", false),
+	wallpaperblurvalue: window.GetProperty("自定义墙纸模糊值", 1.05),
+	wallpapermode: window.GetProperty("自定义墙纸类型", 0),
+	wallpaperpath: window.GetProperty("自定义默认的墙纸路径", ".\\user-components\\foo_spider_monkey_panel\\samples\\jsplaylist-mod\\images\\default.jpg"),
+	oddevenrowshighlight: window.GetProperty("自定义高亮显示奇/偶行", true),
 	settingspanel: false,
-	smoothscrolling: window.GetProperty("CUSTOM Enable Smooth Scrolling", true),
+	smoothscrolling: window.GetProperty("自定义启用平滑滚动条", true),
 	max_columns: 24,
 	max_patterns: 25,
-	focus_rect_alpha: window.GetProperty("CUSTOM Focus box ALPHA", 75),
-	selection_rect_alpha: window.GetProperty("CUSTOM Selection solid box ALPHA", 60)
+	focus_rect_alpha: window.GetProperty("自定义焦点框透明度", 75),
+	selection_rect_alpha: window.GetProperty("自定义选择实体框透明度", 60)
 };
 
 // =================================================================== // Singleton for Images
@@ -154,7 +155,7 @@ var tf_bitrate_playing = fb.TitleFormat("$if(%__bitrate_dynamic%,$if(%_isplaying
 
 // =================================================================== // Singletons
 cRow = { // references of row height (zoom 100%)
-	default_playlist_h: window.GetProperty("SYSTEM.Playlist Row Height in Pixel", 28),
+	default_playlist_h: window.GetProperty("SYSTEM.播放列表行高象素", 28),
 	playlist_h: 29,
 	extra_line_h: 6,
 	playlistManager_h: 28,
@@ -189,14 +190,14 @@ cSettings = {
 };
 
 cPlaylistManager = {
-	mediaLibraryPlaylist: window.GetProperty("SYSTEM.Media Library Playlist", false),
-	enableHistoricPlaylist: window.GetProperty("CUSTOM Historic Playlist enabled", false),
+	mediaLibraryPlaylist: window.GetProperty("SYSTEM.媒体库播放列表", false),
+	enableHistoricPlaylist: window.GetProperty("启用自定义历史播放列表", false),
 	width: zoom(220, g_dpi),
 	rowHeight: zoom(cRow.playlistManager_h, g_dpi),
 	showStatusBar: true,
 	statusBarHeight: zoom(18, g_dpi),
 	step: zoom(50, g_dpi),
-	visible: window.GetProperty("SYSTEM.PlaylistManager.Visible", false),
+	visible: window.GetProperty("SYSTEM.播放列表管理.显示", false),
 	visible_on_launch: false,
 	drag_move_timer: false,
 	hscroll_timer: false,
@@ -206,7 +207,7 @@ cPlaylistManager = {
 	blink_counter: -1,
 	blink_id: null,
 	blink_totaltracks: 0,
-	showTotalItems: window.GetProperty("SYSTEM.PlaylistManager.ShowTotalItems", true),
+	showTotalItems: window.GetProperty("SYSTEM.播放列表管理.显示统计项目", true),
 	playlist_switch_pending: false,
 	drag_clicked: false,
 	drag_moved: false,
@@ -224,14 +225,14 @@ cPlaylistManager = {
 cTopBar = {
 	height: zoom(54, g_dpi),
 	txtHeight: zoom(19, g_dpi),
-	visible: window.GetProperty("SYSTEM.TopBar.Visible", true)
+	visible: window.GetProperty("SYSTEM.顶栏.显示", true)
 };
 
 cHeaderBar = {
 	height: zoom(cRow.headerBar_h, g_dpi),
 	txtHeight: zoom(12, g_dpi),
 	borderWidth: Math.ceil(cRow.headerBar_h * g_dpi / 100 / 14),
-	locked: window.GetProperty("SYSTEM.HeaderBar.Locked", true),
+	locked: window.GetProperty("SYSTEM.头部栏.锁定", true),
 	timerAutoHide: false,
 	sortRequested: false
 };
@@ -249,7 +250,7 @@ cScrollBar = {
 	timerID2: false,
 	timerCounter: 0,
 	timer_repaint: false,
-	themed: window.GetProperty("CUSTOM.Scrollbar Themed", false)
+	themed: window.GetProperty("CUSTOM.滚动条主题", false)
 };
 
 cTrack = {
@@ -258,23 +259,23 @@ cTrack = {
 };
 
 cGroup = {
-	show: window.GetProperty("*GROUP: Show Group Headers", true),
+	show: window.GetProperty("*GROUP:显示组标题栏", true),
 	default_collapsed_height: 3,
 	default_expanded_height: 3,
 	collapsed_height: 3,
 	expanded_height: 3,
-	default_count_minimum: window.GetProperty("*GROUP: Minimum number of rows in a group", 0),
-	count_minimum: window.GetProperty("*GROUP: Minimum number of rows in a group", 0),
+	default_count_minimum: window.GetProperty("*GROUP:组中的最小行数", 0),
+	count_minimum: window.GetProperty("*GROUP:组中的最小行数", 0),
 	extra_rows: 0,
 	type: 0,
-	pattern_idx: window.GetProperty("SYSTEM.Groups.Pattern Index", 0)
+	pattern_idx: window.GetProperty("SYSTEM.组.索引方式", 0)
 };
 
 cover = {
 	show: true,
 	column: false,
-	draw_glass_reflect: window.GetProperty("CUSTOM.Cover draw reflect", false),
-	keepaspectratio: window.GetProperty("CUSTOM.Cover keep ration aspect", true),
+	draw_glass_reflect: window.GetProperty("CUSTOM.封面绘制反射", false),
+	keepaspectratio: window.GetProperty("CUSTOM.封面保持高宽比", true),
 	load_timer: false,
 	repaint_timer: false,
 	margin: 7,
@@ -294,16 +295,16 @@ cList = {
 	clear_incsearch_timer: false,
 	incsearch_timer: false,
 	repaint_timer: false,
-	scrollstep: window.GetProperty("SYSTEM.Playlist Scroll Step", 3),
-	touchstep: window.GetProperty("SYSTEM.Playlist Touch Step", 2),
+	scrollstep: window.GetProperty("SYSTEM.播放列表滚动步距", 10),
+	touchstep: window.GetProperty("SYSTEM.播放列表触摸步距", 5),
 	scroll_timer: false,
 	scroll_delta: cTrack.height,
 	scroll_direction: 1,
 	scroll_step: Math.floor(cTrack.height / 3),
-	scroll_div: 2,
+	scroll_div: 3,
 	borderWidth: Math.ceil(cRow.headerBar_h * g_dpi / 100 / 14),
 	beam_timer: false,
-	enableExtraLine: window.GetProperty("SYSTEM.Enable Extra Line", true)
+	enableExtraLine: window.GetProperty("SYSTEM.启用扩展行", true)
 };
 
 dragndrop = {
@@ -405,9 +406,9 @@ function addToHistoricPlaylist(handle) {
 
 function checkMediaLibrayPlaylist() {
 	g_avoid_on_playlists_changed = true;
-	var idx = plman.FindPlaylist("Media Library");
+	var idx = plman.FindPlaylist("整个媒体库"); //Media Library
 	if (idx == -1) {
-		plman.CreateAutoPlaylist(0, "Media Library", "ALL", "%album artist% | $if(%album%,%date%,'9999') | %album% | %discnumber% | %tracknumber% | %title%", 0);
+		plman.CreateAutoPlaylist(0, "整个媒体库", "ALL", "%album artist% | $if(%album%,%date%,'9999') | %album% | %discnumber% | %tracknumber% | %title%", 0);
 	} else if (idx > 0) {
 		plman.MovePlaylist(idx, 0);
 	};
@@ -426,7 +427,7 @@ function togglePlaylistManager() {
 						cPlaylistManager.hscroll_timer && window.ClearTimeout(cPlaylistManager.hscroll_timer);
 						cPlaylistManager.hscroll_timer = false;
 						cPlaylistManager.visible = false;
-						window.SetProperty("SYSTEM.PlaylistManager.Visible", cPlaylistManager.visible);
+						window.SetProperty("SYSTEM.播放列表管理.显示", cPlaylistManager.visible);
 						p.headerBar.button.update(p.headerBar.slide_open_normal, p.headerBar.slide_open_hover, p.headerBar.slide_open_down);
 						full_repaint();
 					};
@@ -440,7 +441,7 @@ function togglePlaylistManager() {
 						cPlaylistManager.hscroll_timer && window.ClearTimeout(cPlaylistManager.hscroll_timer);
 						cPlaylistManager.hscroll_timer = false;
 						cPlaylistManager.visible = true;
-						window.SetProperty("SYSTEM.PlaylistManager.Visible", cPlaylistManager.visible);
+						window.SetProperty("SYSTEM.播放列表管理.显示", cPlaylistManager.visible);
 						p.headerBar.button.update(p.headerBar.slide_close_normal, p.headerBar.slide_close_hover, p.headerBar.slide_close_down);
 						full_repaint();
 					} else {
@@ -1857,7 +1858,7 @@ function on_key_down(vkey) {
 					break;
 				case VK_F6:
 					properties.showDPI = !properties.showDPI;
-					window.SetProperty("SYSTEM.Show DPI", properties.showDPI);
+					window.SetProperty("SYSTEM.显示DPI", properties.showDPI);
 					full_repaint();
 					break;
 				case VK_TAB:
@@ -2202,7 +2203,7 @@ function on_key_down(vkey) {
 					};
 					if (vkey == 73) { // CTRL+I
 						cTopBar.visible = !cTopBar.visible;
-						window.SetProperty("SYSTEM.TopBar.Visible", cTopBar.visible);
+						window.SetProperty("SYSTEM.顶栏.显示", cTopBar.visible);
 						resize_panels();
 						full_repaint();
 					};
@@ -2210,7 +2211,7 @@ function on_key_down(vkey) {
 						// Toggle Toolbar
 						if (!p.timer_onKey) {
 							cHeaderBar.locked = !cHeaderBar.locked;
-							window.SetProperty("SYSTEM.HeaderBar.Locked", cHeaderBar.locked);
+							window.SetProperty("SYSTEM.头部栏.锁定", cHeaderBar.locked);
 							if (!cHeaderBar.locked) {
 								p.headerBar.visible = false;
 							};
@@ -2530,21 +2531,21 @@ function get_colors() {
 	g_syscolor_button_bg = utils.GetSysColour(COLOR_BTNFACE);
 	g_syscolor_button_txt = utils.GetSysColour(COLOR_BTNTEXT);
 
-	arr = window.GetProperty("SYSTEM.COLOR TEXT NORMAL", "180-180-180").split("-");
-	g_color_selected_txt = window.GetProperty("SYSTEM.COLOR TEXT SELECTED", "200-210-255");
-	g_color_normal_bg = window.GetProperty("SYSTEM.COLOR BACKGROUND NORMAL", "25-25-35");
-	g_color_selected_bg = window.GetProperty("SYSTEM.COLOR BACKGROUND SELECTED", "130-150-255");
-	g_color_highlight = window.GetProperty("SYSTEM.COLOR HIGHLIGHT", "255-175-50");
+	arr = window.GetProperty("SYSTEM.通用文本颜色", "180-180-180").split("-");
+	g_color_selected_txt = window.GetProperty("SYSTEM.选择文本颜色", "200-210-255");
+	g_color_normal_bg = window.GetProperty("SYSTEM.通用背景颜色", "25-25-35");
+	g_color_selected_bg = window.GetProperty("SYSTEM.选择背景颜色", "130-150-255");
+	g_color_highlight = window.GetProperty("SYSTEM.高亮颜色", "255-175-50");
 
-	arr = window.GetProperty("SYSTEM.COLOR TEXT NORMAL", "180-180-180").split("-");
+	arr = window.GetProperty("SYSTEM.通用文本颜色", "180-180-180").split("-");
 	g_color_normal_txt = RGB(arr[0], arr[1], arr[2]);
-	arr = window.GetProperty("SYSTEM.COLOR TEXT SELECTED", "200-210-255").split("-");
+	arr = window.GetProperty("SYSTEM.选择文本颜色", "200-210-255").split("-");
 	g_color_selected_txt = RGB(arr[0], arr[1], arr[2]);
-	arr = window.GetProperty("SYSTEM.COLOR BACKGROUND NORMAL", "25-25-35").split("-");
+	arr = window.GetProperty("SYSTEM.通用背景颜色", "25-25-35").split("-");
 	g_color_normal_bg = RGB(arr[0], arr[1], arr[2]);
-	arr = window.GetProperty("SYSTEM.COLOR BACKGROUND SELECTED", "130-150-255").split("-");
+	arr = window.GetProperty("SYSTEM.选择背景颜色", "130-150-255").split("-");
 	g_color_selected_bg = RGB(arr[0], arr[1], arr[2]);
-	arr = window.GetProperty("SYSTEM.COLOR HIGHLIGHT", "255-175-50").split("-");
+	arr = window.GetProperty("SYSTEM.高亮颜色", "255-175-50").split("-");
 	g_color_highlight = RGB(arr[0], arr[1], arr[2]);
 
 	// get custom colors from window Properties first

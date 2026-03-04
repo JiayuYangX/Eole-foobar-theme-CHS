@@ -6,8 +6,8 @@ include(fb.ComponentPath + 'samples\\complete\\js\\helpers.js');
 include(fb.ComponentPath + 'samples\\complete\\js\\seekbar.js');
 
 let seekbar = new _seekbar(0, 0, 0, 0);
-seekbar.c1 = _RGB(50, 50, 50);
-seekbar.c2 = _RGB(196, 30, 35);
+seekbar.c1 = _RGB(23, 23, 23);
+seekbar.c2 = _RGB(0, 110, 149);
 
 function on_size() {
 	seekbar.w = window.Width;

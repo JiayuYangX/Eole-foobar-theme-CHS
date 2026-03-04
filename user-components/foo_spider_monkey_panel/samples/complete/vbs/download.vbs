@@ -1,4 +1,4 @@
-﻿If (WScript.Arguments.Count <> 2) Then
+If (WScript.Arguments.Count <> 2) Then
 	WScript.Quit
 End If
 

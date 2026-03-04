@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 
 window.DefineScript('Status Bar + Volume', {author:'marc2003', options:{grab_focus:false}});
 include(fb.ComponentPath + 'samples\\complete\\js\\lodash.min.js');
@@ -107,7 +107,7 @@ function on_mouse_rbtn_up(x, y) {
 	col.AppendMenuItem(MF_STRING, 10005, 'Text...');
 	col.AppendTo(m, MF_STRING, 'Colours');
 	m.AppendMenuSeparator();
-	m.AppendMenuItem(MF_STRING, 10010, '配置...');
+	m.AppendMenuItem(MF_STRING, 10010, 'Configure...');
 	const idx = m.TrackPopupMenu(x, y);
 	switch (idx) {
 	case 0:

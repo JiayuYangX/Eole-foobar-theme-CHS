@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 
 function _lastfm() {
 	this.notify_data = (name, data) => {

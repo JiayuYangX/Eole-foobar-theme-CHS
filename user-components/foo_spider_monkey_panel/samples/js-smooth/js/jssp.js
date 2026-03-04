@@ -8,35 +8,35 @@ ppt = {
 	tf_path: fb.TitleFormat("$directory_path(%path%)\\"),
 	tf_crc: fb.TitleFormat("$crc32(%path%)"),
 	tf_time_remaining: fb.TitleFormat("$if(%length%,-%playback_time_remaining%,'ON AIR')"),
-	defaultRowHeight: window.GetProperty("_PROPERTY: Row Height", 35),
+	defaultRowHeight: window.GetProperty("_PROPERTY: 默认行高", 35),
 	doubleRowPixelAdds: 3,
-	rowHeight: window.GetProperty("_PROPERTY: Row Height", 35),
+	rowHeight: window.GetProperty("_PROPERTY: 行高", 35),
 	rowScrollStep: 3,
 	scrollSmoothness: 2.5,
 	refreshRate: 40,
-	extraRowsNumber: window.GetProperty("_PROPERTY: Number of Extra Rows per Group", 0),
-	minimumRowsNumberPerGroup: window.GetProperty("_PROPERTY: Number minimum of Rows per Group", 0),
-	groupHeaderRowsNumber: window.GetProperty("_PROPERTY: Number of Rows for Group Header", 2),
-	showHeaderBar: window.GetProperty("_DISPLAY: Show Top Bar", true),
+	extraRowsNumber: window.GetProperty("_PROPERTY: 每组扩展行数", 0),
+	minimumRowsNumberPerGroup: window.GetProperty("_PROPERTY: 每组最小行数", 0),
+	groupHeaderRowsNumber: window.GetProperty("_PROPERTY: 组标题行数", 2),
+	showHeaderBar: window.GetProperty("_DISPLAY: 显示顶栏", true),
 	defaultHeaderBarHeight: 25,
 	headerBarHeight: 25,
-	autocollapse: window.GetProperty("_PROPERTY: Autocollapse groups", false),
+	autocollapse: window.GetProperty("_PROPERTY: 自动折叠组", false),
 	enableFullScrollEffectOnFocusChange: false,
-	enableCustomColors: window.GetProperty("_PROPERTY: Custom Colors", false),
-	showgroupheaders: window.GetProperty("_DISPLAY: Show Group Headers", true),
-	showwallpaper: window.GetProperty("_DISPLAY: Show Wallpaper", false),
+	enableCustomColors: window.GetProperty("_PROPERTY: 自定义颜色", false),
+	showgroupheaders: window.GetProperty("_DISPLAY: 显示组标题", true),
+	showwallpaper: window.GetProperty("_DISPLAY: 显示墙纸", false),
 	wallpaperalpha: 150,
-	wallpaperblurred: window.GetProperty("_DISPLAY: Wallpaper Blurred", true),
+	wallpaperblurred: window.GetProperty("_DISPLAY: 墙纸模糊", true),
 	wallpaperblurvalue: 1.05,
-	wallpapermode: window.GetProperty("_SYSTEM: Wallpaper Mode", 0),
-	wallpaperpath: window.GetProperty("_PROPERTY: Default Wallpaper Path", ".\\user-components\\foo_spider_monkey_panel\\samples\\js-smooth\\images\\default.png"),
-	extra_font_size: window.GetProperty("_SYSTEM: Extra font size value", 0),
-	showFilterBox: window.GetProperty("_PROPERTY: Enable Playlist Filterbox in Top Bar", true),
-	doubleRowText: window.GetProperty("_PROPERTY: Double Row Text Info", true),
-	showArtistAlways: window.GetProperty("_DISPLAY: Show Artist in Track Row", true),
-	showRating: window.GetProperty("_DISPLAY: Show Rating in Track Row", true),
-	showMood: window.GetProperty("_DISPLAY: Show Mood in Track Row", true),
-	enableTouchControl: window.GetProperty("_PROPERTY: Touch control", true)
+	wallpapermode: window.GetProperty("_SYSTEM: 墙纸模式", 0),
+	wallpaperpath: window.GetProperty("_PROPERTY: 默认墙纸路径", ".\\user-components\\foo_spider_monkey_panel\\samples\\js-smooth\\images\\default.png"),
+	extra_font_size: window.GetProperty("_SYSTEM: 扩展字体大小", 0),
+	showFilterBox: window.GetProperty("_PROPERTY: 在顶栏启用播放列表过滤器", true),
+	doubleRowText: window.GetProperty("_PROPERTY: 双行文本信息", true),
+	showArtistAlways: window.GetProperty("_DISPLAY: 在每个曲目显示艺术家", true),
+	showRating: window.GetProperty("_DISPLAY: 在每个曲目显示评级", true),
+	showMood: window.GetProperty("_DISPLAY: 在每个曲目显示喜爱标识", true),
+	enableTouchControl: window.GetProperty("_PROPERTY: 触模控制", true)
 };
 
 cTouch = {
@@ -58,7 +58,7 @@ cSettings = {
 };
 
 cFilterBox = {
-	enabled: window.GetProperty("_PROPERTY: Enable Filter Box", true),
+	enabled: window.GetProperty("_PROPERTY: 启用过滤器", true),
 	default_w: 120,
 	default_h: 20,
 	x: 5,
@@ -89,11 +89,11 @@ cPlaylistManager = {
 	blink_id: null,
 	blink_row: null,
 	blink_totaltracks: 0,
-	showTotalItems: window.GetProperty("_PROPERTY.PlaylistManager.ShowTotalItems", true)
+	showTotalItems: window.GetProperty("_PROPERTY.播放列表管理.显示所有项目", true)
 };
 
 cScrollBar = {
-	enabled: window.GetProperty("_DISPLAY: Show Scrollbar", true),
+	enabled: window.GetProperty("_DISPLAY: 显示滚动条", true),
 	visible: true,
 	themed: false,
 	defaultWidth: get_system_scrollbar_width(),
@@ -110,8 +110,8 @@ cScrollBar = {
 };
 
 cover = {
-	masks: window.GetProperty("_PROPERTY: Cover art masks (used for the cache)", "*front*.*;*cover*.*;*folder*.*;*.*"),
-	show: window.GetProperty("_DISPLAY: Show Cover Art", true),
+	masks: window.GetProperty("_PROPERTY: 封面艺术家 (用于缓存)", "*front*.*;*cover*.*;*folder*.*;*.*"),
+	show: window.GetProperty("_DISPLAY: 显示封面艺术家", true),
 	column: false,
 	draw_glass_reflect: false,
 	glass_reflect: null,
@@ -524,16 +524,16 @@ oPlaylistManager = function (name) {
 			if (cPlaylistManager.blink_counter > -1) {
 				if (cPlaylistManager.blink_row == 0) {
 					if (cPlaylistManager.blink_counter <= 6 && Math.floor(cPlaylistManager.blink_counter / 2) == Math.ceil(cPlaylistManager.blink_counter / 2)) {
-						gr.GdiDrawText("+ Sent to a New Playlist", g_font_bold, txt_color, cx + bg_margin_left + txt_margin, this.y, cw - bg_margin_left * 2 - txt_margin * 2 - tw - this.scr_w, ch, DT_LEFT | DT_CALCRECT | DT_VCENTER | DT_END_ELLIPSIS | DT_NOPREFIX);
+						gr.GdiDrawText("+ 发送到一个新播放列表", g_font_bold, txt_color, cx + bg_margin_left + txt_margin, this.y, cw - bg_margin_left * 2 - txt_margin * 2 - tw - this.scr_w, ch, DT_LEFT | DT_CALCRECT | DT_VCENTER | DT_END_ELLIPSIS | DT_NOPREFIX);
 					};
 				} else {
-					gr.GdiDrawText("Send to ...", g_font, txt_color, cx + bg_margin_left + txt_margin, this.y, cw - bg_margin_left * 2 - txt_margin * 2 - tw - this.scr_w, ch, DT_LEFT | DT_CALCRECT | DT_VCENTER | DT_END_ELLIPSIS | DT_NOPREFIX);
+					gr.GdiDrawText("发送到 ...", g_font, txt_color, cx + bg_margin_left + txt_margin, this.y, cw - bg_margin_left * 2 - txt_margin * 2 - tw - this.scr_w, ch, DT_LEFT | DT_CALCRECT | DT_VCENTER | DT_END_ELLIPSIS | DT_NOPREFIX);
 				};
 			} else {
 				if (this.activeRow == 0) {
-					gr.GdiDrawText("+ Send to a New Playlist", g_font_bold, txt_color, cx + bg_margin_left + txt_margin, this.y, cw - bg_margin_left * 2 - txt_margin * 2 - tw - this.scr_w, ch, DT_LEFT | DT_CALCRECT | DT_VCENTER | DT_END_ELLIPSIS | DT_NOPREFIX);
+					gr.GdiDrawText("+ 发送到一个新播放列表", g_font_bold, txt_color, cx + bg_margin_left + txt_margin, this.y, cw - bg_margin_left * 2 - txt_margin * 2 - tw - this.scr_w, ch, DT_LEFT | DT_CALCRECT | DT_VCENTER | DT_END_ELLIPSIS | DT_NOPREFIX);
 				} else {
-					gr.GdiDrawText("Send to ...", g_font, txt_color, cx + bg_margin_left + txt_margin, this.y, cw - bg_margin_left * 2 - txt_margin * 2 - tw - this.scr_w, ch, DT_LEFT | DT_CALCRECT | DT_VCENTER | DT_END_ELLIPSIS | DT_NOPREFIX);
+					gr.GdiDrawText("发送到 ...", g_font, txt_color, cx + bg_margin_left + txt_margin, this.y, cw - bg_margin_left * 2 - txt_margin * 2 - tw - this.scr_w, ch, DT_LEFT | DT_CALCRECT | DT_VCENTER | DT_END_ELLIPSIS | DT_NOPREFIX);
 				};
 			};
 
@@ -775,7 +775,7 @@ oFilterBox = function () {
 	this.getImages();
 
 	this.on_init = function () {
-		this.inputbox = new oInputbox(cFilterBox.w, cFilterBox.h, "", "Filter", g_color_normal_txt, 0, 0, g_color_selected_bg, g_sendResponse, "brw");
+		this.inputbox = new oInputbox(cFilterBox.w, cFilterBox.h, "", "过滤", g_color_normal_txt, 0, 0, g_color_selected_bg, g_sendResponse, "brw");
 		this.inputbox.autovalidation = true;
 	};
 	this.on_init();
@@ -2716,20 +2716,20 @@ oBrowser = function (name) {
 			};
 		};
 
-		_menu.AppendMenuItem(MF_STRING, 1, "Settings...");
+		_menu.AppendMenuItem(MF_STRING, 1, "设置...");
 		_menu.AppendMenuSeparator();
 		Context.BuildMenu(_menu, 2);
 
-		_child01.AppendTo(_menu, MF_STRING, "Selection...");
+		_child01.AppendTo(_menu, MF_STRING, "选择...");
 		if (brw.activeRow > -1) {
 			if (this.metadblist_selection.Count == 1) {
-				_child01.AppendMenuItem(MF_STRING, 1010, "Reset Image Cache");
+				_child01.AppendMenuItem(MF_STRING, 1010, "重置图像缓存");
 			};
 		};
-		_child01.AppendMenuItem((showInAlbumView ? MF_STRING : MF_GRAYED | MF_DISABLED), 1011, "Highlight in JS Smooth Browser");
-		_child01.AppendMenuItem(plman.IsAutoPlaylist(g_active_playlist) ? MF_DISABLED | MF_GRAYED : MF_STRING, 1020, "Remove");
-		_child02.AppendTo(_child01, MF_STRING, "Send to...");
-		_child02.AppendMenuItem(MF_STRING, 2000, "a New playlist...");
+		_child01.AppendMenuItem((showInAlbumView ? MF_STRING : MF_GRAYED | MF_DISABLED), 1011, "在平滑浏览器中高亮显示");
+		_child01.AppendMenuItem(plman.IsAutoPlaylist(g_active_playlist) ? MF_DISABLED | MF_GRAYED : MF_STRING, 1020, "移除");
+		_child02.AppendTo(_child01, MF_STRING, "发送到...");
+		_child02.AppendMenuItem(MF_STRING, 2000, "一个新播放列表...");
 
 		var pl_count = plman.PlaylistCount;
 		if (pl_count > 1) {
@@ -2795,90 +2795,90 @@ oBrowser = function (name) {
 		var _menu3 = window.CreatePopupMenu();
 		var idx;
 
-		_menu.AppendMenuItem((fb.IsPlaying ? MF_STRING : MF_GRAYED | MF_DISABLED), 900, "Show Now Playing");
+		_menu.AppendMenuItem((fb.IsPlaying ? MF_STRING : MF_GRAYED | MF_DISABLED), 900, "显示正在播放的曲目");
 		_menu.AppendMenuSeparator();
-		_menu.AppendMenuItem(MF_STRING, 910, "Header Bar");
+		_menu.AppendMenuItem(MF_STRING, 910, "标题栏");
 		_menu.CheckMenuItem(910, ppt.showHeaderBar);
-		_menu.AppendMenuItem(MF_STRING, 912, "Double Track Line");
+		_menu.AppendMenuItem(MF_STRING, 912, "双行显示");
 		_menu.CheckMenuItem(912, ppt.doubleRowText);
 
 		_menu.AppendMenuSeparator();
-		_menu1.AppendMenuItem((!ppt.doubleRowText ? (!ppt.showgroupheaders ? MF_GRAYED | MF_DISABLED : MF_STRING) : MF_GRAYED | MF_DISABLED), 111, "Artist");
+		_menu1.AppendMenuItem((!ppt.doubleRowText ? (!ppt.showgroupheaders ? MF_GRAYED | MF_DISABLED : MF_STRING) : MF_GRAYED | MF_DISABLED), 111, "艺术家");
 		_menu1.CheckMenuItem(111, ppt.showArtistAlways);
 		//_menu1.AppendMenuItem(MF_STRING, 112, "Mood");
 		//_menu1.CheckMenuItem(112, ppt.showMood);
-		_menu1.AppendMenuItem(MF_STRING, 113, "Rating");
+		_menu1.AppendMenuItem(MF_STRING, 113, "评级");
 		_menu1.CheckMenuItem(113, ppt.showRating);
-		_menu1.AppendTo(_menu, MF_STRING, "Extra Track Infos");
+		_menu1.AppendTo(_menu, MF_STRING, "扩展轨道信息");
 
-		_menu2.AppendMenuItem(MF_STRING, 200, "Enable");
+		_menu2.AppendMenuItem(MF_STRING, 200, "启用");
 		_menu2.CheckMenuItem(200, ppt.showwallpaper);
-		_menu2.AppendMenuItem(MF_STRING, 220, "Blur");
+		_menu2.AppendMenuItem(MF_STRING, 220, "模糊");
 		_menu2.CheckMenuItem(220, ppt.wallpaperblurred);
 		_menu2.AppendMenuSeparator();
-		_menu2.AppendMenuItem(MF_STRING, 210, "Playing Album Cover");
-		_menu2.AppendMenuItem(MF_STRING, 211, "Default");
+		_menu2.AppendMenuItem(MF_STRING, 210, "正在播放的专辑封面");
+		_menu2.AppendMenuItem(MF_STRING, 211, "默认");
 		_menu2.CheckMenuRadioItem(210, 211, ppt.wallpapermode + 210);
 
-		_menu2.AppendTo(_menu, MF_STRING, "Background Wallpaper");
+		_menu2.AppendTo(_menu, MF_STRING, "背景墙纸");
 
-		_menu3.AppendMenuItem((!ppt.autocollapse ? MF_STRING : MF_GRAYED | MF_DISABLED), 300, "Enable");
+		_menu3.AppendMenuItem((!ppt.autocollapse ? MF_STRING : MF_GRAYED | MF_DISABLED), 300, "启用");
 		_menu3.CheckMenuItem(300, ppt.showgroupheaders);
-		_menu3.AppendMenuItem((ppt.showgroupheaders ? MF_STRING : MF_GRAYED | MF_DISABLED), 310, "Autocollapse");
+		_menu3.AppendMenuItem((ppt.showgroupheaders ? MF_STRING : MF_GRAYED | MF_DISABLED), 310, "自动折叠");
 		_menu3.CheckMenuItem(310, ppt.autocollapse);
 		_menu3.AppendMenuSeparator();
-		_menu3.AppendMenuItem((ppt.showgroupheaders && !ppt.autocollapse ? MF_STRING : MF_GRAYED | MF_DISABLED), 320, "Collapse All");
-		_menu3.AppendMenuItem((ppt.showgroupheaders && !ppt.autocollapse ? MF_STRING : MF_GRAYED | MF_DISABLED), 330, "Expand All");
+		_menu3.AppendMenuItem((ppt.showgroupheaders && !ppt.autocollapse ? MF_STRING : MF_GRAYED | MF_DISABLED), 320, "折叠全部");
+		_menu3.AppendMenuItem((ppt.showgroupheaders && !ppt.autocollapse ? MF_STRING : MF_GRAYED | MF_DISABLED), 330, "展开全部");
 
-		_menu3.AppendTo(_menu, MF_STRING, "Group Headers");
+		_menu3.AppendTo(_menu, MF_STRING, "组标题");
 
 		_menu.AppendMenuSeparator();
-		_menu.AppendMenuItem(MF_STRING, 991, "Panel Properties");
-		_menu.AppendMenuItem(MF_STRING, 992, "Configure...");
+		_menu.AppendMenuItem(MF_STRING, 991, "面板属性");
+		_menu.AppendMenuItem(MF_STRING, 992, "配置...");
 
 		idx = _menu.TrackPopupMenu(x, y);
 
 		switch (true) {
 		case (idx == 111):
 			ppt.showArtistAlways = !ppt.showArtistAlways;
-			window.SetProperty("_DISPLAY: Show Artist in Track Row", ppt.showArtistAlways);
+			window.SetProperty("_DISPLAY: 在每个曲目显示艺术家", ppt.showArtistAlways);
 			get_metrics();
 			brw.repaint();
 			break;
 		case (idx == 112):
 			ppt.showMood = !ppt.showMood;
-			window.SetProperty("_DISPLAY: Show Mood in Track Row", ppt.showMood);
+			window.SetProperty("_DISPLAY: 在每个曲目显示喜爱标识", ppt.showMood);
 			get_metrics();
 			brw.repaint();
 			break;
 		case (idx == 113):
 			ppt.showRating = !ppt.showRating;
-			window.SetProperty("_DISPLAY: Show Rating in Track Row", ppt.showRating);
+			window.SetProperty("_DISPLAY: 在每个曲目显示评级", ppt.showRating);
 			get_metrics();
 			brw.repaint();
 			break;
 		case (idx == 200):
 			ppt.showwallpaper = !ppt.showwallpaper;
-			window.SetProperty("_DISPLAY: Show Wallpaper", ppt.showwallpaper);
+			window.SetProperty("_DISPLAY: 显示墙纸", ppt.showwallpaper);
 			g_wallpaperImg = setWallpaperImg();
 			brw.repaint();
 			break;
 		case (idx == 210):
 		case (idx == 211):
 			ppt.wallpapermode = idx - 210;
-			window.SetProperty("_SYSTEM: Wallpaper Mode", ppt.wallpapermode);
+			window.SetProperty("_SYSTEM: 墙纸模式", ppt.wallpapermode);
 			g_wallpaperImg = setWallpaperImg();
 			brw.repaint();
 			break;
 		case (idx == 220):
 			ppt.wallpaperblurred = !ppt.wallpaperblurred;
-			window.SetProperty("_DISPLAY: Wallpaper Blurred", ppt.wallpaperblurred);
+			window.SetProperty("_DISPLAY: 墙纸模糊", ppt.wallpaperblurred);
 			g_wallpaperImg = setWallpaperImg();
 			brw.repaint();
 			break;
 		case (idx == 300):
 			ppt.showgroupheaders = !ppt.showgroupheaders;
-			window.SetProperty("_DISPLAY: Show Group Headers", ppt.showgroupheaders);
+			window.SetProperty("_DISPLAY: 显示组标题", ppt.showgroupheaders);
 			if (!ppt.showgroupheaders)
 				brw.collapseAll(false);
 			get_metrics();
@@ -2886,7 +2886,7 @@ oBrowser = function (name) {
 			break;
 		case (idx == 310):
 			ppt.autocollapse = !ppt.autocollapse;
-			window.SetProperty("_PROPERTY: Autocollapse groups", ppt.autocollapse);
+			window.SetProperty("_PROPERTY: 自动折叠组", ppt.autocollapse);
 			brw.populate(false);
 			brw.showFocusedItem();
 			break;
@@ -2903,13 +2903,13 @@ oBrowser = function (name) {
 			break;
 		case (idx == 910):
 			ppt.showHeaderBar = !ppt.showHeaderBar;
-			window.SetProperty("_DISPLAY: Show Top Bar", ppt.showHeaderBar);
+			window.SetProperty("_DISPLAY: 显示顶栏", ppt.showHeaderBar);
 			get_metrics();
 			brw.repaint();
 			break;
 		case (idx == 912):
 			ppt.doubleRowText = !ppt.doubleRowText;
-			window.SetProperty("_PROPERTY: Double Row Text Info", ppt.doubleRowText);
+			window.SetProperty("_PROPERTY: 双行文本信息", ppt.doubleRowText);
 			get_metrics();
 			brw.repaint();
 			break;
@@ -3384,7 +3384,7 @@ function on_mouse_wheel(step) {
 			};
 			if (previous != ppt.groupHeaderRowsNumber) {
 				timers.mouseWheel = window.SetTimeout(function () {
-						window.SetProperty("_PROPERTY: Number of Rows for Group Header", ppt.groupHeaderRowsNumber);
+						window.SetProperty("_PROPERTY: 组标题行数", ppt.groupHeaderRowsNumber);
 						get_font();
 						get_metrics();
 						get_images();
@@ -3421,7 +3421,7 @@ function on_mouse_wheel(step) {
 			};
 			if (previous != ppt.extra_font_size) {
 				timers.mouseWheel = window.SetTimeout(function () {
-						window.SetProperty("_SYSTEM: Extra font size value", ppt.extra_font_size);
+						window.SetProperty("_SYSTEM: 扩展字体大小", ppt.extra_font_size);
 						get_font();
 						get_metrics();
 						get_images();
@@ -3625,15 +3625,15 @@ function get_colors() {
 	g_syscolor_button_bg = utils.GetSysColour(COLOR_BTNFACE);
 	g_syscolor_button_txt = utils.GetSysColour(COLOR_BTNTEXT);
 
-	arr = window.GetProperty("CUSTOM COLOR TEXT NORMAL", "180-180-180").split("-");
+	arr = window.GetProperty("自定义通用文本颜色", "180-180-180").split("-");
 	g_color_normal_txt = RGB(arr[0], arr[1], arr[2]);
-	arr = window.GetProperty("CUSTOM COLOR TEXT SELECTED", "000-000-000").split("-");
+	arr = window.GetProperty("自定义选择文本颜色", "000-000-000").split("-");
 	g_color_selected_txt = RGB(arr[0], arr[1], arr[2]);
-	arr = window.GetProperty("CUSTOM COLOR BACKGROUND NORMAL", "025-025-035").split("-");
+	arr = window.GetProperty("自定义通用背景颜色", "025-025-035").split("-");
 	g_color_normal_bg = RGB(arr[0], arr[1], arr[2]);
-	arr = window.GetProperty("CUSTOM COLOR BACKGROUND SELECTED", "015-177-255").split("-");
+	arr = window.GetProperty("自定义选择背景颜色", "015-177-255").split("-");
 	g_color_selected_bg = RGB(arr[0], arr[1], arr[2]);
-	arr = window.GetProperty("CUSTOM COLOR HIGHLIGHT", "255-175-050").split("-");
+	arr = window.GetProperty("自定义高亮颜色", "255-175-050").split("-");
 	g_color_highlight = RGB(arr[0], arr[1], arr[2]);
 
 	// get custom colors from window ppt first
@@ -4152,13 +4152,13 @@ function on_key_down(vkey) {
 				};
 				if (vkey == 66) { // CTRL+B
 					cScrollBar.enabled = !cScrollBar.enabled;
-					window.SetProperty("_DISPLAY: Show Scrollbar", cScrollBar.enabled);
+					window.SetProperty("_DISPLAY: 显示滚动条", cScrollBar.enabled);
 					get_metrics();
 					brw.repaint();
 				};
 				if (vkey == 84) { // CTRL+T
 					ppt.showHeaderBar = !ppt.showHeaderBar;
-					window.SetProperty("_DISPLAY: Show Top Bar", ppt.showHeaderBar);
+					window.SetProperty("_DISPLAY: 显示顶栏", ppt.showHeaderBar);
 					get_metrics();
 					brw.scrollbar.updateScrollbar();
 					brw.repaint();
@@ -4169,7 +4169,7 @@ function on_key_down(vkey) {
 						ppt.extra_font_size = 0;
 						if (previous != ppt.extra_font_size) {
 							timers.mouseWheel = window.SetTimeout(function () {
-									window.SetProperty("_SYSTEM: Extra font size value", ppt.extra_font_size);
+									window.SetProperty("_SYSTEM: 扩展字体大小", ppt.extra_font_size);
 									get_font();
 									get_metrics();
 									get_images();

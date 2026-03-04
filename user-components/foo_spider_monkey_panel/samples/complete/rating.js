@@ -1,6 +1,6 @@
 ﻿'use strict';
 
-window.DefineScript('Rating', {author:'marc2003', options:{grab_focus:false}});
+window.DefineScript('rating', {author:'marc2003', options:{grab_focus:false}});
 include(fb.ComponentPath + 'samples\\complete\\js\\lodash.min.js');
 include(fb.ComponentPath + 'samples\\complete\\js\\helpers.js');
 include(fb.ComponentPath + 'samples\\complete\\js\\panel.js');
@@ -14,7 +14,7 @@ Now supports 3 modes:
 */
 
 let panel = new _panel(true);
-let rating = new _rating(0, 0, 24, _RGB(255, 128, 0)); // x, y, size, colour
+let rating = new _rating(0, 0, 24, _RGB(255, 255, 255)); // x, y, size, colour
 
 panel.item_focus_change();
 

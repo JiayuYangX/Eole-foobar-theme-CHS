@@ -7,7 +7,7 @@ include(fb.ComponentPath + 'samples\\complete\\js\\panel.js');
 
 let panel = new _panel(true);
 let buttons = new _buttons();
-buttons.buttons.menu = new _button(0, 0, 36, 36, {normal : 'misc\\foobar2000.png'}, (x, y, mask) => { _menu(0, 36); }, 'Menu');
+buttons.buttons.menu = new _button(0, 0, 36, 36, {normal : 'misc\\foobar2000.png'}, (x, y, mask) => { _menu(0, 36); }, '菜单');
 
 function on_focus(is_focused) {
 	if (is_focused) {

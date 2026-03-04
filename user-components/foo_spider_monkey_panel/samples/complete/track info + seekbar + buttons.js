@@ -8,12 +8,12 @@ include(fb.ComponentPath + 'samples\\complete\\js\\seekbar.js');
 
 let colours = {
 	buttons : _RGB(255, 255, 255),
-	background : _RGB(30, 30, 30),
+	background : _RGB(0o0, 0o0, 0o0),
 	title : _RGB(255, 255, 255),
 	artist : _RGB(240, 240, 240),
 	time : _RGB(240, 240, 240),
-	seekbar_background : _RGB(160, 160, 160),
-	seekbar_progress : _RGB(255, 255, 255),
+	seekbar_background : _RGB(0, 94, 138),
+	seekbar_progress : _RGB(34, 34, 34),
 	seekbar_knob : _RGB(196, 30, 35)
 };
 
@@ -35,13 +35,13 @@ on_playback_new_track(fb.GetNowPlaying());
 
 buttons.update = () => {
 	const y = Math.round((panel.h - bs) / 2);
-	buttons.buttons.stop = new _button(panel.w - LM - (bs * 8), y, bs, bs, {normal : _chrToImg(chars.stop, colours.buttons)}, () => { fb.Stop(); }, 'Stop');
-	buttons.buttons.previous = new _button(panel.w - LM - (bs * 7), y, bs, bs, {normal : _chrToImg(chars.prev, colours.buttons)}, () => { fb.Prev(); }, 'Previous');
-	buttons.buttons.play = new _button(panel.w - LM - (bs * 6), y, bs, bs, {normal : !fb.IsPlaying || fb.IsPaused ? _chrToImg(chars.play, colours.buttons) : _chrToImg(chars.pause, colours.buttons)}, () => { fb.PlayOrPause(); }, !fb.IsPlaying || fb.IsPaused ? 'Play' : 'Pause');
-	buttons.buttons.next = new _button(panel.w - LM - (bs * 5), y, bs, bs, {normal : _chrToImg(chars.next, colours.buttons)}, () => { fb.Next(); }, 'Next');
-	buttons.buttons.console = new _button(panel.w - LM - (bs * 3), y, bs, bs, {normal : _chrToImg(chars.console, colours.buttons)}, () => { fb.ShowConsole(); }, 'Console');
-	buttons.buttons.search = new _button(panel.w - LM - (bs * 2), y, bs, bs, {normal : _chrToImg(chars.search, colours.buttons)}, () => { fb.RunMainMenuCommand('Library/Search'); }, 'Library Search');
-	buttons.buttons.preferences = new _button(panel.w - LM - bs, y, bs, bs, {normal : _chrToImg(chars.preferences, colours.buttons)}, () => { fb.ShowPreferences(); }, 'Preferences');
+	buttons.buttons.stop = new _button(panel.w - LM - (bs * 8), y, bs, bs, {normal : _chrToImg(chars.stop, colours.buttons)}, () => { fb.Stop(); }, '停止');
+	buttons.buttons.previous = new _button(panel.w - LM - (bs * 7), y, bs, bs, {normal : _chrToImg(chars.prev, colours.buttons)}, () => { fb.Prev(); }, '上一首');
+	buttons.buttons.play = new _button(panel.w - LM - (bs * 6), y, bs, bs, {normal : !fb.IsPlaying || fb.IsPaused ? _chrToImg(chars.play, colours.buttons) : _chrToImg(chars.pause, colours.buttons)}, () => { fb.PlayOrPause(); }, !fb.IsPlaying || fb.IsPaused ? '播放' : '暂停');
+	buttons.buttons.next = new _button(panel.w - LM - (bs * 5), y, bs, bs, {normal : _chrToImg(chars.next, colours.buttons)}, () => { fb.Next(); }, '下一首');
+	buttons.buttons.console = new _button(panel.w - LM - (bs * 3), y, bs, bs, {normal : _chrToImg(chars.console, colours.buttons)}, () => { fb.ShowConsole(); }, '控制台');
+	buttons.buttons.search = new _button(panel.w - LM - (bs * 2), y, bs, bs, {normal : _chrToImg(chars.search, colours.buttons)}, () => { fb.RunMainMenuCommand('媒体库/搜索'); }, '媒体库搜索');
+	buttons.buttons.preferences = new _button(panel.w - LM - bs, y, bs, bs, {normal : _chrToImg(chars.preferences, colours.buttons)}, () => { fb.ShowPreferences(); }, '参数选项');
 }
 
 function on_size() {
@@ -143,7 +143,7 @@ function on_mouse_lbtn_up(x, y) {
 	if (seekbar.lbtn_up(x, y)) {
 		return;
 	}
-	fb.RunMainMenuCommand('View/Show now playing in playlist');
+	fb.RunMainMenuCommand('视图/显示列表正在播放项目');
 }
 
 function on_mouse_rbtn_up(x, y) {

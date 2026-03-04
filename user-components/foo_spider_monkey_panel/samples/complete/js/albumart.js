@@ -88,13 +88,13 @@ function _albumart (x, y, w, h) {
 	}
 	
 	this.rbtn_up = (x, y) => {
-		panel.m.AppendMenuItem(MF_STRING, 1000, 'Refresh');
+		panel.m.AppendMenuItem(MF_STRING, 1000, '刷新');
 		panel.m.AppendMenuSeparator();
-		panel.m.AppendMenuItem(MF_STRING, 1001, 'CD Jewel Case');
+		panel.m.AppendMenuItem(MF_STRING, 1001, 'CD光盘盒');
 		panel.m.CheckMenuItem(1001, this.properties.cd.enabled);
-		panel.m.AppendMenuItem(this.properties.cd.enabled ? MF_STRING : MF_GRAYED, 1002, 'Gloss effect');
+		panel.m.AppendMenuItem(this.properties.cd.enabled ? MF_STRING : MF_GRAYED, 1002, '光泽效果');
 		panel.m.CheckMenuItem(1002, this.properties.gloss.enabled);
-		panel.m.AppendMenuItem(this.properties.cd.enabled ? MF_STRING : MF_GRAYED, 1003, 'Shadow effect');
+		panel.m.AppendMenuItem(this.properties.cd.enabled ? MF_STRING : MF_GRAYED, 1003, '阴影效果');
 		panel.m.CheckMenuItem(1003, this.properties.shadow.enabled);
 		panel.m.AppendMenuSeparator();
 		_.forEach(this.ids, (item, i) => {
@@ -107,9 +107,11 @@ function _albumart (x, y, w, h) {
 		});
 		panel.m.CheckMenuRadioItem(1020, 1023, this.properties.aspect.value + 1020);
 		panel.m.AppendMenuSeparator();
-		panel.m.AppendMenuItem(_isFile(this.path) ? MF_STRING : MF_GRAYED, 1030, '打开包含文件夹');
+		panel.m.AppendMenuItem(_isFile(this.path) ? MF_STRING : MF_GRAYED, 1030, '打开所在文件夹');
 		panel.m.AppendMenuSeparator();
-		panel.m.AppendMenuItem(panel.metadb ? MF_STRING : MF_GRAYED, 1040, 'Google image search');
+		panel.m.AppendMenuItem(panel.metadb ? MF_STRING : MF_GRAYED, 1040, '谷歌图像搜索');
+		panel.m.AppendMenuItem(panel.metadb ? MF_STRING : MF_GRAYED, 1050, '百度图像搜索');
+		panel.m.AppendMenuItem(panel.metadb ? MF_STRING : MF_GRAYED, 1060, '必应图像搜索');
 		panel.m.AppendMenuSeparator();
 	}
 	
@@ -151,6 +153,12 @@ function _albumart (x, y, w, h) {
 		case 1040:
 			_run('https://www.google.com/search?tbm=isch&q=' + encodeURIComponent(panel.tf('%album artist%[ %album%]')));
 			break;
+		case 1050:
+			_run('https://image.baidu.com/search/index?tn=baiduimage&ipn=utf-8&word=' + encodeURIComponent(panel.tf('%album artist%[ %album%]')));
+			break;
+		case 1060:
+			_run('https://cn.bing.com/images/search?q=' + encodeURIComponent(panel.tf('%album artist%[ %album%]')));
+			break;	
 		}
 	}
 	
@@ -196,8 +204,8 @@ function _albumart (x, y, w, h) {
 	this.img = null;
 	this.path = null;
 	this.hover = false;
-	this.aspects = ['Crop (focus on centre)', 'Crop (focus on top)', 'Stretch', 'Centre'];
-	this.ids = ['Front', 'Back', 'Disc', 'Icon', 'Artist'];
+	this.aspects = ['裁剪（聚焦于中心）', '裁剪（聚焦于顶部）', '拉伸', '中心'];
+	this.ids = ['封面', '封底', '光盘', '图标', '艺术家'];
 	this.images = {
 		shadow : _img('cd\\shadow.png'),
 		case : _img('cd\\case.png'),

@@ -1,4 +1,4 @@
-﻿window.DefineScript('ColourPicker', { author: 'marc2003' });
+window.DefineScript('ColourPicker', { author: 'marc2003' });
 include('docs/Flags.js');
 include('docs/Helpers.js');
 
@@ -9,7 +9,7 @@ let colour = RGB(255, 0, 0);
 function on_paint(gr) {
     gr.FillSolidRect(0, 0, window.Width, window.Height, colour);
     gr.FillSolidRect(0, 0, window.Width, 24, RGB(0, 0, 0));
-    gr.GdiDrawText('点击打开选色器', font, RGB(255, 255, 255), 0, 0, window.Width, 24, DT_CENTER);
+    gr.GdiDrawText('Click to open ColorPicker', font, RGB(255, 255, 255), 0, 0, window.Width, 24, DT_CENTER);
 }
 
 function on_mouse_lbtn_up() {

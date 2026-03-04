@@ -54,7 +54,7 @@ function on_size() {
 }
 
 function on_paint(gr) {
-	gr.FillSolidRect(seekbar.x, seekbar.y, seekbar.w, seekbar.h, _RGB(0, 0, 0));
+	gr.FillSolidRect(seekbar.x, seekbar.y, seekbar.w, seekbar.h, _RGB(23, 23, 23));
 	if (working) {
 		_drawImage(gr, img.hourglass, seekbar.x, seekbar.y, seekbar.w, seekbar.h, image.centre);
 	} else if (img.spectrogram) {

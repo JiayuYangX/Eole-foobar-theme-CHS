@@ -684,7 +684,7 @@ oItem = function (playlist, row_index, type, handle, track_index, group_index, t
 				// lg 3 (not customizable)
 				gr.FillSolidRect(this.x + cover.w + text_left_padding, (this.y + cTrack.height * 2 - groupDelta) - 1, this.w - cover.w - text_left_padding * 5 + 2 - scrollbar_gape, 1.0, line_color);
 				if (this.obj) {
-					var lg3_left_field = this.obj.count + (this.obj.count > 1 ? " tracks. " : " track. ") + this.obj.total_group_duration_txt;
+					var lg3_left_field = this.obj.count + (this.obj.count > 1 ? " 音轨. " : " 音轨. ") + this.obj.total_group_duration_txt;
 				} else {
 					var lg3_left_field = "";
 				}
@@ -1250,7 +1250,7 @@ oList = function (object_name, playlist) {
 	this.groups = [];
 	this.items = [];
 	this.groupby = [];
-	this.totalGroupBy = window.GetProperty("SYSTEM.Groups.TotalGroupBy", 0);
+	this.totalGroupBy = window.GetProperty("SYSTEM.组.总分组依据", 0);
 	this.metadblist_selection = plman.GetPlaylistSelectedItems(this.playlist);
 	this.SHIFT_start_id = null;
 	this.SHIFT_count = 0;
@@ -1330,49 +1330,49 @@ oList = function (object_name, playlist) {
 			};
 			switch (j) {
 			case 0:
-				window.SetProperty("SYSTEM.GroupBy.label", tmp);
+				window.SetProperty("SYSTEM.分组依据.标签", tmp);
 				break;
 			case 1:
-				window.SetProperty("SYSTEM.GroupBy.tf", tmp);
+				window.SetProperty("SYSTEM.分组依据.tf", tmp);
 				break;
 			case 2:
-				window.SetProperty("SYSTEM.GroupBy.sortOrder", tmp);
+				window.SetProperty("SYSTEM.分组依据.排序器", tmp);
 				break;
 			case 3:
-				window.SetProperty("SYSTEM.GroupBy.ref", tmp);
+				window.SetProperty("SYSTEM.分组依据.ref", tmp);
 				break;
 			case 4:
-				window.SetProperty("SYSTEM.GroupBy.playlistFilter", tmp);
+				window.SetProperty("SYSTEM.分组依据.播放列表过滤器", tmp);
 				break;
 			case 5:
-				window.SetProperty("SYSTEM.GroupBy.extraRows", tmp);
+				window.SetProperty("SYSTEM.分组依据.扩展行", tmp);
 				break;
 			case 6:
-				window.SetProperty("SYSTEM.GroupBy.collapsedHeight", tmp);
+				window.SetProperty("SYSTEM.分组依据.折叠高度", tmp);
 				break;
 			case 7:
-				window.SetProperty("SYSTEM.GroupBy.expandedHeight", tmp);
+				window.SetProperty("SYSTEM.分组依据.扩展高度", tmp);
 				break;
 			case 8:
-				window.SetProperty("SYSTEM.GroupBy.showCover", tmp);
+				window.SetProperty("SYSTEM.分组依据.显示封面", tmp);
 				break;
 			case 9:
-				window.SetProperty("SYSTEM.GroupBy.autoCollapse", tmp);
+				window.SetProperty("SYSTEM.分组依据.自动折叠", tmp);
 				break;
 			case 10:
-				window.SetProperty("SYSTEM.GroupBy.l1", tmp);
+				window.SetProperty("SYSTEM.分组依据.l1", tmp);
 				break;
 			case 11:
-				window.SetProperty("SYSTEM.GroupBy.r1", tmp);
+				window.SetProperty("SYSTEM.分组依据.r1", tmp);
 				break;
 			case 12:
-				window.SetProperty("SYSTEM.GroupBy.l2", tmp);
+				window.SetProperty("SYSTEM.分组依据.l2", tmp);
 				break;
 			case 13:
-				window.SetProperty("SYSTEM.GroupBy.r2", tmp);
+				window.SetProperty("SYSTEM.分组依据.r2", tmp);
 				break;
 			case 14:
-				window.SetProperty("SYSTEM.GroupBy.collapseGroupsByDefault", tmp);
+				window.SetProperty("SYSTEM.分组依据.默认折叠组", tmp);
 				break;
 			};
 		};
@@ -1390,7 +1390,7 @@ oList = function (object_name, playlist) {
 			for (var i = 0; i < 15; i++) {
 				switch (i) {
 				case 0:
-					fields.push(new Array("Album Artist | Album | Disc", "Folder Structure"));
+					fields.push(new Array("专辑艺术家 | 专辑 | 碟片", "文件夹结构"));
 					break;
 				case 1:
 					fields.push(new Array("%album artist%%album%%discnumber%", "$replace(%path%,%filename_ext%,)"));
@@ -1420,7 +1420,7 @@ oList = function (object_name, playlist) {
 					fields.push(new Array("0", "0"));
 					break;
 				case 10: // l1
-					fields.push(new Array("$if(%album%,%album% ['('Disc %discnumber%[ of %totaldiscs%]')'],$if(%length%,'Single(s)','Streams'))", "$directory(%path%,1)"));
+					fields.push(new Array("$if(%album%,%album% ['('碟片 %discnumber%[ / %totaldiscs%]')'],$if(%length%,'Single(s)','Streams'))", "$directory(%path%,1)"));
 					break;
 				case 11: // r1
 					fields.push(new Array("$if(%date%,$year($replace(%date%,/,-,.,-)),'-')", "$if(%date%,$year($replace(%date%,/,-,.,-)),'-')"));
@@ -1447,55 +1447,55 @@ oList = function (object_name, playlist) {
 				// save CSV string into window Properties
 				switch (i) {
 				case 0:
-					window.SetProperty("SYSTEM.GroupBy.label", tmp);
+					window.SetProperty("SYSTEM.分组依据.标签", tmp);
 					break;
 				case 1:
-					window.SetProperty("SYSTEM.GroupBy.tf", tmp);
+					window.SetProperty("SYSTEM.分组依据.tf", tmp);
 					break;
 				case 2:
-					window.SetProperty("SYSTEM.GroupBy.sortOrder", tmp);
+					window.SetProperty("SYSTEM.分组依据.排序器", tmp);
 					break;
 				case 3:
-					window.SetProperty("SYSTEM.GroupBy.ref", tmp);
+					window.SetProperty("SYSTEM.分组依据.ref", tmp);
 					break;
 				case 4:
-					window.SetProperty("SYSTEM.GroupBy.playlistFilter", tmp);
+					window.SetProperty("SYSTEM.分组依据.播放列表过滤器", tmp);
 					break;
 				case 5:
-					window.SetProperty("SYSTEM.GroupBy.extraRows", tmp);
+					window.SetProperty("SYSTEM.分组依据.扩展行", tmp);
 					break;
 				case 6:
-					window.SetProperty("SYSTEM.GroupBy.collapsedHeight", tmp);
+					window.SetProperty("SYSTEM.分组依据.折叠高度", tmp);
 					break;
 				case 7:
-					window.SetProperty("SYSTEM.GroupBy.expandedHeight", tmp);
+					window.SetProperty("SYSTEM.分组依据.扩展高度", tmp);
 					break;
 				case 8:
-					window.SetProperty("SYSTEM.GroupBy.showCover", tmp);
+					window.SetProperty("SYSTEM.分组依据.显示封面", tmp);
 					break;
 				case 9:
-					window.SetProperty("SYSTEM.GroupBy.autoCollapse", tmp);
+					window.SetProperty("SYSTEM.分组依据.自动折叠", tmp);
 					break;
 				case 10:
-					window.SetProperty("SYSTEM.GroupBy.l1", tmp);
+					window.SetProperty("SYSTEM.分组依据.l1", tmp);
 					break;
 				case 11:
-					window.SetProperty("SYSTEM.GroupBy.r1", tmp);
+					window.SetProperty("SYSTEM.分组依据.r1", tmp);
 					break;
 				case 12:
-					window.SetProperty("SYSTEM.GroupBy.l2", tmp);
+					window.SetProperty("SYSTEM.分组依据.l2", tmp);
 					break;
 				case 13:
-					window.SetProperty("SYSTEM.GroupBy.r2", tmp);
+					window.SetProperty("SYSTEM.分组依据.r2", tmp);
 					break;
 				case 14:
-					window.SetProperty("SYSTEM.GroupBy.collapseGroupsByDefault", tmp);
+					window.SetProperty("SYSTEM.分组依据.默认折叠组", tmp);
 					break;
 				};
 			};
 			// create GroupBy Objects
 			this.totalGroupBy = fields[0].length;
-			window.SetProperty("SYSTEM.Groups.TotalGroupBy", this.totalGroupBy);
+			window.SetProperty("SYSTEM.组.总分组依据", this.totalGroupBy);
 			for (var k = 0; k < this.totalGroupBy; k++) {
 				this.groupby.push(new oGroupBy(fields[0][k], fields[1][k], fields[2][k], fields[3][k], fields[4][k], fields[5][k], fields[6][k], fields[7][k], fields[8][k], fields[9][k], fields[10][k], fields[11][k], fields[12][k], fields[13][k], fields[14][k]));
 			};
@@ -1507,49 +1507,49 @@ oList = function (object_name, playlist) {
 			for (var i = 0; i < 15; i++) {
 				switch (i) {
 				case 0:
-					tmp = window.GetProperty("SYSTEM.GroupBy.label", "?;?");
+					tmp = window.GetProperty("SYSTEM.分组依据.标签", "?;?");
 					break;
 				case 1:
-					tmp = window.GetProperty("SYSTEM.GroupBy.tf", "?;?");
+					tmp = window.GetProperty("SYSTEM.分组依据.tf", "?;?");
 					break;
 				case 2:
-					tmp = window.GetProperty("SYSTEM.GroupBy.sortOrder", "?;?");
+					tmp = window.GetProperty("SYSTEM.分组依据.排序器", "?;?");
 					break;
 				case 3:
-					tmp = window.GetProperty("SYSTEM.GroupBy.ref", "?;?");
+					tmp = window.GetProperty("SYSTEM.分组依据.ref", "?;?");
 					break;
 				case 4:
-					tmp = window.GetProperty("SYSTEM.GroupBy.playlistFilter", "?;?");
+					tmp = window.GetProperty("SYSTEM.分组依据.播放列表过滤器", "?;?");
 					break;
 				case 5:
-					tmp = window.GetProperty("SYSTEM.GroupBy.extraRows", "?;?");
+					tmp = window.GetProperty("SYSTEM.分组依据.扩展行", "?;?");
 					break;
 				case 6:
-					tmp = window.GetProperty("SYSTEM.GroupBy.collapsedHeight", "?;?");
+					tmp = window.GetProperty("SYSTEM.分组依据.折叠高度", "?;?");
 					break;
 				case 7:
-					tmp = window.GetProperty("SYSTEM.GroupBy.expandedHeight", "?;?");
+					tmp = window.GetProperty("SYSTEM.分组依据.扩展高度", "?;?");
 					break;
 				case 8:
-					tmp = window.GetProperty("SYSTEM.GroupBy.showCover", "?;?");
+					tmp = window.GetProperty("SYSTEM.分组依据.显示封面", "?;?");
 					break;
 				case 9:
-					tmp = window.GetProperty("SYSTEM.GroupBy.autoCollapse", "?;?");
+					tmp = window.GetProperty("SYSTEM.分组依据.自动折叠", "?;?");
 					break;
 				case 10:
-					tmp = window.GetProperty("SYSTEM.GroupBy.l1", "?;?");
+					tmp = window.GetProperty("SYSTEM.分组依据.l1", "?;?");
 					break;
 				case 11:
-					tmp = window.GetProperty("SYSTEM.GroupBy.r1", "?;?");
+					tmp = window.GetProperty("SYSTEM.分组依据.r1", "?;?");
 					break;
 				case 12:
-					tmp = window.GetProperty("SYSTEM.GroupBy.l2", "?;?");
+					tmp = window.GetProperty("SYSTEM.分组依据.l2", "?;?");
 					break;
 				case 13:
-					tmp = window.GetProperty("SYSTEM.GroupBy.r2", "?;?");
+					tmp = window.GetProperty("SYSTEM.分组依据.r2", "?;?");
 					break;
 				case 14:
-					tmp = window.GetProperty("SYSTEM.GroupBy.collapseGroupsByDefault", "?;?");
+					tmp = window.GetProperty("SYSTEM.分组依据.默认折叠组", "?;?");
 					break;
 				};
 				fields.push(tmp.split("^^"));
@@ -2523,14 +2523,14 @@ oList = function (object_name, playlist) {
 		var _context = fb.CreateContextMenuManager();
 		
 		_context.InitContextPlaylist();
-		_menu.AppendMenuItem(MF_STRING, 1000, "Panel Settings...");
+		_menu.AppendMenuItem(MF_STRING, 1000, "面板设置...");
 		_menu.AppendMenuSeparator();
-		_menu.AppendMenuItem(flag, 1001, "Crop");
-		_menu.AppendMenuItem(flag, 1002, "Remove");
+		_menu.AppendMenuItem(flag, 1001, "移除非选择项");
+		_menu.AppendMenuItem(flag, 1002, "移除");
 		_menu.AppendMenuSeparator();
-		_menu.AppendMenuItem(flag, 1003, "Cut");
-		_menu.AppendMenuItem(MF_STRING, 1004, "Copy");
-		_menu.AppendMenuItem(!plman.IsPlaylistLocked(this.playlist) && fb.CheckClipboardContents(window.ID) ? MF_STRING : MF_GRAYED, 1005, "Paste");
+		_menu.AppendMenuItem(flag, 1003, "剪切");
+		_menu.AppendMenuItem(MF_STRING, 1004, "复制");
+		_menu.AppendMenuItem(!plman.IsPlaylistLocked(this.playlist) && fb.CheckClipboardContents(window.ID) ? MF_STRING : MF_GRAYED, 1005, "粘贴");
 		_menu.AppendMenuSeparator();
 		_context.BuildMenu(_menu, 1);
 		var idx = _menu.TrackPopupMenu(x, y);

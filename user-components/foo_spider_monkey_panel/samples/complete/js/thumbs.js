@@ -310,22 +310,22 @@ function _thumbs() {
 	}
 	
 	this.rbtn_up = (x, y) => {
-		panel.m.AppendMenuItem(MF_STRING, 1000, 'Custom folder');
-		panel.m.AppendMenuItem(MF_STRING, 1001, 'Last.fm artist art');
+		panel.m.AppendMenuItem(MF_STRING, 1000, '自定义文件夹');
+		panel.m.AppendMenuItem(MF_STRING, 1001, 'Last.fm 艺术家图片');
 		panel.m.CheckMenuRadioItem(1000, 1001, this.properties.source.value + 1000);
 		panel.m.AppendMenuSeparator();
 		if (this.properties.source.value == 0) { // custom folder
-			panel.m.AppendMenuItem(MF_STRING, 1002, 'Refresh');
-			panel.m.AppendMenuItem(MF_STRING, 1003, 'Set custom folder...');
+			panel.m.AppendMenuItem(MF_STRING, 1002, '刷新');
+			panel.m.AppendMenuItem(MF_STRING, 1003, '设置自定义文件夹...');
 		} else { // last.fm
-			panel.m.AppendMenuItem(panel.metadb ? MF_STRING : MF_GRAYED, 1004, 'Download now');
-			panel.m.AppendMenuItem(MF_STRING, 1005, 'Automatic downloads');
+			panel.m.AppendMenuItem(panel.metadb ? MF_STRING : MF_GRAYED, 1004, '强制更新');
+			panel.m.AppendMenuItem(MF_STRING, 1005, '自动下载');
 			panel.m.CheckMenuItem(1005, this.properties.auto_download.enabled);
 			_.forEach(this.limits, (item) => {
 				panel.s10.AppendMenuItem(MF_STRING, item + 1010, item);
 			});
 			panel.s10.CheckMenuRadioItem(_.first(this.limits) + 1010, _.last(this.limits) + 1010, this.properties.limit.value + 1010);
-			panel.s10.AppendTo(panel.m, MF_STRING, 'Limit');
+			panel.s10.AppendTo(panel.m, MF_STRING, '数量');
 		}
 		panel.m.AppendMenuSeparator();
 		if (!panel.text_objects.length && !panel.list_objects.length) {
@@ -339,40 +339,40 @@ function _thumbs() {
 				panel.s11.AppendMenuItem(flag, item + 1000, item + 'px');
 			});
 			panel.s11.CheckMenuRadioItem(_.first(this.pxs) + 1000, _.last(this.pxs) + 1000, this.properties.px.value + 1000);
-			panel.s11.AppendTo(panel.m, MF_STRING, 'Thumbs');
+			panel.s11.AppendTo(panel.m, MF_STRING, '布局');
 			panel.m.AppendMenuSeparator();
 		}
-		panel.s12.AppendMenuItem(MF_STRING, 1400, 'Off');
-		panel.s12.AppendMenuItem(MF_STRING, 1405, '5 seconds');
-		panel.s12.AppendMenuItem(MF_STRING, 1410, '10 seconds');
-		panel.s12.AppendMenuItem(MF_STRING, 1420, '20 seconds');
+		panel.s12.AppendMenuItem(MF_STRING, 1400, '关');
+		panel.s12.AppendMenuItem(MF_STRING, 1405, '5 秒');
+		panel.s12.AppendMenuItem(MF_STRING, 1410, '10 秒');
+		panel.s12.AppendMenuItem(MF_STRING, 1420, '20 秒');
 		panel.s12.CheckMenuRadioItem(1400, 1420, this.properties.cycle.value + 1400);
-		panel.s12.AppendTo(panel.m, MF_STRING, 'Cycle');
+		panel.s12.AppendTo(panel.m, MF_STRING, '循环');
 		panel.m.AppendMenuSeparator();
 		panel.s13.AppendMenuItem(MF_STRING, 1500, 'A-Z');
-		panel.s13.AppendMenuItem(MF_STRING, 1501, 'Newest first');
+		panel.s13.AppendMenuItem(MF_STRING, 1501, '最新排前');
 		panel.s13.CheckMenuRadioItem(1500, 1501, this.properties.sort.value + 1500);
-		panel.s13.AppendTo(panel.m, MF_STRING, 'Sort');
+		panel.s13.AppendTo(panel.m, MF_STRING, '排序');
 		panel.m.AppendMenuSeparator();
 		if (this.image_xywh_trace(x, y)) {
 			if (this.properties.mode.value != 0) {
-				panel.m.AppendMenuItem(MF_STRING, 1510, 'Crop (focus on centre)');
-				panel.m.AppendMenuItem(MF_STRING, 1511, 'Crop (focus on top)');
-				panel.m.AppendMenuItem(MF_STRING, 1512, 'Stretch');
-				panel.m.AppendMenuItem(MF_STRING, 1513, 'Centre');
+				panel.m.AppendMenuItem(MF_STRING, 1510, '裁剪 (聚集于中心)');
+				panel.m.AppendMenuItem(MF_STRING, 1511, '裁剪 (聚集于顶部)');
+				panel.m.AppendMenuItem(MF_STRING, 1512, '伸展');
+				panel.m.AppendMenuItem(MF_STRING, 1513, '中心');
 				panel.m.CheckMenuRadioItem(1510, 1513, this.properties.aspect.value + 1510);
 				panel.m.AppendMenuSeparator();
 			}
 			if (this.properties.source.value == 1 && this.images.length > 1) {
-				panel.m.AppendMenuItem(this.default_file == this.files[this.image] ? MF_GRAYED : MF_STRING, 1520, 'Set as default');
-				panel.m.AppendMenuItem(MF_STRING, 1521, 'Clear default');
+				panel.m.AppendMenuItem(this.default_file == this.files[this.image] ? MF_GRAYED : MF_STRING, 1520, '设置为默认值');
+				panel.m.AppendMenuItem(MF_STRING, 1521, '清除默认值');
 				panel.m.AppendMenuSeparator();
 			}
-			panel.m.AppendMenuItem(MF_STRING, 1530, 'Open image');
-			panel.m.AppendMenuItem(MF_STRING, 1531, 'Delete image');
+			panel.m.AppendMenuItem(MF_STRING, 1530, '打开图片');
+			panel.m.AppendMenuItem(MF_STRING, 1531, '删除图片');
 			panel.m.AppendMenuSeparator();
 		}
-		panel.m.AppendMenuItem(_isFolder(this.folder) ? MF_STRING : MF_GRAYED, 1540, '打开包含文件夹');
+		panel.m.AppendMenuItem(_isFolder(this.folder) ? MF_STRING : MF_GRAYED, 1540, '打开所在文件夹');
 		panel.m.AppendMenuSeparator();
 	}
 	
@@ -389,7 +389,7 @@ function _thumbs() {
 			this.update();
 			break;
 		case 1003:
-			const tmp = utils.InputBox(window.ID, 'Enter title formatting or an absolute path to a folder.\n\n%profile% will resolve to your foobar2000 profile folder or the program folder if using portable mode.', window.ScriptInfo.Name, this.properties.tf.value);
+			const tmp = utils.InputBox(window.ID, '输入标题格式或文件夹的绝对路径.\n\n%profile% 将解析为foobar2000配置文件文件夹或程序文件夹（如果使用便携模式）.', window.ScriptInfo.Name, this.properties.tf.value);
 			this.properties.tf.value = tmp || '$directory_path(%path%)';
 			this.folder = '';
 			panel.item_focus_change();
@@ -566,7 +566,7 @@ function _thumbs() {
 	this.files = [];
 	this.images = [];
 	this.limits = [1, 3, 5, 10, 15, 20];
-	this.modes = ['grid', 'left', 'right', 'top', 'bottom', 'off'];
+	this.modes = ['网格', '左', '右', '顶', '底', '关闭'];
 	this.pxs = [75, 100, 150, 200, 250, 300];
 	this.ini_file = folders.data + 'thumbs.ini';
 	this.vbs_file = folders.home + 'vbs\\download.vbs';
@@ -583,15 +583,15 @@ function _thumbs() {
 	this.counter = 0;
 	this.xmlhttp = new ActiveXObject('Microsoft.XMLHTTP');
 	this.properties = {
-		mode : new _p('2K3.THUMBS.MODE', 4), // 0 grid 1 left 2 right 3 top 4 bottom 5 off
-		source : new _p('2K3.THUMBS.SOURCE', 0), // 0 custom folder 1 last.fm
-		tf : new _p('2K3.THUMBS.CUSTOM.FOLDER.TF', '$directory_path(%path%)'),
-		limit : new _p('2K3.THUMBS.DOWNLOAD.LIMIT', 10),
+		mode : new _p('2K3.THUMBS.模式', 4), // 0 grid 1 left 2 right 3 top 4 bottom 5 off
+		source : new _p('2K3.THUMBS.来源', 0), // 0 custom folder 1 last.fm
+		tf : new _p('2K3.THUMBS.自定义.文件夹.TF', '$directory_path(%path%)'),
+		limit : new _p('2K3.THUMBS.下载.数量', 10),
 		px : new _p('2K3.THUMBS.PX', 75),
-		cycle : new _p('2K3.THUMBS.CYCLE', 0),
-		sort : new _p('2K3.THUMBS.SORT', 0), // 0 a-z 1 newest first
-		aspect : new _p('2K3.THUMBS.ASPECT', image.crop_top),
-		auto_download : new _p('2K3.THUMBS.AUTO.DOWNLOAD', true),
+		cycle : new _p('2K3.THUMBS.循环', 0),
+		sort : new _p('2K3.THUMBS.排序', 0), // 0 a-z 1 newest first
+		aspect : new _p('2K3.THUMBS.布局', image.crop_top),
+		auto_download : new _p('2K3.THUMBS.自动.下载', true),
 	};
 	this.close_btn = new _sb(chars.close, 0, 0, _scale(12), _scale(12), () => { return this.properties.mode.value == 0 && this.overlay; }, () => { this.enable_overlay(false); });
 	window.SetInterval(this.interval_func, 1000);

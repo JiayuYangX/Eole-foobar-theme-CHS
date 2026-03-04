@@ -1,4 +1,4 @@
-﻿### Requirements
+### Requirements
 - "basic" scripts:  
          Should work fine on any system.
 - "complete" scripts:  

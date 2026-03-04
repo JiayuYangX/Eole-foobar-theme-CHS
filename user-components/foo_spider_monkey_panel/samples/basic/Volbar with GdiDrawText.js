@@ -16,7 +16,7 @@ function on_paint(gr) {
     let pos = ww * vol2pos(volume);
     let txt = volume.toFixed(2) + 'dB';
     if (pos) {
-        gr.FillGradRect(0, 0, pos, wh, 90, RGB(240, 240, 240), RGB(100, 230, 100));
+        gr.FillGradRect(0, 0, pos, wh, 90, RGB(0, 94, 138), RGB(0, 94, 138));
     }
     if (ww > pos) {
         gr.FillGradRect(pos, 0, ww - pos, wh, 90, RGB(240, 240, 240), RGB(190, 190, 190));

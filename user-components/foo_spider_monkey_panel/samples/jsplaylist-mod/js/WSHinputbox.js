@@ -333,14 +333,14 @@ oInputbox = function (w, h, default_text, empty_text, textcolor, backcolor, bord
 		var idx;
 		var _menu = window.CreatePopupMenu();
 		cInputbox.clipboard = cInputbox.doc.parentWindow.clipboardData.getData("Text");
-		_menu.AppendMenuItem(this.select ? MF_STRING : MF_GRAYED | MF_DISABLED, 1, "Copy");
-		_menu.AppendMenuItem(this.select ? MF_STRING : MF_GRAYED | MF_DISABLED, 2, "Cut");
+		_menu.AppendMenuItem(this.select ? MF_STRING : MF_GRAYED | MF_DISABLED, 1, "复制");
+		_menu.AppendMenuItem(this.select ? MF_STRING : MF_GRAYED | MF_DISABLED, 2, "剪切");
 		_menu.AppendMenuSeparator();
-		_menu.AppendMenuItem(cInputbox.clipboard ? MF_STRING : MF_GRAYED | MF_DISABLED, 3, "Paste");
+		_menu.AppendMenuItem(cInputbox.clipboard ? MF_STRING : MF_GRAYED | MF_DISABLED, 3, "粘贴");
 		if (utils.IsKeyPressed(VK_SHIFT)) {
 			_menu.AppendMenuSeparator();
-			_menu.AppendMenuItem(MF_STRING, 20, "Properties");
-			_menu.AppendMenuItem(MF_STRING, 21, "Configure...");
+			_menu.AppendMenuItem(MF_STRING, 20, "属性");
+			_menu.AppendMenuItem(MF_STRING, 21, "配置...");
 		};
 		idx = _menu.TrackPopupMenu(x, y);
 		switch (idx) {
