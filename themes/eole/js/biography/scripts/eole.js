@@ -382,13 +382,13 @@ var lyrics_off_icon_white = gdi.Image(theme_img_path + "\\icons\\white\\nowplayi
 var g_cursor = new oCursor();
 var g_tooltip = new oTooltip();
 var btns_manager = new SimpleButtonManager();
-btns_manager.addButton("lyricsReduce",-20, 8, 15, lyrics_off_icon.Height, "Reduce Lyrics", "Reduce Lyrics width", function () {
+btns_manager.addButton("lyricsReduce",-20, 8, 15, lyrics_off_icon.Height, "Reduce Lyrics", "减少歌词面板宽度", function () {
 		lyrics_state.decrement(1);
 		positionButtons();
 		g_tooltip.Deactivate();
 		window.Repaint();		
     },false,lyrics_off_icon,lyrics_off_hover_icon,ButtonStates.normal,255);
-btns_manager.addButton("lyricsIncrease",-45, 8, 15, lyrics_off_icon.Height, "Extend Lyrics", "Extend Lyrics width", function () {
+btns_manager.addButton("lyricsIncrease",-45, 8, 15, lyrics_off_icon.Height, "Extend Lyrics", "增加歌词面板宽度", function () {
 		lyrics_state.increment(1);
 		positionButtons();
 		g_tooltip.Deactivate();
@@ -418,7 +418,7 @@ function positionButtons(){
 		btns_manager.buttons.lyricsIncrease.hide = true;	
 		btns_manager.buttons.lyricsReduce.hide = false;			
 	} else if(lyrics_state.isMinimumValue()) {
-		btns_manager.buttons.lyricsIncrease.text = "Lyrics";
+		btns_manager.buttons.lyricsIncrease.text = "歌词";
 		btns_manager.buttons.lyricsIncrease.first_draw=true;
 		btns_manager.buttons.lyricsIncrease.x = -20;		
 		btns_manager.buttons.lyricsReduce.hide = true;

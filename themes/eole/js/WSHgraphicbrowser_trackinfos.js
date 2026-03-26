@@ -1033,7 +1033,8 @@ oRow = function(metadb,itemIndex) {
 			elapsed_seconds % 2 === 0
 				? gr.DrawImage(image0, this.x+12,  text_y+Math.ceil((text_height-image0.Height)/2), image0.Width, image0.Height, 0, 0, image0.Width, image0.Height,0,255)
 				: gr.DrawImage(image1, this.x+12,  text_y+Math.ceil((text_height-image1.Height)/2), image1.Width, image1.Height, 0, 0, image1.Width, image1.Height,0,255);
-		} else {
+		// } else {
+		} else if (this.tracknumber !== "?") {
 			gr.GdiDrawText(this.discnumber + this.tracknumber, g_font.normal, g_showlist.colorSchemeTextFaded, this.x - 2, text_y, this.tracknumber_w, text_height, DT_RIGHT | DT_VCENTER | DT_CALCRECT | DT_END_ELLIPSIS | DT_NOPREFIX);
 		}
 
