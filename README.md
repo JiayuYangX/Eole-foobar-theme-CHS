@@ -1,6 +1,6 @@
 # Eole-foobar-theme-CHS
 
-本主题为 [Eole](https://github.com/Ottodix/Eole-foobar-theme) 的汉化版（仅支持 32 位），提取自 [shooterspps/foobar2000](https://github.com/shooterspps/foobar2000) 安装包文件，修改部分汉化文本，并依照 Eole 后来更新的内容同步部分更新。另外自行增加了跟随 Columns UI 深浅色自动切换的功能。
+本仓库为 foobar2000 [Eole](https://github.com/Ottodix/Eole-foobar-theme) 主题的汉化版（仅支持 32 位版本），提取自 [shooterspps/foobar2000](https://github.com/shooterspps/foobar2000) 安装包文件，优化部分汉化文本及界面细节，并依照 Eole 后来更新的内容同步部分更新。另外自行增加了跟随 Columns UI 深浅色自动切换的功能。
 
 ### 深浅色自动切换
 
