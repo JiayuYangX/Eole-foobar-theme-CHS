@@ -4057,7 +4057,6 @@ oBrowser = function(name) {
 				};
 			}
 
-            let albumIndex = 0;
 			brw.activeRow > -1 && (albumIndex = this.rows[this.activeRow].albumId);
 
 			Context.InitContext(context_items);
