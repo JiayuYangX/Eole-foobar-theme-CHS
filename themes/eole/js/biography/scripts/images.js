@@ -89,7 +89,9 @@ class Images {
 			img: '',
 			curImg: '',
 			w1: 0,
-			w2: 0
+			w2: 0,
+			panW: 0, // [RAF] 上次 on_size 尺寸：未变时跳过 clearCache，免封面重复 process
+			panH: 0
 		}
 
 		this.im = {
@@ -1003,11 +1005,15 @@ class Images {
 		this.cur_handle = handle;
 		if (id === 4 && ppt.artistView && this.cov.artSrc && this.cov.artSrc.key === this.covKey(handle) + 4) {
 			// [RAF] 艺人图已查过（含在途/无图）：有图进显示缓存，否则直接返回——不再重复请求
-			if (this.cov.artSrc.image && !this.blackListed(this.cov.artSrc.path)) this.cache().cacheIt(this.cov.artSrc.image, this.cov.artSrc.path + (this.cov.artSrc.embedded ? 4 : ''), this.cov.artSrc.embedded);
+			if (this.cov.artSrc.image && !this.blackListed(this.cov.artSrc.path)) {
+				const key = this.cov.artSrc.path + (this.cov.artSrc.embedded ? 4 : '');
+				if (!this.cache().cacheHit(key)) this.cache().cacheIt(this.cov.artSrc.image, key, this.cov.artSrc.embedded); // [RAF] 显示缓存已有处理好的图→直接回放，免重复 process
+			}
 			return;
 		}
 		if (!ppt.artistView && id === ppt.covType && this.cov.bgSrc && this.cov.bgSrc.key === this.covKey(handle) + id && !this.blackListed(this.cov.bgSrc.path)) {
-			this.cache().cacheIt(this.cov.bgSrc.image, this.cov.bgSrc.path + (this.cov.bgSrc.embedded ? id : ''), this.cov.bgSrc.embedded); // [RAF] 已有该封面：直接进显示缓存（免请求、切视图不闪）
+			const key = this.cov.bgSrc.path + (this.cov.bgSrc.embedded ? id : '');
+			if (!this.cache().cacheHit(key)) this.cache().cacheIt(this.cov.bgSrc.image, key, this.cov.bgSrc.embedded); // [RAF] 显示缓存已有处理好的图→直接回放（开面板/切视图秒显），免重复 process
 			return;
 		}
 		utils.GetAlbumArtAsync(0, handle, id, needStub);
@@ -1443,6 +1449,7 @@ class Images {
 		if (!panel.updateNeeded() && !force) return;
 		if (panel.block()) {
 			this.get = true;
+			if (!ppt.text_only || ui.style.isBlur || ppt.showFilmStrip) this.getFbImg(); // [RAF] 隐藏时也异步预取封面/艺人图（不显示），切回视图时槽拦截即时显示
 			filmStrip.logScrollPos();
 			this.artistReset();
 		} else {
@@ -1463,7 +1470,11 @@ class Images {
 		}
 		if (ppt.text_only && !ui.style.isBlur && !ppt.showFilmStrip) return this.init = false;
 		filmStrip.logScrollPos();
-		this.clearCache();
+		if (this.id.panW !== panel.w || this.id.panH !== panel.h) { // [RAF] 尺寸未变（多为可见性补跑）时不清显示缓存，避免封面重复 process
+			this.id.panW = panel.w;
+			this.id.panH = panel.h;
+			this.clearCache();
+		}
 		if (ppt.artistView) {
 			if (this.init) this.artistReset();
 			this.getArtImg();
