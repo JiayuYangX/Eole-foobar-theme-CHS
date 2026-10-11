@@ -4,6 +4,7 @@ class Images {
 	constructor() {
 		this.artist = '';
 		this.blur = null;
+		this.bgSrcKey = ''; // [RAF] this.blur 的来源键（槽命中时 = 当前专辑键）
 		this.counter = 0;
 		this.cur = null;
 		this.cur_artist = '';
@@ -59,6 +60,10 @@ class Images {
 			list: [],
 			newBlur: false,
 			blur: null,
+			bgSrc: null, // [RAF] 当前条目的预载封面 {key, image, path, embedded}
+			bgPend: '', // [RAF] 封面请求在途的条目键
+			coverState: null, // [RAF] 最近一次封面查询结果 {key, found}（供 server.js 复用，免同步检查）
+			artSrc: null, // [RAF] 艺人图（类型4）槽 {key, image, path, embedded}；有 key 无 image = 已查询过（含无图）
 			selection: $.jsonParse(ppt.loadCovSelFb, [0, 1, 2, 3, 4])
 		}
 
@@ -199,18 +204,19 @@ class Images {
 			}
 		});
 
-		for (let i = 0; i < 5; i++) {
-			if (!this.stub[i].user) {
-				const pth = i != 4 ? 'cov' : 'art';
-				this.ext.some(v => {
-					this.stub[i].path = this.stub[pth].folder + v;
-					if ($.file(this.stub[i].path)) {
-						this.stub[i].user = gdi.Image(this.stub[i].path);
-						return true;
-					}
-				});
-			}
-		}
+		// [RAF] 不再自动加载"抓取的用户备用图"文件（front_cover_stub_user.png 等）；设置里的面板自定义占位图（上方循环）保留
+		// for (let i = 0; i < 5; i++) {
+		// 	if (!this.stub[i].user) {
+		// 		const pth = i != 4 ? 'cov' : 'art';
+		// 		this.ext.some(v => {
+		// 			this.stub[i].path = this.stub[pth].folder + v;
+		// 			if ($.file(this.stub[i].path)) {
+		// 				this.stub[i].user = gdi.Image(this.stub[i].path);
+		// 				return true;
+		// 			}
+		// 		});
+		// 	}
+		// }
 
 		this.setCov = $.debounce(() => {
 			filmStrip.logScrollPos();
@@ -319,12 +325,22 @@ class Images {
 		if (this.covBlur() && this.cov.newBlur) {
 			let handle = null;
 			this.cov.blur = null;
+			this.bgSrcKey = ''; // [RAF] 背景来源标记：默认非槽来源
 			if (cfg.cusCov && !ppt.covType) {
 				this.chkPths(cfg.cusCovPaths, '', 1, true);
+				if (this.cov.blur) this.bgSrcKey = this.slotKey(); // [RAF] 自定义封面：等同当前键
 			}
 			if (!this.cov.blur) {
 				handle = $.handle(panel.id.focus);
-				if (handle) this.cov.blur = utils.GetAlbumArtV2(handle, ppt.covType, !ppt.covType ? false : true);
+				const bgKey = handle ? this.covKey(handle) + ppt.covType : '';
+				if (handle && this.cov.bgSrc && this.cov.bgSrc.key === bgKey) {
+					this.cov.blur = this.cov.bgSrc.image; // [RAF] 用预载好的封面
+					this.bgSrcKey = bgKey; // [RAF] 槽来源
+				} else if (bgKey && this.cov.bgPend === bgKey) {
+					this.cov.newBlur = false; // [RAF] 预载在途：不落兜底，保持当前背景（无则留空），等结果
+					this.cov.blur = this.blur; // [RAF] 记入 cov.blur：后续处理（占位图等）沿用它，避免把背景打回兜底
+					return this.blur;
+				}
 			}
 			if (!this.cov.blur && !ppt.covType) {
 				const pth_cov = panel.getPth('cov', panel.id.focus).pth;
@@ -341,12 +357,12 @@ class Images {
 				const pth_cov = [panel.getPth('cov', panel.id.focus).pth, panel.getPth('img', panel.id.focus, a, l).pth];
 				this.chkPths(pth_cov, '', 1);
 			}
-			if (!this.cov.blur && !ppt.covType)
-				if (handle) this.cov.blur = utils.GetAlbumArtV2(handle, 0);
+			// [RAF] 原同步兜底 GetAlbumArtV2(handle, 0) 已删除：缺图由预载封面/磁盘文件/水印处理
 			if (!this.cov.blur) this.cov.blur = this.stub.default[0].Clone(0, 0, this.stub.default[0].Width, this.stub.default[0].Height);
 			this.cov.newBlur = false;
 			if (this.cov.blur && !ppt.blurAutofill) this.cov.blur = this.cov.blur.Resize(panel.w, panel.h);
 		}
+		if (!this.covBlur()) this.bgSrcKey = ''; // [RAF] 普通模式：背景来自照片自身，不算槽来源
 		if (this.covBlur() && this.cov.blur) image = this.cov.blur.Clone(0, 0, this.cov.blur.Width, this.cov.blur.Height); // clone to stop blurring same img more than once
 		image = ppt.blurAutofill ? this.format(image, 1, 'crop', panel.w, panel.h, 'blurAutofill', o) : this.format(image, 1, 'stretch', panel.w, panel.h, 'blurStretch', o);
 		const i = $.gr(panel.w, panel.h, true, (g, gi) => {
@@ -372,6 +388,79 @@ class Images {
 			}
 		});
 		return i;
+	}
+
+	covKey(handle) {
+		// [RAF] 直接按给定 handle 求专辑键。不能用 name.albID/$.eval——那里只把参数当真假标志，
+		//       实际读的是"当前焦点"曲目的标签，会给迟到结果贴错键。
+		if (!handle) return '';
+		let k = '';
+		try { k = FbTitleFormat(cfg.tf.albumArtist + cfg.tf.album + '%discnumber%%date%').EvalWithMetadb(handle); } catch (e) { k = ''; }
+		return k || handle.Path;
+	}
+
+	slotKey() {
+		const handle = $.handle(panel.id.focus);
+		return handle ? this.covKey(handle) + ppt.covType : '';
+	}
+
+	applyBgSlot() {
+		// [RAF] 槽已在手但错过处理时机（缓存命中/视图切换等）：绘制前按需补算一次
+		if (!ui.style.isBlur || this.themed || !this.covBlur() || !this.cov.bgSrc) return;
+		const bgKey = this.slotKey();
+		if (!bgKey || this.cov.bgSrc.key !== bgKey || this.bgSrcKey === bgKey) return;
+		this.cov.blur = this.cov.bgSrc.image;
+		const b = this.blurImage(this.cov.blur, {});
+		if (!b) return;
+		this.blur = b;
+		this.bgSrcKey = bgKey;
+		const ca = this.cache();
+		const e = ca.cache[ca.pth];
+		if (e && e.img) {
+			e.blur = b;
+			e.bgSrcKey = bgKey;
+		}
+	}
+
+	applyBgFallback(bgKey) {
+		// [RAF] 预载请求确认无图：这时才落兜底（磁盘替代图 → 水印）并应用
+		if (!bgKey || !ui.style.isBlur || this.themed || !this.covBlur() || this.cov.newBlur) return;
+		if (bgKey !== this.slotKey()) return; // [RAF] 专辑/类型已变：作废
+		this.cov.newBlur = true; // [RAF] 让 blurImage 分支重新解析一次
+		const b = this.blurImage(this.blur || this.stub.default[0], {});
+		if (!b) return;
+		this.blur = b;
+		const ca = this.cache();
+		const e = ca.cache[ca.pth];
+		if (e && e.img) {
+			e.blur = b;
+			e.bgSrcKey = this.bgSrcKey; // [RAF] 与分支解析结论一致（兜底来源为空）
+		}
+		window.Repaint();
+	}
+
+	bgArtDone(handle, art_id, image, image_path, embedded) {
+		// [RAF] 封面结果处理：入槽（带键，属于当前条目的才存）+ 艺人视图截断显示路由；返回 true 表示已处理完
+		const isCov = art_id === ppt.covType;
+		const bgKey = isCov ? this.covKey(handle) + art_id : '';
+		const pend = isCov && this.cov.bgPend === bgKey; // 是否为我们预载的封面请求
+		if (pend) this.cov.bgPend = null; // 请求已回
+		if (isCov && bgKey === this.slotKey()) this.cov.coverState = { key: bgKey, found: !!(image && image_path) }; // [RAF] 记录查询结果（供 server.js 复用）
+		if (isCov && image && image_path && bgKey === this.slotKey()) this.cov.bgSrc = { key: bgKey, image: image, path: image_path, embedded: embedded }; // 存槽
+		if (art_id === 4) { // [RAF] 艺人图：入槽（属于当前条目的才存）；专辑视图下的预查结果不进显示路由（防污染）
+			const artKey = this.covKey(handle) + 4;
+			const cur = $.handle(panel.id.focus);
+			if (image && image_path && cur && this.covKey(cur) + 4 === artKey) this.cov.artSrc = { key: artKey, image: image, path: image_path, embedded: embedded };
+			if (!ppt.artistView && !ppt.loadCovAllFb && !isCov) return true;
+		}
+		if (!ppt.artistView || art_id === 4) return false; // 专辑视图 / 艺人图（type4）：继续原显示路由
+		if (image && image_path) {
+			this.loadCycCov(handle, art_id, image, image_path); // 循环列表照常构建（内部自带开关判断）
+			if (isCov && this.covBlur()) window.Repaint(); // 背景应用交给 draw 里的 applyBgSlot
+		} else if (isCov && pend && this.covBlur()) {
+			this.applyBgFallback(bgKey); // 确认无图：才落兜底（内部再校验当前键）
+		}
+		return true; // 艺人视图：非艺人图结果不进显示路由（防污染）
 	}
 
 	cache() {
@@ -437,28 +526,29 @@ class Images {
 	}
 
 	checkUserStub(type, handle) {
-		switch (type) {
-			case 'art': {
-				if (this.stub[4].user) break;
-				const stubArtUser = utils.GetAlbumArtV2(handle, 4);
-				if (stubArtUser) stubArtUser.SaveAs(this.stub.art.file);
-				if ($.file(this.stub.art.file)) {
-					this.stub[4].user = gdi.Image(this.stub.art.file);
-					this.stub[4].path = this.stub.art.file;
-				}
-				break;
-			}
-			case 'cov': {
-				if (this.stub[0].user) break;
-				const stubCovUser = utils.GetAlbumArtV2(handle, 0);
-				if (stubCovUser) stubCovUser.SaveAs(this.stub.cov.file);
-				if ($.file(this.stub.cov.file)) {
-					this.stub[0].user = gdi.Image(this.stub.cov.file);
-					this.stub[0].path = this.stub.cov.file;
-				}
-				break;
-			}
-		}
+		// [RAF] 已禁用"抓取用户备用图"（会把别处取到的封面/艺人图当全局占位图显示）；缺图时走 stub.default 水印
+		// switch (type) {
+		// 	case 'art': {
+		// 		if (this.stub[4].user) break;
+		// 		const stubArtUser = utils.GetAlbumArtV2(handle, 4);
+		// 		if (stubArtUser) stubArtUser.SaveAs(this.stub.art.file);
+		// 		if ($.file(this.stub.art.file)) {
+		// 			this.stub[4].user = gdi.Image(this.stub.art.file);
+		// 			this.stub[4].path = this.stub.art.file;
+		// 		}
+		// 		break;
+		// 	}
+		// 	case 'cov': {
+		// 		if (this.stub[0].user) break;
+		// 		const stubCovUser = utils.GetAlbumArtV2(handle, 0);
+		// 		if (stubCovUser) stubCovUser.SaveAs(this.stub.cov.file);
+		// 		if ($.file(this.stub.cov.file)) {
+		// 			this.stub[0].user = gdi.Image(this.stub.cov.file);
+		// 			this.stub[0].path = this.stub.cov.file;
+		// 		}
+		// 		break;
+		// 	}
+		// }
 	}
 
 	chkPths(pths, fn, type, cusCovPaths) {
@@ -559,6 +649,7 @@ class Images {
 			return;
 		}
 		if (ui.style.isBlur) {
+			this.applyBgSlot(); // [RAF] 槽补应用：任何一次绘制都会校正背景
 			const bImg = !this.themed ? this.blur : this.themed;
 			if (bImg) gr.DrawImage(bImg, 0, 0, panel.w, panel.h, 0, 0, bImg.Width, bImg.Height);
 		}
@@ -773,7 +864,7 @@ class Images {
 	}
 
 	getCovImages() {
-		if (ppt.artistView || !this.cov.cycle || panel.alb.ix) return false;
+		if (!this.cov.cycle || panel.alb.ix) return false; // [RAF] 不再按视图屏蔽：循环模式的封面获取在两视图走同一流程（显示侧由缓存/响应层保证不串）
 		if (!panel.lock) this.setAlbID();
 		const new_album = this.id.albCyc != this.id.curAlbCyc || !this.id.albCyc;
 		if (ppt.loadCovFolder && !panel.lock) this.cov.folder = panel.cleanPth(cfg.albCovFolder, panel.id.focus);
@@ -806,6 +897,20 @@ class Images {
 				const handle = $.handle(panel.id.focus);
 				if (handle) this.cov.selFiltered.forEach(v => this.getImg(handle, v, false));
 				else if (!ppt.loadCovFolder || !this.cov.images.length) return false;
+			} else { // [RAF] 文件夹循环：显示用文件夹图，但"始终基于封面"背景仍需 covType 封面 → 与上面 selFiltered 请求对位，补一次
+				const handle = $.handle(panel.id.focus);
+				const key = handle ? this.covKey(handle) + ppt.covType : '';
+				if (key && !(this.cov.bgSrc && this.cov.bgSrc.key === key) && this.cov.bgPend !== key) {
+					this.cov.bgPend = key;
+					this.getImg(handle, ppt.covType, false);
+				}
+				if (handle && ppt.covType !== 4) { // [RAF] 顺带预查艺人图（covType=4 时上面那次就是类型4请求，无需再查）
+					const artKey = this.covKey(handle) + 4;
+					if (!(this.cov.artSrc && this.cov.artSrc.key === artKey)) {
+						this.cov.artSrc = { key: artKey }; // 占位：已发起（无图结果也保留，之后不再查）
+						this.getImg(handle, 4, false);
+					}
+				}
 			}
 		}
 		if (!new_album || !ppt.loadCovAllFb) {
@@ -817,7 +922,6 @@ class Images {
 	}
 
 	getFbImg() {
-		if (ppt.artistView && this.art.images.length && ppt.cycPhoto) return;
 		const forceStnd = this.forceStnd();
 		this.cov.ix = this.cov.cycle && !panel.alb.ix ? this.cov.cycle_ix : panel.alb.ix + 1000000;
 		this.blurCheck();
@@ -847,7 +951,7 @@ class Images {
 		if ((forceStnd || !panel.alb.ix) && cfg.cusCov && !ppt.artistView && !ppt.covType) {
 			if (this.chkPths(cfg.cusCovPaths, '', 0, true)) return;
 		}
-		if (!forceStnd && (panel.art.ix && panel.art.ix < panel.art.list.length && ppt.artistView)) { // !stndBio
+		if (!forceStnd && (panel.art.ix && panel.art.ix < panel.art.list.length && ppt.artistView) && !(this.art.images.length && ppt.cycPhoto)) { // !stndBio（有照片时不再兜底）
 			const a_handle = lib.inLibrary(3, this.artist);
 			if (a_handle) {
 				this.getImg(a_handle, 4, false);
@@ -859,9 +963,18 @@ class Images {
 		// stndAlb
 		const handle = $.handle(panel.id.focus);
 		if (handle) {
-			let id = ppt.artistView ? 4 : ppt.covType;
-			if (!ppt.loadCovAllFb || forceStnd || ppt.artistView) this.getImg(handle, id, this.stub[id].panel ? false : !ppt.covType || ppt.artistView ? false : true);
-			else {
+			let id = ppt.covType; // [RAF] 两视图一致：封面都取 covType
+			if (!ppt.loadCovAllFb || forceStnd || ppt.artistView) {
+				this.cov.bgPend = this.covKey(handle) + id; // [RAF] 在途标记（供"在途保持"）
+				this.getImg(handle, id, this.stub[id].panel ? false : !ppt.covType || ppt.artistView ? false : true);
+				if (ppt.covType !== 4) { // [RAF] 顺带预查艺人图（covType=4 时上面那次就是类型4请求，无需再查）
+					const artKey = this.covKey(handle) + 4;
+					if (!(this.cov.artSrc && this.cov.artSrc.key === artKey)) {
+						this.cov.artSrc = { key: artKey }; // 占位：已发起（无图结果也保留，之后不再查）
+						this.getImg(handle, 4, false);
+					}
+				}
+			} else {
 				id = this.cov.selFiltered[0];
 				let image = null;
 				if (cov.cacheHit(this.stub[id].path)) return;
@@ -882,11 +995,21 @@ class Images {
 		if (ppt.artistView && ppt.cycPhoto) {
 			if (!panel.art.ix) this.artistReset(force);
 			this.getArtImg();
-		} else this.getFbImg();
+		}
+		this.getFbImg(); // [RAF] 统一入口：所有情况都经过 getFbImg（预载段 + 无照片时的兜底）
 	}
 
 	getImg(handle, id, needStub) {
 		this.cur_handle = handle;
+		if (id === 4 && ppt.artistView && this.cov.artSrc && this.cov.artSrc.key === this.covKey(handle) + 4) {
+			// [RAF] 艺人图已查过（含在途/无图）：有图进显示缓存，否则直接返回——不再重复请求
+			if (this.cov.artSrc.image && !this.blackListed(this.cov.artSrc.path)) this.cache().cacheIt(this.cov.artSrc.image, this.cov.artSrc.path + (this.cov.artSrc.embedded ? 4 : ''), this.cov.artSrc.embedded);
+			return;
+		}
+		if (!ppt.artistView && id === ppt.covType && this.cov.bgSrc && this.cov.bgSrc.key === this.covKey(handle) + id && !this.blackListed(this.cov.bgSrc.path)) {
+			this.cache().cacheIt(this.cov.bgSrc.image, this.cov.bgSrc.path + (this.cov.bgSrc.embedded ? id : ''), this.cov.bgSrc.embedded); // [RAF] 已有该封面：直接进显示缓存（免请求、切视图不闪）
+			return;
+		}
 		utils.GetAlbumArtAsync(0, handle, id, needStub);
 	}
 
@@ -1118,7 +1241,12 @@ class Images {
 
 	loadArtImage() {
 		if (this.art.images.length && ppt.cycPhoto) this.loadImg(art, this.art.images[this.art.ix], true, this.art.ix);
-		else if (!this.init) this.getFbImg();
+		else if (!this.init) {
+			this.getFbImg(); // [RAF] 先发查询（建立"在途"标记）再显示占位：背景"在途保持"才生效
+			const h = $.handle(panel.id.focus);
+			const hasArt = h && this.cov.artSrc && this.cov.artSrc.image && this.cov.artSrc.key === this.covKey(h) + 4;
+			if (!hasArt) this.setStub(this.cache(), 'stub4', true, 1); // [RAF] 无艺人图：显示"无 照片"（若预载艺人图已在手，上面的查询已直接显示它）
+		}
 	}
 
 	loadCycCov(handle, art_id, image, image_path) { // stndAlb
@@ -1249,7 +1377,9 @@ class Images {
 	}
 
 	on_get_album_art_done(handle, art_id, image, image_path) {
+		if ($.server) server.resolvePendingCover(handle, art_id, image); // [RAF] 远程封面结果 → 解析下载决策
 		const embedded = handle.Path == image_path;
+		if (this.bgArtDone(handle, art_id, image, image_path, embedded)) return; // [RAF] 封面结果：入槽 + 艺人视图截断显示路由
 		const forceStnd = this.forceStnd();
 		if (!this.cur_handle || !this.cur_handle.Compare(handle) || image && this.cache().cacheHit(image_path + (!embedded ? '' : art_id))) return;
 		if (!forceStnd && this.loadCycCov(handle, art_id, image, image_path)) return;
@@ -1320,7 +1450,8 @@ class Images {
 				filmStrip.logScrollPos();
 				this.artistReset();
 				this.getArtImg();
-			} else this.getFbImg();
+			}
+			this.getFbImg(); // [RAF] 统一入口：所有情况都经过 getFbImg（预载段 + 无照片时的兜底）
 			this.get = false;
 		}
 	}
@@ -1336,6 +1467,7 @@ class Images {
 		if (ppt.artistView) {
 			if (this.init) this.artistReset();
 			this.getArtImg();
+			this.getFbImg(); // [RAF] 统一入口（预载段；有照片时它只预载后早退）
 		} else {
 			this.getFbImg();
 			if (this.init) {
@@ -1742,6 +1874,7 @@ class ImageCache {
 				const start = Date.now();
 				const o = this.cache[key] = {};
 				o.img = img.cur = img.process(image, this.type, o);
+				o.bgSrcKey = img.bgSrcKey; // [RAF] 背景来源标记随缓存条目留存
 				o.filmID = filmStrip.id();
 				o.time = Date.now() - start;
 			}
@@ -1757,6 +1890,7 @@ class ImageCache {
 	}
 
 	cacheHit(key) {
+		if (this.type != ppt.artistView) return false; // [RAF] 视图不匹配的缓存不参与命中（与 cacheIt 对称，防止把封面回放进照片区）
 		if (ppt.text_only && !ui.style.isBlur) {
 			this.pth = key;
 			return;
@@ -1768,7 +1902,10 @@ class ImageCache {
 		seeker.counter.x = o.counter_x;
 		img.y = o.y;
 		seeker.counter.y = o.counter_y;
-		if (ui.style.isBlur && o.blur && !(ppt.img_only && img.style.crop)) img.blur = o.blur;
+		if (ui.style.isBlur && o.blur && !(ppt.img_only && img.style.crop)) {
+			img.blur = o.blur;
+			img.bgSrcKey = o.bgSrcKey || ''; // [RAF] 连同背景来源标记一起回放
+		}
 		img.cur = o.img;
 		this.pth = key;
 		if (this.type && !img.art.images.length || !this.type && !img.cov.images.length) filmStrip.check();

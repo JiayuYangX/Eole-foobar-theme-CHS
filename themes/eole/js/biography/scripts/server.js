@@ -345,8 +345,18 @@ class Server {
 	getCover(force, alb) { // stndAlb
 		const handle = $.handle(alb.focus, true);
 		if (!handle) return;
-		const g_img = utils.GetAlbumArtV2(handle, 0, false);
-		if (g_img) return;
+		// [RAF] 不再区分远程/本地、不做同步检查：先复用显示侧留下的查询结果标识；未知则挂起等显示流程的异步结果
+		const key = img.covKey(handle) + ppt.covType;
+		const st = img.cov.coverState;
+		if (st && st.key === key) {
+			if (!st.found) this.runCoverDownload(handle, force, alb);
+			return;
+		}
+		this.pendCover = { handle: handle, force: force, alb: alb };
+	}
+
+	// [RAF] getCover 的下载部分（本地检查通过 / 远程异步确认无图后调用）
+	runCoverDownload(handle, force, alb) {
 		const covCanBeSaved = !handle.RawPath.startsWith('fy+') && !handle.RawPath.startsWith('3dydfy:') && !handle.RawPath.startsWith('http');
 		const sw = cfg.dlLfmCov && covCanBeSaved ? 1 : cfg.dlRevImg ? 0 : 2;
 		let lfm_cov;
@@ -371,6 +381,15 @@ class Server {
 				break;
 			}
 		}
+	}
+
+	// [RAF] 远程 getCover 的异步决策：显示流程（art_id 0）有结果后，无图才走下载
+	resolvePendingCover(handle, art_id, image) {
+		if (!this.pendCover || art_id !== 0) return;
+		const pend = this.pendCover;
+		if (!handle || !pend.handle.Compare(handle)) return;
+		this.pendCover = null;
+		if (!image) this.runCoverDownload(pend.handle, pend.force, pend.alb);
 	}
 
 	getObjKeyValue(obj, searchKey, results = []) {
@@ -518,16 +537,11 @@ class Server {
 			const lfm_cov = new LfmAlbum(() => lfm_cov.onStateChange());
 			lfm_cov.search(a, l, false, pe, fe, l, false, true);
 		} else {
-			const metadb = lib.inLibrary(2, a, l);
-			if (metadb) {
-				const g_img = utils.GetAlbumArtV2(metadb, 0, false);
-				if (g_img) return;
-			} else {
-				const pth = panel.getPth('img', panel.id.focus, a, l, '', cfg.supCache);
-				if (img.chkPths(pth.pe, pth.fe, 2)) return;
-				const lfm_cov = new LfmAlbum(() => lfm_cov.onStateChange());
-				lfm_cov.search(a, l, false, pth.pe[cfg.supCache], pth.pe[cfg.supCache] + pth.fe, l, true, true);
-			}
+			if (lib.inLibrary(2, a, l)) return; // [RAF] 库内条目不下载（原逻辑：同步查图后两种结局都是"什么都不做"；此处去掉无用的同步检查）
+			const pth = panel.getPth('img', panel.id.focus, a, l, '', cfg.supCache);
+			if (img.chkPths(pth.pe, pth.fe, 2)) return;
+			const lfm_cov = new LfmAlbum(() => lfm_cov.onStateChange());
+			lfm_cov.search(a, l, false, pth.pe[cfg.supCache], pth.pe[cfg.supCache] + pth.fe, l, true, true);
 		}
 	}
 
