@@ -3072,7 +3072,7 @@ oHeaderBar = function(name) {
 		basemenu.AppendMenuSeparator();
 		if(fb.IsPlaying) basemenu.AppendMenuItem(MF_STRING, 802, "显示正在播放");
 		basemenu.AppendMenuItem(MF_STRING, 803, "全部播放");
-		basemenu.AppendMenuSeparator();
+		//basemenu.AppendMenuSeparator();
 
 		//basemenu.AppendMenuItem(MF_STRING, 801, "音轨属性");
 		actions[801] = function(){
