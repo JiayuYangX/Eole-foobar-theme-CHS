@@ -2723,11 +2723,11 @@ oBrowser = function(name) {
 													pt.DrawImage(this.groups[this.rows[i].albumId].g_wallpaperImg, 0, 0, total_size+15,  ah, 0, 0, this.groups[this.rows[i].albumId].g_wallpaperImg.Width, ah);
 													pt.FillSolidRect(0, 0, total_size+15, ah,colors.albumartprogressbar_overlay)
 													pt.SetTextRenderingHint(5);
-													pt.DrawString(track_time_part, g_font.normal, colors.albumartprogressbar_txt, 0, 1, total_size+6, ah_1, 554696704);
+													pt.DrawString(track_time_part, g_font.normal, colors.albumartprogressbar_txt, 0, 1, (tx+tw-8)-(ax+22-properties.track_gradient_size), ah_1, 554696704); // [FIX] 与正常时间右缘 tx+tw-8 对齐
 												playingText.ReleaseGraphics(pt);
 
 												var progress_x = ax+22-properties.track_gradient_size
-												var progress_w = ax+current_size+7;
+												var progress_w = current_size+3; // [FIX] 与源区域等宽，避免贴图（含时间文本）横向拉伸漂移
 
 												gr.DrawImage(playingText, progress_x, ay, progress_w, ah, 0, 0, current_size+3, ah, 0, 255);
 												gr.DrawRect(ax+22-properties.track_gradient_size, ay, ax+current_size+6, ah-1,1,colors.albumartprogressbar_rectline)
@@ -3071,10 +3071,10 @@ oBrowser = function(name) {
 													pt.DrawImage(this.groups[this.rows[i].albumId].g_wallpaperImg, 0, 0, total_size+15,  ah, 0, 0, this.groups[this.rows[i].albumId].g_wallpaperImg.Width, ah);
 													pt.FillSolidRect(0, 0, total_size+15, ah,colors.albumartprogressbar_overlay)
 													pt.SetTextRenderingHint(5);
-													pt.DrawString(track_time_part, g_font.normal, colors.albumartprogressbar_txt, 0, 0, total_size+6, ah, 554696704);
+													pt.DrawString(track_time_part, g_font.normal, colors.albumartprogressbar_txt, 0, 0, (tx+tw-8)-(ax+22-properties.track_gradient_size), ah, 554696704); // [FIX] 与正常时间右缘 tx+tw-8 对齐
 												playingText.ReleaseGraphics(pt);
 												var progress_x = ax+22-properties.track_gradient_size
-												var progress_w = ax+current_size+5;
+												var progress_w = current_size+3; // [FIX] 与源区域等宽，避免贴图（含时间文本）横向拉伸漂移
 												gr.DrawImage(playingText, progress_x, ay, progress_w, ah, 0, 0, current_size+3, ah, 0, 255);
 												gr.DrawRect(ax+22-properties.track_gradient_size, ay, ax+current_size+4, ah-1,1,colors.albumartprogressbar_rectline)
 
