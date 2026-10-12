@@ -2797,6 +2797,7 @@ oSearch = function() {
 
     this.on_char = function(code) {
 		if(this.hide) return;
+		if(!this.inputbox.isActive()) return; // [FIX] 仅搜索框被激活（点击进入）时接收字符；防止焦点在标题栏时普通按键/快捷键被当成搜索输入并强制跳回媒体库
 		if(code==13) {
 			if(this.inputbox.text.length < 3)
 				return;
