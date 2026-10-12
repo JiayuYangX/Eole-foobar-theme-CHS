@@ -3333,11 +3333,7 @@ oImageCache = function () {
         var cover_type = null;
 
         if(!isImage(image)) {
-            if(brw.groups[albumId].tracktype != 3) {
-                cover_type = 0;
-            } else {
-                cover_type = 3;
-            };
+            cover_type = 0; // [FIX] 不再按 tracktype==3 拒绝：http(s) 的网络文件同样取封面/入缓存（TrackType 保持流分类不变）
         } else {
             if(cover.keepaspectratio) {
                 if(image.Height>=image.Width) {
@@ -3354,13 +3350,9 @@ oImageCache = function () {
                 var ph = ch;
             };
             // cover.type : 0 = nocover, 1 = external cover, 2 = embedded cover, 3 = stream
-            if(brw.groups[albumId].tracktype != 3) {
-                if(metadb) {
-                    img = FormatCover(image, pw, ph, false);
-                    cover_type = 1;
-                };
-            } else {
-                cover_type = 3;
+            if(metadb) {
+                img = FormatCover(image, pw, ph, false);
+                cover_type = 1;
             };
 
             //try{this.cachelist[brw.groups[albumId].cachekey] = img;}catch(e){}
