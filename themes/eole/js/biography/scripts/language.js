@@ -210,7 +210,7 @@ const simplifiedChinese = {
 	"Auto cycle items": "自动循环项目",
 	"Auto lock": "自动锁定",
 	"Auto-fallback": "自动回退",
-	"Back": "后退",
+	"Back": "封底",
 	"Biography [allmusic location]": "简介 [allMusic 位置]",
 	"Biography [allmusic]": "简介 [allmusic]",
 	"Biography [last.fm location]": "简介 [last.fm 位置]",

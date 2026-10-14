@@ -2994,7 +2994,7 @@ oBrowser = function(name) {
 										if(!this.customGroups){
 											if(this.groups[i].album == "?") {
 												if(this.groups[i].count > 1) {
-													var album_name = (this.groups[i].tracktype != 3 ? "(单曲)" : "(网络收音机)");
+													var album_name = (this.groups[i].tracktype != 3 ? "(单曲)" : "(网络电台)");
 												} else {
 													var arr_t = this.groups[i].tra[0].split(" ^^ ");
 													var album_name = (this.groups[i].tracktype != 3 ? "(单曲) " : "") + arr_t[0];
@@ -3040,7 +3040,7 @@ oBrowser = function(name) {
 										if(!this.customGroups && properties.tagMode == 1){
 											if(this.groups[i].album == "?") {
 												if(this.groups[i].count > 1) {
-													var album_name = (this.groups[i].tracktype != 3 ? "(单曲)" : "(网络收音机)");
+													var album_name = (this.groups[i].tracktype != 3 ? "(单曲)" : "(网络电台)");
 												} else {
 													var arr_t = this.groups[i].tra[0].split(" ^^ ");
 													var album_name = (this.groups[i].tracktype != 3 ? "(单曲) " : "") + arr_t[0];
@@ -3194,7 +3194,7 @@ oBrowser = function(name) {
 											if(!this.customGroups){
 												if(this.groups[i].album == "?") {
 													if(this.groups[i].count > 1) {
-														var album_name = (this.groups[i].tracktype != 3 ? "(单曲)" : "(网络收音机)");
+														var album_name = (this.groups[i].tracktype != 3 ? "(单曲)" : "(网络电台)");
 													} else {
 														var arr_t = this.groups[i].tra[0].split(" ^^ ");
 														var album_name = (this.groups[i].tracktype != 3 ? "(单曲) " : "") + arr_t[0];

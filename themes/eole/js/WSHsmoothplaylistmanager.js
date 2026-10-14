@@ -37,7 +37,7 @@
 	newly_added : "新添加的音轨",
 	history : "历史 (过去几周播放的音轨)",
 	top_rated : "评级最高的音轨",
-	radios : "收音机",
+	radios : "电台",
 	most_played : "经常播放的音轨",
 	podcasts : "播客",
 	external_files : "外部文件",
