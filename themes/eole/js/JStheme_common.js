@@ -518,7 +518,7 @@ function get_colors_global(){
 		colors.wallpaper_overlay_blurred = GetGrey(25,200);
 
 		colors.normal_txt = darkcolors.normal_txt;
-		colors.faded_txt = GetGrey(110);
+		colors.faded_txt = GetGrey(140);
 		colors.superfaded_txt = GetGrey(60);
 		colors.full_txt = GetGrey(255);
 
