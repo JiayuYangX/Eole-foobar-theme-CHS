@@ -720,7 +720,10 @@ class Images {
 					image = image.Clone(ix, iy, iw, ih);
 				}
 				if (caller == 'blurAutofill') return image;
-				if (type == 'circular') this.circularMask(image, image.Width, image.Height);
+				if (type == 'circular') {
+					image = image.Clone(0, 0, image.Width, image.Height); // [FIX] 克隆后再打圆罩：避免原地修改共享源图（槽图/背景会永久变圆）
+					this.circularMask(image, image.Width, image.Height);
+				}
 				if (!border) image = image.Resize(w, h, 2);
 				if (caller == 'filmStrip') return image;
 				break;
@@ -1887,6 +1890,7 @@ class ImageCache {
 				o.img = img.cur = img.process(image, this.type, o);
 				o.bgSrcKey = img.bgSrcKey; // [RAF] 背景来源标记随缓存条目留存
 				o.filmID = filmStrip.id();
+				o.circular = img.isType('Circ'); // [FIX] 记录处理时的圆形样式（供 cacheHit 失效判断）
 				o.time = Date.now() - start;
 			}
 			this.pth = key;
@@ -1908,7 +1912,7 @@ class ImageCache {
 		}
 		const o = this.cache[key];
 		const id = filmStrip.id();
-		if (!o || !o.img || o.filmID.id != id.id || o.filmID.bor != id.bor || img.refl.adjust) return false;
+		if (!o || !o.img || o.filmID.id != id.id || o.filmID.bor != id.bor || img.refl.adjust || o.circular !== img.isType('Circ')) return false; // [FIX] 圆形样式变化也视为缓存失效（原版靠重新取图刷新）
 		img.x = o.x;
 		seeker.counter.x = o.counter_x;
 		img.y = o.y;
