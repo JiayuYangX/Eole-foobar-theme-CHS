@@ -15,6 +15,7 @@ class Images {
 		this.nw = 10;
 		this.removed = 0;
 		this.themed = null;
+		this.tfCache = null; // [RAF] 封面缓存键的标题格式实例（懒加载）
 		this.x = 0;
 		this.y = 0;
 		this.exclArr = [6467, 6473, 6500, 24104, 24121, 34738, 29520, 35875, 37235, 47700, 52526, 68626, 86884, 92172];
@@ -325,7 +326,7 @@ class Images {
 		if (!image || !panel.w || !panel.h) return;
 		if (this.covBlur() && this.cov.newBlur) {
 			const handle = $.handle(panel.id.focus);
-			const f = this.covFallback(handle); // [RAF] 与主图共用同一条回退链（自定义→槽→磁盘/rev_img→用户占位→水印）
+			const f = this.covFallback(handle); // [RAF] 与主图共用同一条回退链（自定义→槽→磁盘→Eole 缓存→rev_img→用户占位→水印）
 			this.cov.blur = null;
 			this.bgSrcKey = '';
 			if (f.kind === 'slot') {
@@ -334,7 +335,7 @@ class Images {
 			} else if (f.kind === 'custom') {
 				this.cov.blur = gdi.Image(f.path);
 				this.bgSrcKey = this.slotKey();
-			} else if (f.kind === 'disk' || f.kind === 'rev') {
+			} else if (f.kind === 'disk' || f.kind === 'rev' || f.kind === 'cache') {
 				this.cov.blur = gdi.Image(f.path);
 			} else {
 				this.cov.blur = f.image;
@@ -402,8 +403,20 @@ class Images {
 		}
 	}
 
+	coverCachePth(handle) {
+		// [RAF] 查询 Eole 本体（封面面板）的封面磁盘缓存：<profile>\wsh-data\eole-img-cache\<crc32>.jpg
+		if (!handle) return '';
+		if (!this.tfCache) this.tfCache = FbTitleFormat('$if(%album artist%,$if(%album%,$crc32(%album artist%##%album%),undefined),undefined)');
+		let key = '';
+		try { key = this.tfCache.EvalWithMetadb(handle); } catch (e) { return ''; }
+		key = (key || '').toLowerCase();
+		if (!key || key === 'undefined') return '';
+		const pth = fb.ProfilePath + 'wsh-data\\eole-img-cache\\' + key + '.jpg';
+		return $.file(pth) ? pth : '';
+	}
+
 	covFallback(handle) {
-		// [RAF] 统一封面回退来源解析（主图与背景共用，无副作用）：自定义/磁盘/rev_img 仅正面 → 槽位 → 用户占位 → 水印
+		// [RAF] 统一封面回退来源解析（主图与背景共用，无副作用）：自定义 → 槽位（直接获取） → 磁盘 → Eole 封面缓存 → rev_img（后三者仅正面） → 用户占位 → 水印
 		if (cfg.cusCov && !ppt.covType) {
 			const p = this.chkPths(cfg.cusCovPaths, '', 3, true);
 			if (p) return { kind: 'custom', path: p, embedded: false };
@@ -417,6 +430,8 @@ class Images {
 			for (let i = 0; i < this.ext.length; i++) {
 				if ($.file(pth_cov + this.ext[i])) return { kind: 'disk', path: pth_cov + this.ext[i], embedded: false };
 			}
+			const cache = this.coverCachePth(handle); // [RAF] 磁盘无图时用 Eole 本体已缓存的封面
+			if (cache) return { kind: 'cache', path: cache, embedded: false };
 			const a = name.albumArtist(panel.id.focus);
 			const l = name.album(panel.id.focus);
 			const p = this.chkPths([panel.getPth('img', panel.id.focus, a, l).pth], '', 3);
@@ -434,7 +449,7 @@ class Images {
 		if (f.kind === 'slot') {
 			const pth = f.path + (f.embedded ? ppt.covType : '');
 			if (!this.cache().cacheHit(pth)) this.cache().cacheIt(f.image, pth, f.embedded);
-		} else if (f.kind === 'custom' || f.kind === 'disk' || f.kind === 'rev') {
+		} else if (f.kind === 'custom' || f.kind === 'disk' || f.kind === 'rev' || f.kind === 'cache') {
 			this.loadImg(cov, f.path, true, this.cov.ix);
 		} else if (f.kind === 'user') {
 			if (!this.cache().cacheHit(f.path)) this.cache().cacheIt(f.image, f.path);
