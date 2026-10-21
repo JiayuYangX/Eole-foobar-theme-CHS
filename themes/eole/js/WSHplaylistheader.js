@@ -784,7 +784,7 @@ playlistInfo = function(){
 			txt_hour = (totalH > 0) ? `${totalH} 小时 ` : '';
             txt_mins = (totalM > 0) ? `${totalM} 分 ` : '';
 
-			this.time_txt = `${txt_month}${txt_week}${txt_day}${txt_hour}${txt_mins}${totalS}秒`;
+			this.time_txt = `${txt_month}${txt_week}${txt_day}${txt_hour}${txt_mins}${totalS} 秒`;
 			this.items_txt=displayed_count+' 项目 ';
 
 			// Main Text, Left justified
