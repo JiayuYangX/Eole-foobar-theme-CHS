@@ -19,7 +19,7 @@ class Images {
 		this.x = 0;
 		this.y = 0;
 		this.exclArr = [6467, 6473, 6500, 24104, 24121, 34738, 29520, 35875, 37235, 47700, 52526, 68626, 86884, 92172];
-		this.ext = ['.jpg', '.png', 'webp', '.gif', '.bmp', '.jpeg'];
+		this.ext = ['.jpg', '.png', '.webp', '.gif', '.bmp', '.jpeg'];
 
 		this.art = {
 			allFilesLength: 0,
@@ -63,7 +63,7 @@ class Images {
 			blur: null,
 			bgSrc: null, // [RAF] 当前条目的预载封面 {key, image, path, embedded}
 			coverState: null, // [RAF] 最近一次封面查询结果 {key, found}（去重查询 + 供 server.js 复用）
-			artSrc: null, // [RAF] 艺人图（类型4）槽 {key, image, path, embedded}；有 key 无 image = 已查询过（含无图）
+			artSrc: null, // [RAF] 艺人图（类型4）槽 {key, alb, image, path, embedded}；key 含曲目路径（每次换曲重查），alb 用于同专辑占位
 			selection: $.jsonParse(ppt.loadCovSelFb, [0, 1, 2, 3, 4])
 		}
 
@@ -89,9 +89,7 @@ class Images {
 			img: '',
 			curImg: '',
 			w1: 0,
-			w2: 0,
-			panW: 0, // [RAF] 上次 on_size 尺寸：未变时跳过 clearCache，免封面重复 process
-			panH: 0
+			w2: 0
 		}
 
 		this.im = {
@@ -380,9 +378,25 @@ class Images {
 		return k || handle.Path;
 	}
 
+	artKey(handle) {
+		// [RAF] 艺人图槽键：并入曲目路径 → 同一专辑的不同曲目也各自重查
+		if (!handle) return '';
+		return this.covKey(handle) + 4 + (handle.Path || '');
+	}
+
 	slotKey() {
 		const handle = $.handle(panel.id.focus);
 		return handle ? this.covKey(handle) + ppt.covType : '';
+	}
+
+	deferImg(ca, image, key, embedded, view, aKey, type) {
+		// [RAF] 点击/显示路径里不直接 process（会卡 UI）：下一 tick 再物化；视图/槽键/类型已变则放弃
+		setTimeout(() => {
+			if (ppt.artistView !== view) return;
+			const h = $.handle(panel.id.focus);
+			if (!h || (view ? this.artKey(h) : this.covKey(h) + type) !== aKey) return;
+			if (!ca.cacheHit(key)) ca.cacheIt(image, key, embedded);
+		}, 0);
 	}
 
 	applyBgSlot() {
@@ -448,7 +462,8 @@ class Images {
 		const f = this.covFallback(handle);
 		if (f.kind === 'slot') {
 			const pth = f.path + (f.embedded ? ppt.covType : '');
-			if (!this.cache().cacheHit(pth)) this.cache().cacheIt(f.image, pth, f.embedded);
+			const aKey = handle ? this.covKey(handle) + ppt.covType : '';
+			if (!this.cache().cacheHit(pth)) this.deferImg(this.cache(), f.image, pth, f.embedded, false, aKey, ppt.covType);
 		} else if (f.kind === 'custom' || f.kind === 'disk' || f.kind === 'rev' || f.kind === 'cache') {
 			this.loadImg(cov, f.path, true, this.cov.ix);
 		} else if (f.kind === 'user') {
@@ -461,10 +476,12 @@ class Images {
 	applyArtFallback(handle) {
 		// [RAF] 主图照片回退（无照片时立即调用；与上游一致，每次调用都落一次回退/回放）：艺人图槽 → 用户占位 → 水印
 		if (!ppt.artistView) return;
-		const slot = handle ? this.covKey(handle) + 4 : '';
-		if (this.cov.artSrc && this.cov.artSrc.image && this.cov.artSrc.key === slot) {
-			const pth = this.cov.artSrc.path + (this.cov.artSrc.embedded ? 4 : '');
-			if (!this.cache().cacheHit(pth)) this.cache().cacheIt(this.cov.artSrc.image, pth, this.cov.artSrc.embedded);
+		const slot = handle ? this.artKey(handle) : '';
+		const s = this.cov.artSrc;
+		if (s && s.image && (s.key === slot || s.alb && s.alb === this.covKey(handle))) {
+			// [RAF] 同专辑上一曲的艺人图先作为占位显示，当前曲目结果到达后覆盖
+			const pth = s.path + (s.embedded ? 4 : '');
+			if (!this.cache().cacheHit(pth)) this.deferImg(this.cache(), s.image, pth, s.embedded, true, slot, 4);
 		} else if (this.stub[4].user) {
 			if (!this.cache().cacheHit(this.stub[4].path)) this.cache().cacheIt(this.stub[4].user, this.stub[4].path);
 		} else {
@@ -479,9 +496,10 @@ class Images {
 		if (isCov && bgKey === this.slotKey()) this.cov.coverState = { key: bgKey, found: !!(image && image_path) }; // [RAF] 记录查询结果（供 server.js 复用）
 		if (isCov && image && image_path && bgKey === this.slotKey()) this.cov.bgSrc = { key: bgKey, image: image, path: image_path, embedded: embedded }; // 存槽
 		if (art_id === 4) { // [RAF] 艺人图：入槽（属于当前条目的才存）；专辑视图下的预查结果不进显示路由（防污染）
-			const artKey = this.covKey(handle) + 4;
+			const artKey = this.artKey(handle);
 			const cur = $.handle(panel.id.focus);
-			if (image && image_path && cur && this.covKey(cur) + 4 === artKey) this.cov.artSrc = { key: artKey, image: image, path: image_path, embedded: embedded };
+			if (image && image_path && cur && this.artKey(cur) === artKey) this.cov.artSrc = { key: artKey, alb: this.covKey(handle), image: image, path: image_path, embedded: embedded };
+			if (ppt.artistView && this.art.images.length && ppt.cycPhoto) return true; // [RAF] 照片轮播显示中：艺人图只入槽，不覆盖已显示的照片
 			if (!ppt.artistView && !ppt.loadCovAllFb && !isCov) return true;
 		}
 		if (!ppt.artistView || art_id === 4) return false; // 专辑视图 / 艺人图（type4）：继续原显示路由
@@ -857,6 +875,7 @@ class Images {
 			if (this.artist) this.getArtImages();
 		}
 		this.setCheckArr(ppt.cycPhoto ? this.art.images[this.art.ix] : null);
+		this.applyArtFallback($.handle(panel.id.focus)); // [RAF] 进入艺人视图先落照片回退，文件夹照片/类型4到达后覆盖
 		this.loadArtImage();
 	}
 
@@ -896,7 +915,7 @@ class Images {
 	}
 
 	getCovImages() {
-		if (!this.cov.cycle || panel.alb.ix) return false; // [RAF] 不再按视图屏蔽：循环模式的封面获取在两视图走同一流程（显示侧由缓存/响应层保证不串）
+		if (!this.cov.cycle || panel.alb.ix) return false; // 原版：循环模式在两视图都执行（艺人视图只预取，显示部分见下方 !ppt.artistView 守卫）
 		if (!panel.lock) this.setAlbID();
 		const new_album = this.id.albCyc != this.id.curAlbCyc || !this.id.albCyc;
 		if (ppt.loadCovFolder && !panel.lock) this.cov.folder = panel.cleanPth(cfg.albCovFolder, panel.id.focus);
@@ -927,23 +946,34 @@ class Images {
 			}
 			if (ppt.loadCovAllFb) {
 				const handle = $.handle(panel.id.focus);
-				if (handle) this.cov.selFiltered.forEach(v => this.getImg(handle, v, false));
+				if (!ppt.artistView) { // [RAF] 艺人视图只预取：不显示占位
+					const sid = this.cov.selFiltered[0];
+					if (this.stub[sid].user) this.cache().cacheIt(this.stub[sid].user, this.stub[sid].path);
+					else this.setStub(this.cache(), 'stub' + sid, true, sid === 4 ? 1 : 0);
+				}
+				if (handle) this.cov.selFiltered.forEach(v => this.getImg(handle, v, false)); // [RAF] 预取封面列表
 				else if (!ppt.loadCovFolder || !this.cov.images.length) return false;
 			} else { // [RAF] 文件夹循环：显示用文件夹图，但"始终基于封面"背景仍需 covType 封面 → 与上面 selFiltered 请求对位，补一次
+				if (!ppt.artistView) { // [RAF] 艺人视图只预取：不显示占位
+					const sid = this.cov.selFiltered[0];
+					if (this.stub[sid].user) this.cache().cacheIt(this.stub[sid].user, this.stub[sid].path);
+					else this.setStub(this.cache(), 'stub' + sid, true, sid === 4 ? 1 : 0);
+				}
 				const handle = $.handle(panel.id.focus);
 				const key = handle ? this.covKey(handle) + ppt.covType : '';
 				if (key && !(this.cov.bgSrc && this.cov.bgSrc.key === key)) {
 					this.getImg(handle, ppt.covType, false);
 				}
-				if (handle && ppt.covType !== 4) { // [RAF] 顺带预查艺人图（covType=4 时上面那次就是类型4请求，无需再查）
-					const artKey = this.covKey(handle) + 4;
+				if (!ppt.artistView && handle && ppt.covType !== 4) { // [RAF] 文件夹循环同样预取艺人图
+					const artKey = this.artKey(handle);
 					if (!(this.cov.artSrc && this.cov.artSrc.key === artKey)) {
-						this.cov.artSrc = { key: artKey }; // 占位：已发起（无图结果也保留，之后不再查）
-						this.getImg(handle, 4, false);
+						this.getImg(handle, 4, false); // 先查询
+						this.cov.artSrc = { key: artKey, alb: this.covKey(handle) }; // 后占位（无图结果也保留；同一曲目不重复查）
 					}
 				}
 			}
 		}
+		if (ppt.artistView) return false; // [RAF] 艺人视图不显示循环图：继续走 stndAlb（查封面 + 预查艺人图）
 		if (!new_album || !ppt.loadCovAllFb) {
 			const key = this.cov.images[this.cov.ix];
 			if (!key) return false;
@@ -994,14 +1024,15 @@ class Images {
 		// stndAlb
 		const handle = $.handle(panel.id.focus);
 		if (handle) {
-			let id = ppt.covType; // [RAF] 两视图一致：封面都取 covType
+			let id = ppt.covType; // [RAF] 两视图一致：封面都取 covType（艺人视图顺带预取封面）
 			if (!ppt.loadCovAllFb || forceStnd || ppt.artistView) {
 				this.getImg(handle, id, this.stub[id].panel ? false : !ppt.covType || ppt.artistView ? false : true);
-				if (ppt.covType !== 4) { // [RAF] 顺带预查艺人图（covType=4 时上面那次就是类型4请求，无需再查）
-					const artKey = this.covKey(handle) + 4;
+				if (ppt.covType !== 4 && // [RAF] 顺带预查艺人图；照片显示中跳过
+					!(ppt.artistView && this.art.images.length && ppt.cycPhoto)) {
+					const artKey = this.artKey(handle);
 					if (!(this.cov.artSrc && this.cov.artSrc.key === artKey)) {
-						this.cov.artSrc = { key: artKey }; // 占位：已发起（无图结果也保留，之后不再查）
-						this.getImg(handle, 4, false);
+						this.getImg(handle, 4, false); // 先查询
+						this.cov.artSrc = { key: artKey, alb: this.covKey(handle) }; // 后占位（无图结果也保留；同一曲目不重复查）
 					}
 				}
 				// [RAF] 异步结果返回前：立即应用统一回退（结果到达后正常覆盖；空结果保持）
@@ -1034,19 +1065,11 @@ class Images {
 	getImg(handle, id, needStub) {
 		this.cur_handle = handle;
 		const qKey = handle ? this.covKey(handle) + id : '';
-		if (id === 4 && ppt.artistView && this.cov.artSrc && this.cov.artSrc.key === this.covKey(handle) + 4) {
-			// [RAF] 艺人图已查过（含在途/无图）：有图进显示缓存，否则直接返回——不再重复请求
-			if (this.cov.artSrc.image && !this.blackListed(this.cov.artSrc.path)) {
-				const key = this.cov.artSrc.path + (this.cov.artSrc.embedded ? 4 : '');
-				if (!this.cache().cacheHit(key)) this.cache().cacheIt(this.cov.artSrc.image, key, this.cov.artSrc.embedded); // [RAF] 显示缓存已有处理好的图→直接回放，免重复 process
-			}
-			return;
-		}
 		if (qKey && id === ppt.covType && !ppt.loadCovAllFb && (this.cov.bgSrc && this.cov.bgSrc.key === qKey || this.cov.coverState && this.cov.coverState.key === qKey)) {
 			// [RAF] 同一键已回调过（含无图）：不再重复查询；有图则回放
 			if (this.cov.bgSrc && this.cov.bgSrc.key === qKey && !ppt.artistView && !this.blackListed(this.cov.bgSrc.path)) {
 				const key = this.cov.bgSrc.path + (this.cov.bgSrc.embedded ? id : '');
-				if (!this.cache().cacheHit(key)) this.cache().cacheIt(this.cov.bgSrc.image, key, this.cov.bgSrc.embedded); // [RAF] 显示缓存已有处理好的图→直接回放（开面板/切视图秒显），免重复 process
+				if (!this.cache().cacheHit(key)) this.deferImg(this.cache(), this.cov.bgSrc.image, key, this.cov.bgSrc.embedded, false, qKey, id);
 			}
 			return;
 		}
@@ -1274,10 +1297,7 @@ class Images {
 
 	loadArtImage() {
 		if (this.art.images.length && ppt.cycPhoto) this.loadImg(art, this.art.images[this.art.ix], true, this.art.ix);
-		else if (!this.init) {
-			this.getFbImg(); // [RAF] 先发查询（建立在途标记）
-			this.applyArtFallback($.handle(panel.id.focus)); // [RAF] 立即应用统一照片回退：艺人图槽 → 用户占位 → 水印
-		}
+		else if (!this.init) this.getFbImg();
 	}
 
 	loadCycCov(handle, art_id, image, image_path) { // stndAlb
@@ -1496,11 +1516,7 @@ class Images {
 		}
 		if (ppt.text_only && !ui.style.isBlur && !ppt.showFilmStrip) return this.init = false;
 		filmStrip.logScrollPos();
-		if (this.id.panW !== panel.w || this.id.panH !== panel.h) { // [RAF] 尺寸未变（多为可见性补跑）时不清显示缓存，避免封面重复 process
-			this.id.panW = panel.w;
-			this.id.panH = panel.h;
-			this.clearCache();
-		}
+		this.clearCache();
 		if (ppt.artistView) {
 			if (this.init) this.artistReset();
 			this.getArtImg();
