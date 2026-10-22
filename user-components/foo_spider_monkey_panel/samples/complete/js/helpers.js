@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 
 Array.prototype.srt=function(){for(var z=0,t;t=this[z];z++){this[z]=[];var x=0,y=-1,n=true,i,j;while(i=(j=t.charAt(x++)).charCodeAt(0)){var m=(i==46||(i>=48&&i<=57));if(m!==n){this[z][++y]='';n=m;}
 this[z][y]+=j;}}
@@ -324,7 +324,7 @@ function _help(x, y, flags) {
 		}
 	});
 	m.AppendMenuSeparator();
-	m.AppendMenuItem(MF_STRING, 1, '配置...');
+	m.AppendMenuItem(MF_STRING, 1, 'Configure...');
 	const idx = m.TrackPopupMenu(x, y, flags);
 	switch (true) {
 	case idx == 0:

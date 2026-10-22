@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 
 window.DefineScript('Volume', {author:'marc2003', options:{grab_focus:false}});
 include(fb.ComponentPath + 'samples\\complete\\js\\lodash.min.js');
@@ -7,7 +7,7 @@ include(fb.ComponentPath + 'samples\\complete\\js\\volume.js');
 
 let volume = new _volume(0, 0, 0, 0);
 volume.c1 = _RGB(50, 50, 50);
-volume.c2 = _RGB(0, 86, 128);
+volume.c2 = _RGB(196, 30, 35);
 
 function on_size() {
 	volume.w = window.Width;

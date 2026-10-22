@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 
 window.DefineScript('Volume Slider', {author:'marc2003', options:{grab_focus:false}});
 include(fb.ComponentPath + 'samples\\complete\\js\\lodash.min.js');
@@ -6,8 +6,8 @@ include(fb.ComponentPath + 'samples\\complete\\js\\helpers.js');
 include(fb.ComponentPath + 'samples\\complete\\js\\volume.js');
 
 let volume = new _volume(0, 0, 0, 0);
-volume.c1 = _RGB(50, 54, 57);
-volume.c2 = _RGB(38, 119, 168);
+volume.c1 = _RGB(50, 50, 50);
+volume.c2 = _RGB(196, 30, 35);
 
 function on_mouse_lbtn_down(x, y) {
 	volume.lbtn_down(x, y);

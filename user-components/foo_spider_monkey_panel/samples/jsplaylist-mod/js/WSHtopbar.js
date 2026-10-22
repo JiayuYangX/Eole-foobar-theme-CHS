@@ -1,4 +1,4 @@
-﻿// *****************************************************************************************************************************************
+// *****************************************************************************************************************************************
 // TopBar object by Br3tt aka Falstaff (c)2015
 // *****************************************************************************************************************************************
 
@@ -126,7 +126,7 @@ oTopBar = function () {
 			// playlist infos
 			gr.SetTextRenderingHint(5);
 			if (this.totalDurationText.length > 0) {
-				gr.DrawString(this.playlist_count > 0 ? (this.playlist_count + (this.playlist_count > 1 ? " 音轨. " : " 音轨. ") + this.totalDurationText) : "empty playlist", gdi_font("segoe ui", this.txt2Height, 0), g_color_normal_txt & 0x88ffffff, this.x + logoW + borderHeight, Math.ceil(cTopBar.height / 2) + 1 + borderHeight, this.w - logoW - 15, 32, lt_stringformat);
+				gr.DrawString(this.playlist_count > 0 ? (this.playlist_count + (this.playlist_count > 1 ? " tracks. " : " track. ") + this.totalDurationText) : "empty playlist", gdi_font("segoe ui", this.txt2Height, 0), g_color_normal_txt & 0x88ffffff, this.x + logoW + borderHeight, Math.ceil(cTopBar.height / 2) + 1 + borderHeight, this.w - logoW - 15, 32, lt_stringformat);
 			} else {
 				gr.DrawString(this.playlist_count > 0 ? (this.playlist_count + (this.playlist_count > 1 ? " streams " : " stream ")) : "empty playlist", gdi_font("segoe ui", this.txt2Height, 0), g_color_normal_txt & 0x88ffffff, this.x + logoW + cHeaderBar.borderWidth, Math.ceil(cTopBar.height / 2) + 1 + borderHeight, this.w - logoW - 15, 32, lt_stringformat);
 			};
@@ -147,7 +147,7 @@ oTopBar = function () {
 			if (this.buttonClicked && state == ButtonStates.hover) {
 				// action
 				cTopBar.visible = false;
-				window.SetProperty("SYSTEM.顶栏.显示", cTopBar.visible);
+				window.SetProperty("SYSTEM.TopBar.Visible", cTopBar.visible);
 				resize_panels();
 				full_repaint();
 			};
@@ -184,7 +184,7 @@ oTopBar = function () {
 		var idx;
 		var _menu = window.CreatePopupMenu();
 
-		_menu.AppendMenuItem(MF_STRING, 10, "面板设置...");
+		_menu.AppendMenuItem(MF_STRING, 10, "Panel Settings...");
 
 		idx = _menu.TrackPopupMenu(x, y);
 		switch (true) {
