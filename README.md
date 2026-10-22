@@ -1,10 +1,16 @@
 # Eole-foobar-theme-CHS
 
-本仓库为 foobar2000 [Eole](https://github.com/Ottodix/Eole-foobar-theme) 主题的汉化版（仅支持 32 位版本），提取自 [shooterspps/foobar2000](https://github.com/shooterspps/foobar2000) 安装包文件，优化部分汉化文本及界面细节，并依照 Eole 后来更新的内容同步部分更新。另外自行增加了跟随 Columns UI 深浅色自动切换的功能。
+本仓库为 foobar2000 [Eole](https://github.com/Ottodix/Eole-foobar-theme) 主题的汉化版（仅支持 32 位版本），提取自 [shooterspps/foobar2000](https://github.com/shooterspps/foobar2000) 安装包文件，优化部分汉化文本及界面细节，并依照 Eole 后来更新的内容同步部分更新。另外增加了跟随 Columns UI 深浅色自动切换的功能、以及获取远程曲目内嵌封面的功能。
+
+建议搭配 [Asion](https://www.cnblogs.com/asionwu) 的 foobar2000 汉化版使用，部分脚本功能依赖汉化后的菜单项才能工作。
 
 ### 深浅色自动切换
 
 可在主菜单的 `皮肤设置 > 颜色 > 深浅色跟随 CUI 设置` 选项开启。启用此功能须在 Columns UI 的设置里打开深浅色使用系统设置的选项。
+
+### 获取远程曲目内嵌封面
+
+通过 [Remote Art Fix](https://github.com/JiayuYangX/foo_remote_art_fix) 组件，可获取支持文件系统的远程文件（如 WebDAV）和支持 Range 请求的 HTTP(s) 直链文件的内嵌封面。
 
 ### 安装方法
 
