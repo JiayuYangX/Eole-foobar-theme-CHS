@@ -239,11 +239,11 @@ function get_colors(){
 		colors.wallpaper_overlay_blurred = GetGrey(0,140);
 		colors.albumartbg_overlay = GetGrey(0,80);
 
-		colors.btn_inactive_opacity = 110;
+		colors.btn_inactive_opacity = 180;
 		colors.active_tab = GetGrey(255);
 		colors.active_tab_line_height = 1;
 
-		colors.inactive_txt = GetGrey(110);
+		colors.inactive_txt = GetGrey(180);
 		colors.faded_txt = GetGrey(240);
 
 		colors.search_txt = GetGrey(240);
