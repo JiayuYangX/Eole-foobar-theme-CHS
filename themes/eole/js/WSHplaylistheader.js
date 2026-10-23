@@ -778,14 +778,14 @@ playlistInfo = function(){
 			totalS=Math.round(r_timetodraw);
 			totalS = (totalS > 9) ? totalS : '0' + totalS;
 
-			txt_month = (totalMth > 0) ? `${totalMth} 月${totalMth > 1 ? '' : ''}, `: '';
-			txt_week = (totalW > 0) ? `${totalW} 星期${totalW > 1 ? 's' : ''} ` : '';
-			txt_day = (totalD > 0) ? `${totalD} 天${totalD > 1 ? 's' : ''} ` : '';
-			txt_hour = (totalH > 0) ? `${totalH} 小时 ` : '';
-            txt_mins = (totalM > 0) ? `${totalM} 分 ` : '';
+			txt_month = (totalMth > 0) ? `${totalMth}月${totalMth > 1 ? '' : ''}, `: '';
+			txt_week = (totalW > 0) ? `${totalW}星期${totalW > 1 ? '' : ''} ` : '';
+			txt_day = (totalD > 0) ? `${totalD}天${totalD > 1 ? '' : ''} ` : '';
+			txt_hour = (totalH > 0) ? `${totalH}小时 ` : '';
+            txt_mins = (totalM > 0) ? `${totalM}分 ` : '';
 
-			this.time_txt = `${txt_month}${txt_week}${txt_day}${txt_hour}${txt_mins}${totalS} 秒`;
-			this.items_txt=displayed_count+' 项目 ';
+			this.time_txt = `${txt_month}${txt_week}${txt_day}${txt_hour}${txt_mins}${totalS}秒`;
+			this.items_txt=displayed_count+'项目 ';
 
 			// Main Text, Left justified
 			var filtered_playlist = "";
@@ -804,7 +804,7 @@ playlistInfo = function(){
 			} else if(this.genres!="") {
 				this.main_txt=this.genres;
 			} else if(this.dates!="") {
-				this.main_txt="日期 : "+this.dates;
+				this.main_txt="日期: "+this.dates;
 			} else if(this.playlist_name==globalProperties.playing_playlist || this.playlist_name==globalProperties.selection_playlist){
 				this.main_txt='混合选择';
 			} else {

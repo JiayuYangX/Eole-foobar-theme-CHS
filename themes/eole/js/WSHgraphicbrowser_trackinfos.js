@@ -412,7 +412,7 @@ oFilterBox = function() {
 		icon_theme_subfolder = properties.darklayout ? "\\white" : "";
 
 		this.images.search_icon = gdi.Image(theme_img_path + "\\icons"+icon_theme_subfolder+"\\search_icon.png");
-		this.search_bt = new button(this.images.search_icon, this.images.search_icon, this.images.search_icon,"search_bt", "过滤分组"+(properties.filterBox_filter_tracks?" & 音轨":''));
+		this.search_bt = new button(this.images.search_icon, this.images.search_icon, this.images.search_icon,"search_bt", "过滤分组"+(properties.filterBox_filter_tracks?" &音轨":''));
 
 		this.images.resetIcon_off = gdi.CreateImage(w, w);
 		gb = this.images.resetIcon_off.GetGraphics();
@@ -1034,19 +1034,19 @@ oRow = function(metadb,itemIndex) {
 				? gr.DrawImage(image0, this.x+12,  text_y+Math.ceil((text_height-image0.Height)/2), image0.Width, image0.Height, 0, 0, image0.Width, image0.Height,0,255)
 				: gr.DrawImage(image1, this.x+12,  text_y+Math.ceil((text_height-image1.Height)/2), image1.Width, image1.Height, 0, 0, image1.Width, image1.Height,0,255);
 		} else {
-			gr.GdiDrawText(this.discnumber + (this.tracknumber !== "?" ? this.tracknumber : "-"), g_font.normal, g_showlist.colorSchemeTextFaded, this.x - 2, text_y, this.tracknumber_w, text_height, DT_RIGHT | DT_VCENTER | DT_CALCRECT | DT_END_ELLIPSIS | DT_NOPREFIX);
+			gr.GdiDrawText(this.discnumber + (this.tracknumber !== "?" ? this.tracknumber : "-"), g_font.plus1, g_showlist.colorSchemeTextFaded, this.x - 2, text_y, this.tracknumber_w, text_height, DT_RIGHT | DT_VCENTER | DT_CALCRECT | DT_END_ELLIPSIS | DT_NOPREFIX);
 		}
 
 		var tx = this.x + this.tracknumber_w + 10;
 		var tw = this.w - this.tracknumber_w - length_w - (this.rating_length==0?0:this.rating_length+10)
 		var tw2 = this.w - this.tracknumber_w - length_w;
-        gr.GdiDrawText(this.title, g_font.normal, g_showlist.colorSchemeText, tx, text_y, tw, text_height, DT_LEFT | DT_VCENTER | DT_CALCRECT | DT_END_ELLIPSIS | DT_NOPREFIX);
+        gr.GdiDrawText(this.title, g_font.plus1, g_showlist.colorSchemeText, tx, text_y, tw, text_height, DT_LEFT | DT_VCENTER | DT_CALCRECT | DT_END_ELLIPSIS | DT_NOPREFIX);
 
-		this.title_length === 0 && (this.title_length = gr.CalcTextWidth(this.title, g_font.normal));
+		this.title_length === 0 && (this.title_length = gr.CalcTextWidth(this.title, g_font.plus1));
 
 		if (this.artist_text !== "" && !properties.show2lines) {
-			gr.GdiDrawText(` - ${this.artist_text}`, g_font.italic, g_showlist.colorSchemeTextFaded, tx + this.title_length, text_y, tw - this.title_length, text_height, DT_LEFT | DT_VCENTER | DT_CALCRECT | DT_END_ELLIPSIS | DT_NOPREFIX);
-			this.artist_length === 0 && (this.artist_length = gr.CalcTextWidth(` - ${this.artist_text}`, g_font.italic));
+			gr.GdiDrawText(` - ${this.artist_text}`, g_font.italicplus1, g_showlist.colorSchemeTextFaded, tx + this.title_length, text_y, tw - this.title_length, text_height, DT_LEFT | DT_VCENTER | DT_CALCRECT | DT_END_ELLIPSIS | DT_NOPREFIX);
+			this.artist_length === 0 && (this.artist_length = gr.CalcTextWidth(` - ${this.artist_text}`, g_font.italicplus1));
 		}
 		if((properties.showPlaycount || properties.showCodec || properties.showBitrate) && !properties.show2lines){
 			this.playcount_text = "  ("+this.playcount+")";
@@ -1058,8 +1058,8 @@ oRow = function(metadb,itemIndex) {
 		}
 		if(properties.show2lines) {
 			if(this.secondLine=="") this.secondLine = this.artist_text+(this.artist_text!=""?" - ":"")+this.playcount;
-			if(this.secondLine_length==0) this.secondLine_length = gr.CalcTextWidth(this.secondLine, g_font.normal);
-			gr.GdiDrawText(this.secondLine, g_font.normal, g_showlist.colorSchemeTextFaded, tx, text_y+text_height-6, tw2, text_height, DT_LEFT | DT_VCENTER | DT_CALCRECT | DT_END_ELLIPSIS | DT_NOPREFIX);			
+			if(this.secondLine_length==0) this.secondLine_length = gr.CalcTextWidth(this.secondLine, g_font.plus1);
+			gr.GdiDrawText(this.secondLine, g_font.plus1, g_showlist.colorSchemeTextFaded, tx, text_y+text_height-6, tw2, text_height, DT_LEFT | DT_VCENTER | DT_CALCRECT | DT_END_ELLIPSIS | DT_NOPREFIX);			
 		}
 		if(properties.showToolTip && ((this.title_length + this.artist_length + this.playcount_length) > tw || this.secondLine_length>tw2)) {
 			this.showToolTip = true;
@@ -1073,7 +1073,7 @@ oRow = function(metadb,itemIndex) {
 			
 		} else this.showToolTip = false;
 
-        gr.GdiDrawText(duration, g_font.normal, g_showlist.colorSchemeText, this.x + this.w - length_w, text_y, length_w, text_height, DT_RIGHT | DT_VCENTER | DT_CALCRECT | DT_END_ELLIPSIS | DT_NOPREFIX);
+        gr.GdiDrawText(duration, g_font.plus1, g_showlist.colorSchemeText, this.x + this.w - length_w, text_y, length_w, text_height, DT_RIGHT | DT_VCENTER | DT_CALCRECT | DT_END_ELLIPSIS | DT_NOPREFIX);
 
         if(isPlaying && properties.AlbumArtProgressbar && properties.drawProgressBar && (cNowPlaying.flashescounter<5 || !cNowPlaying.flashEnable)) {
 				var playingText = gdi.CreateImage(this.w+10, this.h);
@@ -1801,7 +1801,7 @@ oShowList = function(parentPanelName) {
 			this.discnumber = Tags[2];
 			this.date = Tags[3];
 			this.genre = Tags[4];
-			this.total_tracks = pl_count+(pl_count>1?" 音轨":" 音轨");
+			this.total_tracks = pl_count+(pl_count>1?"音轨":"音轨");
 		} else {
 			//TagsString = TF.showlistReduced.EvalWithMetadb(this.pl[0]);
 			//Tags = TagsString.split(" ^^ ");
@@ -1812,7 +1812,7 @@ oShowList = function(parentPanelName) {
 			if(brw.groups[this.idx].date!="?" && !brw.custom_groupby) this.date = ' ('+brw.groups[this.idx].date+')';
 			else this.date = '';
 			this.genre = brw.groups[this.idx].genre;
-			this.total_tracks = pl_count+(pl_count>1?" 音轨":" 音轨");
+			this.total_tracks = pl_count+(pl_count>1?"音轨":"音轨");
 		}
 
 		this.firstRow = this.album+this.discnumber+this.date;
@@ -2779,10 +2779,10 @@ oHeaderBar = function(name) {
 		if(brw.finishLoading) {
 			if(brw.playlistItemCount) {
 				if(g_filterbox.isActive) {
-					this.itemsTxt=((properties.showTotalTime)?',  ':'')+g_filterbox.filtered_tracks_count+' 音轨'+((g_filterbox.filtered_tracks_count>1)?" ":"")+',  '+brw.groups_draw.length+' 分组 '+((brw.groups_draw.length>1)?" ":"");
+					this.itemsTxt=((properties.showTotalTime)?',  ':'')+g_filterbox.filtered_tracks_count+'音轨'+((g_filterbox.filtered_tracks_count>1)?" ":"")+',  '+brw.groups_draw.length+'分组 '+((brw.groups_draw.length>1)?" ":"");
 					time_total = g_filterbox.filtered_tracks_time;
 				} else {
-					this.itemsTxt=((properties.showTotalTime)?',  ':'')+brw.playlistItemCount+' 音轨'+((brw.playlistItemCount>1)?" ":"")+',  '+brw.groups_draw.length+' 分组 '+((brw.groups_draw.length>1)?" ":"");
+					this.itemsTxt=((properties.showTotalTime)?',  ':'')+brw.playlistItemCount+'音轨'+((brw.playlistItemCount>1)?" ":"")+',  '+brw.groups_draw.length+'分组 '+((brw.groups_draw.length>1)?" ":"");
 					time_total = brw.totalTime;
 				}
 				
@@ -3207,7 +3207,7 @@ function draw_settings_menu(x,y,right_align,sort_group){
 
 	_filterMenu.AppendMenuItem((!properties.showheaderbar)?MF_DISABLED:MF_STRING, 30, "显示")
 	_filterMenu.CheckMenuItem(30, properties.showFilterBox);
-	_filterMenu.AppendMenuItem(MF_STRING, 50, "过滤 also 音轨 (稍微减慢搜索速度)");
+	_filterMenu.AppendMenuItem(MF_STRING, 50, "过滤 also音轨 (稍微减慢搜索速度)");
 	_filterMenu.CheckMenuItem(50, properties.filterBox_filter_tracks);
 	_filterMenu.AppendTo(_menuHeaderBar,MF_STRING, "过滤栏");
 
@@ -4286,7 +4286,7 @@ oBrowser = function(name) {
 	if(properties.showheaderbar)
 		this.headerBarHeight = (properties.CoverGridNoText?39:43);
 	else
-		this.headerBarHeight = (properties.CoverGridNoText?0:4);
+		this.headerBarHeight = (properties.CoverGridNoText?0:0);
 
    timers.firstPopulate = setTimeout(function(){
 		if(!brw.finishLoading && brw.firstInitialisation) eval(name+".populate(13)");
@@ -4318,12 +4318,12 @@ oBrowser = function(name) {
 			totalS -= (totalH = Math.floor(totalS / 3600)) * 3600;
 			totalS -= (totalM = Math.floor(totalS / 60)) * 60;
 
-			txt_week = (totalW > 0) ? `${totalW} 星期${totalW > 1 ? 's' : ''} ` : '';
-			txt_day = (totalD > 0) ? `${totalD} 天${totalD > 1 ? 's' : ''} ` : '';
-			txt_hour = (totalH > 0) ? `${totalH} 小时 ` : '';
-            txt_mins = (totalM > 0) ? `${totalM} 分 ` : '';
+			txt_week = (totalW > 0) ? `${totalW}星期${totalW > 1 ? '' : ''} ` : '';
+			txt_day = (totalD > 0) ? `${totalD}天${totalD > 1 ? '' : ''} ` : '';
+			txt_hour = (totalH > 0) ? `${totalH}小时 ` : '';
+            txt_mins = (totalM > 0) ? `${totalM}分 ` : '';
 
-			time_txt = `${txt_week}${txt_day}${txt_hour}${txt_mins}${totalS} 秒`;
+			time_txt = `${txt_week}${txt_day}${txt_hour}${txt_mins}${totalS}秒`;
 		}
 		return time_txt;
 	}
@@ -4331,7 +4331,7 @@ oBrowser = function(name) {
 		if(properties.showheaderbar)
 			this.headerBarHeight = (properties.CoverGridNoText?39:43);
 		else
-			this.headerBarHeight = (properties.CoverGridNoText?0:4);
+			this.headerBarHeight = (properties.CoverGridNoText?0:0);
 		if(properties.showheaderbar){
 			g_headerbar.setDisplayedInfo();
 			g_headerbar.setSize(0,0,this.w,this.headerBarHeight);
@@ -4514,7 +4514,7 @@ oBrowser = function(name) {
 					if(this.custom_groupby) {
 						var groupinfos_rows = TF.grouping.EvalWithMetadb(this.groups[i-1].pl[0]).replace(/\r?\n/gm, ' ').split(" ^^ ");
 						this.groups[i-1].firstRow = groupinfos_rows[0];
-						this.groups[i-1].secondRow = (groupinfos_rows[1]!="")?groupinfos_rows[1]:this.groups[i-1].pl.Count+(this.groups[i-1].pl.Count>1?" 音轨":" 音轨");
+						this.groups[i-1].secondRow = (groupinfos_rows[1]!="")?groupinfos_rows[1]:this.groups[i-1].pl.Count+(this.groups[i-1].pl.Count>1?"音轨":"音轨");
 					} else {
 						this.groups[i-1].firstRow = this.groups[i-1].artist
 						this.groups[i-1].secondRow = this.groups[i-1].album;
@@ -4616,7 +4616,7 @@ oBrowser = function(name) {
 				if(this.custom_groupby) {
 					var groupinfos_rows = TF.grouping.EvalWithMetadb(this.groups[i-1].pl[0]).split(" ^^ ");
 					this.groups[this.groups.length-1].firstRow = groupinfos_rows[0];
-					this.groups[this.groups.length-1].secondRow = (groupinfos_rows[1]!="")?groupinfos_rows[1]:this.groups[this.groups.length-1].pl.Count+(this.groups[this.groups.length-1].pl.Count>1?" 音轨":" 音轨");
+					this.groups[this.groups.length-1].secondRow = (groupinfos_rows[1]!="")?groupinfos_rows[1]:this.groups[this.groups.length-1].pl.Count+(this.groups[this.groups.length-1].pl.Count>1?"音轨":"音轨");
 				} else {
 					this.groups[this.groups.length-1].firstRow = this.groups[this.groups.length-1].artist
 					this.groups[this.groups.length-1].secondRow = this.groups[this.groups.length-1].album;
@@ -6244,7 +6244,7 @@ function on_paint(gr) {
     brw && brw.draw(gr);
 	gr.FillGradRect(0, wh-colors.fading_bottom_height, ww, colors.fading_bottom_height, 90, colors.grad_bottom_2,  colors.grad_bottom_1,1);
 
-	if(!properties.showheaderbar && !properties.CoverGridNoText) gr.FillSolidRect(0, 0, ww-1, brw.marginTop+brw.headerBarHeight+4,colors.no_headerbar_top);
+	if(!properties.showheaderbar && !properties.CoverGridNoText) gr.FillSolidRect(0, 0, ww-1, brw.marginTop+brw.headerBarHeight,colors.no_headerbar_top);
 
 	if(properties.DragToPlaylist){
 		if(!g_plmanager.isOpened || g_plmanager.side == "left") paint_scrollbar=true;
@@ -6874,7 +6874,7 @@ function on_mouse_move(x, y, m) {
 				if(g_showlist.rows_[i].isSelected) showlist_selected_count++;
 			}
 			if(showlist_selected_count==items.Count) var drag_img = createDragImg(brw.groups[g_showlist.idx].cover_img, 80,items.Count);
-			else drag_img = createDragText("拖动", items.Count+" 音轨", 220);
+			else drag_img = createDragText("拖动", items.Count+"音轨", 220);
 			brw.external_dragging = true;
 			var options = {
 				show_text : false,

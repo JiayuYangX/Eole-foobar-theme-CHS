@@ -23,8 +23,8 @@ var last_mouse_move_notified = (new Date).getTime();
 var foo_playcount = utils.CheckComponent("foo_playcount", true);
 var timers = []
 var globalProperties = {
-	theme_version: '1.2.3b24',
-	lastest_breaking_version: '1.2.3b20',
+	theme_version: '1.2.3b25',
+	lastest_breaking_version: '1.2.3b24',
     thumbnailWidthMax: window.GetProperty("GLOBAL thumbnail width max", 200),
     coverCacheWidthMax: window.GetProperty("GLOBAL cover cache width max", 400),
 	TextRendering: 4,
@@ -2802,11 +2802,11 @@ function get_font() {
 	};
     // tweaks to fix a problem with WSH Panel Mod on Font object Name property
     try {
-        g_fname = "Segoe UI";
-        g_fname_light = "Segoe UI Semilight";
-        g_fname_light_italic = "Segoe UI Semilight Italic";
-        g_fname_italic = "Segoe UI Italic";
-        g_fname_semibold = "Segoe UI Semibold";
+        g_fname = "微软雅黑";
+        g_fname_light = "微软雅黑";
+        g_fname_light_italic = "微软雅黑";
+        g_fname_italic = "微软雅黑";
+        g_fname_semibold = "微软雅黑";
         g_fsize = default_font.Size;
         g_fstyle = 0;
         // g_fstyle_light = 2;
@@ -3172,7 +3172,7 @@ function createDragImg(img, cover_size, count){
     gb.FillSolidRect(left_padding, top_padding, cover_size, cover_size, colors.dragcover_overlay);
 	gb.FillSolidRect(left_padding,top_padding+cover_size-text_height,cover_size,text_height,colors.dragimage_bg);
 	gb.DrawRect(left_padding, top_padding, cover_size-1, cover_size-1, 1.0,colors.dragimage_border);
-	gb.GdiDrawText(count+" 音轨", g_font.italicmin1,  colors.dragimage_text, left_padding, top_padding+cover_size-text_height, cover_size, text_height, DT_CENTER | DT_CALCRECT | DT_VCENTER | DT_END_ELLIPSIS | DT_NOPREFIX);
+	gb.GdiDrawText(count+"音轨", g_font.italicmin1,  colors.dragimage_text, left_padding, top_padding+cover_size-text_height, cover_size, text_height, DT_CENTER | DT_CALCRECT | DT_VCENTER | DT_END_ELLIPSIS | DT_NOPREFIX);
 	drag_img.ReleaseGraphics(gb);
 
 	//drag_img = drag_img.Resize(cover_size, cover_size, 2);

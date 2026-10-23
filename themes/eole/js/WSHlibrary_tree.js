@@ -1091,7 +1091,7 @@ function userinterface() {
     this.get_font = function() {
         orig_font_sz = window.GetProperty("SYSTEM.Font Size", 16);
 
-		this.font = g_font.normal;
+		this.font = g_font.plus1;
 		this.s_font = g_font.normal;
 		this.font_small = g_font.min2;
         this.calc_text();

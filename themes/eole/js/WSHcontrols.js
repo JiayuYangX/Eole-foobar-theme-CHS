@@ -635,7 +635,7 @@ function build_buttons(){
 			g_tooltip.Deactivate();
 			fb.RunMainMenuCommand("视图/DSP/均衡器");
 		},false,equalizer_img,equalizer_img_hover),
-		Device: new SimpleButton(-button_right_m-(button_width+button_padding)*(displayed_button++), buttons_right_top_m, button_width, 32, "设备", "输出设备 & DSP 预设", function () {
+		Device: new SimpleButton(-button_right_m-(button_width+button_padding)*(displayed_button++), buttons_right_top_m, button_width, 32, "设备", "输出与DSP预设", function () {
 			g_tooltip.Deactivate();
 			menuOutputAndDSP(window.Width-button_right_m-(button_width+button_padding)*1-130, 15);
 		},false,false,device_img,device_img_hover),		
@@ -2509,7 +2509,7 @@ function moreMenu(x, y){
 		_menu_button.CheckMenuItem(4020, properties.displayPlayRandom);
 		_menu_button.AppendMenuItem(MF_STRING, 4017, "均衡器");
 		_menu_button.CheckMenuItem(4017, properties.displayEqualizer);
-		_menu_button.AppendMenuItem(MF_STRING, 4024, "输出设备 & DSP 预设");
+		_menu_button.AppendMenuItem(MF_STRING, 4024, "输出与DSP预设");
 		_menu_button.CheckMenuItem(4024, properties.displayDevice);		
 		_menu_button.AppendMenuItem(MF_STRING, 4018, "评级");
 		_menu_button.CheckMenuItem(4018, properties.displayRating);
@@ -3140,7 +3140,7 @@ function draw_settings_menu(x,y){
 		_menu_button.CheckMenuItem(3020, properties.displayPlayRandom);		
 		_menu_button.AppendMenuItem(MF_STRING, 3023, "打开");
 		_menu_button.CheckMenuItem(3023, properties.displayOpen);
-		_menu_button.AppendMenuItem(MF_STRING, 3029, "输出设备 & DSP 预设");
+		_menu_button.AppendMenuItem(MF_STRING, 3029, "输出与DSP预设");
 		_menu_button.CheckMenuItem(3029, properties.displayDevice);				
 		_menu_button.AppendMenuItem(MF_STRING, 3017, "均衡器");
 		_menu_button.CheckMenuItem(3017, properties.displayEqualizer);	

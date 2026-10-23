@@ -1495,12 +1495,12 @@ oGroup = function(index, start, handle, groupkey) {
 			totalS -= (totalH = Math.floor(totalS / 3600)) * 3600;
 			totalS -= (totalM = Math.floor(totalS / 60)) * 60;
 
-			txt_week = (totalW > 0) ? `${totalW} 星期${totalW > 1 ? 's' : ''} ` : '';
-			txt_day = (totalD > 0) ? `${totalD} 天${totalD > 1 ? 's' : ''} ` : '';
-			txt_hour = (totalH > 0) ? `${totalH} 小时 ` : '';
-            txt_mins = (totalM > 0) ? `${totalM} 分 ` : '';
+			txt_week = (totalW > 0) ? `${totalW}星期${totalW > 1 ? '' : ''} ` : '';
+			txt_day = (totalD > 0) ? `${totalD}天${totalD > 1 ? '' : ''} ` : '';
+			txt_hour = (totalH > 0) ? `${totalH}小时 ` : '';
+            txt_mins = (totalM > 0) ? `${totalM}分 ` : '';
 
-			time_txt = `${txt_week}${txt_day}${txt_hour}${txt_mins}${totalS} 秒`;
+			time_txt = `${txt_week}${txt_day}${txt_hour}${txt_mins}${totalS}秒`;
 		}
 		return time_txt;
 	}
@@ -3404,7 +3404,7 @@ oBrowser = function(name) {
 									playlist:g_active_playlist,
 									trackIndex:playlistTrackId,
 									cover_img:null,
-									totalTracks:this.groups[groupId].count+(this.groups[groupId].count > 1 ? " 音轨" : " track"),
+									totalTracks:this.groups[groupId].count+(this.groups[groupId].count > 1 ? "音轨" : " track"),
 									genre:this.groups[groupId].genre,
 									metadb:this.groups[groupId].metadb,
 									date:this.groups[groupId].date,
@@ -3593,7 +3593,7 @@ oBrowser = function(name) {
 								album_info=this.rows[this.activeRow].groupkeysplit;
 								if(items.Count>1) {
 									var line1 = "拖动";
-									var line2 = items.Count+" 音轨";
+									var line2 = items.Count+"音轨";
 								} else {
 									var line1 = album_info[0];
 									var line2 = album_info[1];
@@ -3602,7 +3602,7 @@ oBrowser = function(name) {
 								track_info=this.groups[this.rows[this.activeRow].albumId].tracks[this.rows[this.activeRow].albumTrackId];
 								if(items.Count>1) {
 									var line1 = "拖动";
-									var line2 = items.Count+" 音轨";
+									var line2 = items.Count+"音轨";
 								} else {
 									var line1 = track_info[1];
 									var line2 = track_info[0];
@@ -3629,7 +3629,7 @@ oBrowser = function(name) {
 									album_info=this.rows[this.activeRow].groupkeysplit;
 									if(items.Count>1) {
 										var line1 = "拖动";
-										var line2 = items.Count+" 音轨";
+										var line2 = items.Count+"音轨";
 									} else {
 										var line1 = album_info[0];
 										var line2 = album_info[1];
@@ -3638,7 +3638,7 @@ oBrowser = function(name) {
 									track_info=this.groups[this.rows[this.activeRow].albumId].tracks[this.rows[this.activeRow].albumTrackId];
 									if(items.Count>1) {
 										var line1 = "拖动";
-										var line2 = items.Count+" 音轨";
+										var line2 = items.Count+"音轨";
 									} else {
 										var line1 = track_info[1];
 										var line2 = track_info[0];
@@ -5380,7 +5380,7 @@ function get_colors() {
 	get_colors_global();
 	if(properties.darklayout){
 		//if(window.Name!="BottomPlaylist") colors.normal_txt = GetGrey(180);
-		colors.fadedsmall_txt = GetGrey(180);
+		colors.fadedsmall_txt = GetGrey(18);
 		colors.tracknumber_txt = GetGrey(190);
 		colors.flash_bg = GetGrey(255,30),
 		colors.flash_rectline = GetGrey(255,61),

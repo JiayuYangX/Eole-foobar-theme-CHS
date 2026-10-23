@@ -524,11 +524,11 @@ function build_buttons(){
 				main_panel_state.setValue(1);
 				get_colors();g_searchbox.adapt_look_to_layout();
 			}, false,false,images.playlist_img,images.playlist_img,1, false, false, true,(compact_titlebar.isEqual(2)?g_font.plus1:g_font.normal)),
-			Artist_Bio: new JSButton(btn.left_m+btn.width+btn.width+btn.margin*2, btn.top_m, btn.width, btn.height, "当前播放", "当前播放", "", function () {
+			Artist_Bio: new JSButton(btn.left_m+btn.width+btn.width+btn.margin*2, btn.top_m, btn.width, btn.height, "艺人简介", "艺人简介", "", function () {
 				main_panel_state.setValue(2);
 				get_colors();g_searchbox.adapt_look_to_layout();
 			}, false,false,images.artist_bio_img,images.artist_bio_img,2, false, false, true,(compact_titlebar.isEqual(2)?g_font.plus1:g_font.normal)),
-			Visualization: new JSButton(btn.left_m+btn.width+btn.width+btn.width+btn.margin*3, btn.top_m, btn.width, btn.height, "可视化", "可视化", "", function () {
+			Visualization: new JSButton(btn.left_m+btn.width+btn.width+btn.width+btn.margin*3, btn.top_m, btn.width, btn.height, "视频播放", "视频播放", "", function () {
 				main_panel_state.setValue(3);
 				get_colors();g_searchbox.adapt_look_to_layout();
 			}, false,false,images.visualization_img,images.visualization_img,3, false, false, true,(compact_titlebar.isEqual(2)?g_font.plus1:g_font.normal)),
@@ -564,7 +564,7 @@ function build_buttons(){
 				toggleSearch();
 				g_cursor.setCursor(IDC_ARROW,2);
 			}, false,false,images.search_toggle_img,images.search_toggle_img,-1, false, false, true),
-			Settings: new JSButton(2, -1, Settings_width, btn.height-3, "Foobar", "Foobar", "主菜单", function () {
+			Settings: new JSButton(2, -1, Settings_width, btn.height-3, "Foobar2000", "Foobar2000", "主菜单", function () {
 				g_tooltip.Deactivate();
 				draw_main_menu(0, 28);
 			}, false,false,((compact_titlebar.isEqual(2) && layout_state.isEqual(0))?images.global_settings_big_img:images.global_settings_img),((compact_titlebar.isEqual(2) && layout_state.isEqual(0))?images.global_settings_big_img:images.global_settings_img),-1, false, false, false),
@@ -582,7 +582,7 @@ function build_buttons(){
 						g_uihacks.setMainWindowState(WindowState.Normal);
 				}
 			},false,images.max_icon,images.max_icon,-1,false,colors.titlebar_btn_hover_bg,true),
-			Mini: new JSButton(-135, 0, 45, 29, "", "mini", "Mini 播放器", false, function () {
+			Mini: new JSButton(-135, 0, 45, 29, "", "mini", "迷你播放器", false, function () {
 				toggleLayoutMode();get_colors();g_searchbox.adapt_look_to_layout();
 			},false,images.mini_icon,images.mini_icon,-1,false,colors.titlebar_btn_hover_bg,true),
 			Reduce: new JSButton(-180, 0, 45, 29, "", "reduce", "", false, function () {
@@ -1031,11 +1031,11 @@ function on_mouse_rbtn_up(x, y){
 		if(layout_state.isEqual(0)) {
 			_menu.AppendMenuItem(MF_STRING, 1, "媒体库");
 			_menu.AppendMenuItem(MF_STRING, 2, "播放列表");
-			_menu.AppendMenuItem(MF_STRING, 3, "当前播放");
-			if(properties.show_visualization) _menu.AppendMenuItem(MF_STRING, 4, "可视化");
+			_menu.AppendMenuItem(MF_STRING, 3, "艺人简介");
+			if(properties.show_visualization) _menu.AppendMenuItem(MF_STRING, 4, "视频播放");
 			_menu.CheckMenuRadioItem(1, 4, (parseInt(main_panel_state.value)+1));
 			_menu.AppendMenuSeparator();
-			_menu.AppendMenuItem(MF_STRING, 6, "Mini 播放器");
+			_menu.AppendMenuItem(MF_STRING, 6, "迷你播放器");
 			if(g_uihacks.getFullscreenState())
 				_menu.AppendMenuItem(MF_STRING, 5, "退出全屏");
 			else
@@ -1103,9 +1103,9 @@ function draw_settings_menu(x,y){
 		var _menu_button = window.CreatePopupMenu();
         var idx;
 
-		_menu.AppendMenuItem(MF_STRING, 1811, "正常标题栏");
-		_menu.AppendMenuItem(MF_STRING, 1812, "紧凑标题栏 - 小");
-		_menu.AppendMenuItem(MF_STRING, 1813, "紧凑标题栏 - 大");		
+		_menu.AppendMenuItem(MF_STRING, 1811, "标准标题栏");
+		_menu.AppendMenuItem(MF_STRING, 1812, "紧凑标题栏");
+		_menu.AppendMenuItem(MF_STRING, 1813, "紧凑标题栏4K屏");		
 		_menu.CheckMenuRadioItem(1811, 1813, (parseInt(compact_titlebar.getValue())+1811));
 		
 		_menu.AppendMenuSeparator();
@@ -1115,7 +1115,7 @@ function draw_settings_menu(x,y){
 		_menu.AppendMenuItem((compact_titlebar.isActive() && layout_state.isEqual(0))?MF_GRAYED:MF_STRING, 1809, "播放音轨标题格式...");
 		_menu.AppendMenuItem(MF_STRING, 1805, "大写面板文本按钮");
 		_menu.CheckMenuItem(1805, properties.toUpperCase)
-		_menu.AppendMenuItem(MF_STRING, 1810, "Mini 主菜单按钮");
+		_menu.AppendMenuItem(MF_STRING, 1810, "小型主菜单按钮");
 		_menu.CheckMenuItem(1810, properties.mini_mainmenu_button)
 
 		_menu.AppendMenuItem(compact_titlebar.isActive() ? MF_GRAYED : MF_STRING, 1801, "总是显示搜索框");
@@ -1124,11 +1124,11 @@ function draw_settings_menu(x,y){
 		_menu.AppendMenuItem(MF_STRING, 1900, "启动时恢复面板状态");
 		_menu.CheckMenuItem(1900, properties.Remember_previous_state)
 
-		_menu.AppendMenuItem(MF_STRING, 1901, "隐藏可视化面板");
+		_menu.AppendMenuItem(MF_STRING, 1901, "隐藏视频播放面板");
 		_menu.CheckMenuItem(1901, !properties.show_visualization)
 
 		_menu.AppendMenuSeparator();
-		_menu_button.AppendMenuItem(MF_STRING, 1806, "右侧边栏显示");
+		_menu_button.AppendMenuItem(MF_STRING, 1806, "显示右侧边栏");
 		_menu_button.CheckMenuItem(1806, properties.showNowPlayingBtn);
 		_menu_button.AppendMenuItem(MF_STRING, 1808, "面板布局");
 		_menu_button.CheckMenuItem(1808, properties.showConfigLayoutBtn);		
@@ -1412,7 +1412,7 @@ function draw_layout_menu(x,y){
 		wallpaper_visibility.AppendTo(basemenu,MF_STRING, "壁纸显示");
 		wallpaper_blur.AppendTo(basemenu,MF_STRING, "壁纸模糊");
 	} else if(main_panel_state.isEqual(2)){
-		basemenu.AppendMenuItem(MF_GRAYED, 0, "当前播放布局");
+		basemenu.AppendMenuItem(MF_GRAYED, 0, "艺人简介布局");
 		basemenu.AppendMenuSeparator();				
 		nowplaying.AppendTo(basemenu,MF_STRING, "右侧播放列表");
 
@@ -1435,7 +1435,7 @@ function draw_layout_menu(x,y){
 		wallpaper_visibility.AppendTo(basemenu,MF_STRING, "壁纸显示");
 		wallpaper_blur.AppendTo(basemenu,MF_STRING, "壁纸模糊");
 	} else if(main_panel_state.isEqual(3)){
-		basemenu.AppendMenuItem(MF_GRAYED, 0, "可视化布局");
+		basemenu.AppendMenuItem(MF_GRAYED, 0, "视频播放布局");
 		basemenu.AppendMenuSeparator();				
 		nowplaying.AppendTo(basemenu,MF_STRING, "右侧播放列表");
 		basemenu.AppendMenuSeparator();
@@ -1848,7 +1848,7 @@ function draw_main_menu(x,y){
 	main_panel.CheckMenuItem(5001+globalProperties.colorsMainPanel+checked_item, true);
 
 	mini_player = window.CreatePopupMenu();
-	mini_player.AppendTo(colors_menu,MF_STRING, "Mini 播放器");
+	mini_player.AppendTo(colors_menu,MF_STRING, "迷你播放器");
 	mini_player.AppendMenuItem(MF_STRING, 5201, "纯白色");
 	mini_player.AppendMenuItem(MF_STRING, 5202, "白色与专辑封面");
 	mini_player.AppendMenuSeparator();
@@ -1888,7 +1888,7 @@ function draw_main_menu(x,y){
 	mem_solicitation.AppendMenuItem(MF_STRING, 4026, "重置图像缓存");
 	mem_solicitation.AppendTo(skin_settings_menu, MF_STRING, "封面 && 内存使用率");*/
 
-	skin_settings_menu.AppendMenuItem(MF_STRING, 4029, "封面 && 内存使用率");
+	skin_settings_menu.AppendMenuItem(MF_STRING, 4029, "封面与内存使用率");
 	skin_settings_menu.AppendMenuItem(MF_STRING, 4026, "重置图像缓存");
 	skin_settings_menu.AppendMenuSeparator();
 
@@ -1937,7 +1937,7 @@ function draw_main_menu(x,y){
 	schedulerMenu.AppendTo(skin_settings_menu, MF_STRING, "电源和休眠");
 
 	if(layout_state.isEqual(0)) {
-		skin_settings_menu.AppendMenuItem(MF_STRING, 4010, "Mini 播放器");
+		skin_settings_menu.AppendMenuItem(MF_STRING, 4010, "迷你播放器");
 		if(g_uihacks.getFullscreenState())
 			skin_settings_menu.AppendMenuItem(MF_STRING, 4009, "退出全屏");
 		else
@@ -2135,7 +2135,7 @@ function draw_main_menu(x,y){
 		delete_full_cache();
 		break;
 	case (idx == 4029):
-		chooseMemorySettings(" ", "<div class='titleBig'>封面  &  内存使用</div><div class='separator'></div><br/>为了使内存使用适应您的计算机速度和音乐库的大小, 请选择以下封面 & 内存设置之一.\n\n如果您遇到问题或内存不足的错误. 您可以在以后减少它, 相反, 如果一切工作正常. 那么您可以增加它.",'<br/>注意: Eole 使用封面缓存. 封面缓存是逐渐建立起来的: 当显示一个封面时, 如果这时还没有建立缓存, 将被添加到缓存中, 所以第一次显示封面都会有些缓慢, 但第二次显示时将会变快很多.<br/><br/>这个缓存基于 %album artist% & %album% 标签.<br/><br/>如果更新现有封面, 需要刷新缓存. 在封面上点击右键, 会弹出一个相关的菜单项.<br/><br/>','MemoryDialog','可以减少内存中储存封面的宽度, 如下所示. 数字越低, 皮肤内存占用就越低. 注意: 如果减少太多, 封面看起来会很模糊.. <u>警告: 改变这个值将重置封面缓存.</u>');
+		chooseMemorySettings(" ", "<div class='titleBig'>封面与内存使用</div><div class='separator'></div><br/>为了使内存使用适应您的计算机速度和音乐库的大小, 请选择以下封面与内存设置之一.\n\n如果您遇到问题或内存不足的错误. 您可以在以后减少它, 相反, 如果一切工作正常. 那么您可以增加它.",'<br/>注意: Eole 使用封面缓存. 封面缓存是逐渐建立起来的: 当显示一个封面时, 如果这时还没有建立缓存, 将被添加到缓存中, 所以第一次显示封面都会有些缓慢, 但第二次显示时将会变快很多.<br/><br/>这个缓存基于 %album artist% & %album% 标签.<br/><br/>如果更新现有封面, 需要刷新缓存. 在封面上点击右键, 会弹出一个相关的菜单项.<br/><br/>','MemoryDialog','可以减少内存中储存封面的宽度, 如下所示. 数字越低, 皮肤内存占用就越低. 注意: 如果减少太多, 封面看起来会很模糊.. <u>警告: 改变这个值将重置封面缓存.</u>');
 		break;
 	case (idx == 4027):
 		toggleNowPlayingState();
@@ -2827,7 +2827,7 @@ oSearch = function() {
 		}
 	};
 	this.on_init = function() {
-		this.inputbox = new oInputbox(this.w, this.h, "", "搜索...", colors.search_txt , 0, 0, colors.selected_bg, g_launchSearch, "g_searchbox", undefined, "g_font.min2");
+		this.inputbox = new oInputbox(this.w, this.h, "", "搜索...", colors.search_txt , 0, 0, colors.selected_bg, g_launchSearch, "g_searchbox", undefined, "g_font.normal");
         this.inputbox.autovalidation = properties.autosearch;
 		this.adapt_look_to_layout();
     };
@@ -3006,7 +3006,7 @@ function on_init(){
 	if(fb.IsPlaying) caption_title = fb.TitleFormat("[%artist%  -  ][%album%[  -  %tracknumber%] : ]%title%[  -  %date%]").Eval();
 	if(settings_file_not_found){
 		var welcome_msg_timer = setTimeout(function(){
-			chooseMemorySettings(" ", "<div class='titleBig'>您是否第一次安装这个主题?</div><div class='separator'></div><br/>fcl 主题文件路径> foobar2000>themes>eole>columnsUI_eole.fcl\n可视化默认路径> C:>Program Files (x86)>foobar2000>plugins>winamp\n请仔细阅读弹出窗口, 特别是底部文字, 以了解 Eole 图像缓存的工作原理.\n\n下面的设置影响皮肤的性能, 封面分辨率和内存占用率.\n\n如果遇到性能问题或内存不足的错误\n可以通过进入 Foobar > 皮肤设置 > 封面 & 内存使用率 来降低. 反之, 如果一切工作正常, 那么可以提高. 如果不了解详细情况, 请保持默认设置.",'<br/>提示: 大多数面板都有一个设置菜单可通过点击右键获得.<br/><br/>注意: Eole 使用封面缓存. 封面缓存是逐渐建立起来的: 当显示一个封面时, 如果这时还没有建立缓存, 将被添加到缓存中, 所以第一次显示封面都会有些缓慢, 但第二次显示时将会变快很多.<br/><br/>这个缓存基于 %album artist% & %album% 标签.<br/><br/>如果更新现有封面, 需要刷新缓存. 在封面上点击右键, 会弹出一个相关的菜单项.<br/><br/>','MemoryDialog','可以减少内存中储存封面的宽度, 如下所示. 数字越低, 皮肤内存占用就越低. 注意: 如果减少太多, 封面看起来会很模糊.');
+			chooseMemorySettings(" ", "<div class='titleBig'>您是否第一次安装这个主题?</div><div class='separator'></div><br/>fcl 主题文件路径> foobar2000>themes>eole>columnsUI_eole.fcl\n视频播放默认路径> C:>Program Files (x86)>foobar2000>plugins>winamp\n请仔细阅读弹出窗口, 特别是底部文字, 以了解 Eole 图像缓存的工作原理.\n\n下面的设置影响皮肤的性能, 封面分辨率和内存占用率.\n\n如果遇到性能问题或内存不足的错误\n可以通过进入 Foobar > 皮肤设置 > 封面 & 内存使用率 来降低. 反之, 如果一切工作正常, 那么可以提高. 如果不了解详细情况, 请保持默认设置.",'<br/>提示: 大多数面板都有一个设置菜单可通过点击右键获得.<br/><br/>注意: Eole 使用封面缓存. 封面缓存是逐渐建立起来的: 当显示一个封面时, 如果这时还没有建立缓存, 将被添加到缓存中, 所以第一次显示封面都会有些缓慢, 但第二次显示时将会变快很多.<br/><br/>这个缓存基于 %album artist% & %album% 标签.<br/><br/>如果更新现有封面, 需要刷新缓存. 在封面上点击右键, 会弹出一个相关的菜单项.<br/><br/>','MemoryDialog','可以减少内存中储存封面的宽度, 如下所示. 数字越低, 皮肤内存占用就越低. 注意: 如果减少太多, 封面看起来会很模糊.');
 			theme_version.setValue(globalProperties.theme_version);
 			clearTimeout(welcome_msg_timer);
 			welcome_msg_timer=false;
@@ -3014,7 +3014,7 @@ function on_init(){
 		RefreshPSS();
 	} else if(versionCompare(theme_version.getValue(),globalProperties.lastest_breaking_version)<0) {
 		var welcome_msg_timer = setTimeout(function(){
-			NoticeBox(" ","<div class='titleBig'>导入 fcl 文件, Eole v"+(globalProperties.lastest_breaking_version)+" 之后</div><div class='separator'></div><br/>看来您的分栏用户界面配置文件已经过期, 需要导入新的配置文件, 可能会失去一些这个主题的定制元素. 但很快就可以设置回来.<br/><br/>在参数选项页面 (Foobar > 文件 > 参数选项), 进入<br/>显示 > 分栏用户界面 > 主窗口 > 导入配置...<br/><br/>然后导入 fcl 文件: [YOUR_FOOBAR_DIRECTORY]/themes/eole/columnsUI_eole.fcl", "知道了, 打开参数选项","现在不行",'fb.RunMainMenuCommand("文件/参数选项")');
+			NoticeBox(" ","<div class='titleBig'>导入 fcl 文件, Eole v"+(globalProperties.lastest_breaking_version)+" 之后</div><div class='separator'></div><br/>看来您的分栏用户界面配置文件已经过期, 需要导入新的配置文件, 可能会失去一些这个主题的定制元素. 但很快就可以设置回来.<br/><br/>在参数选项页面 (Foobar2000 > 文件 > 参数选项), 进入<br/>显示 > 分栏用户界面 > 主窗口 > 导入配置...<br/><br/>然后导入 fcl 文件: [YOUR_FOOBAR_DIRECTORY]/themes/eole/columnsUI_eole.fcl", "知道了, 打开参数选项","现在不行",'fb.RunMainMenuCommand("文件/参数选项")');
 			clearTimeout(welcome_msg_timer);
 			welcome_msg_timer=false;
 		}, 200);

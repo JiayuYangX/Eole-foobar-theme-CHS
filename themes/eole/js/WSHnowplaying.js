@@ -1801,7 +1801,7 @@ function draw_settings_menu(x,y){
 		_dble_click_menu.AppendMenuItem(MF_STRING, 4, "在全部面板上显示正在播放");
 		_dble_click_menu.AppendMenuItem(MF_STRING, 5, "打开完整/原始封面");
 		_dble_click_menu.AppendMenuItem(MF_STRING, 6, "打开文件夹");
-		_dble_click_menu.AppendMenuItem(MF_STRING, 7, "激活/退出 Mini 播放器");
+		_dble_click_menu.AppendMenuItem(MF_STRING, 7, "激活/退出 迷你播放器");
 		_dble_click_menu.AppendMenuItem(MF_STRING, 8, "编辑音轨属性");		
 		_dble_click_menu.CheckMenuRadioItem(3, 8, 3+properties.dble_click_action);
 		_dble_click_menu.AppendTo(_menu, MF_STRING, "双击动作");

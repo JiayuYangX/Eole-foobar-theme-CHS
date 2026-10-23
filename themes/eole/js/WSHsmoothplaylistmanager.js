@@ -34,11 +34,11 @@
     filtred_playlist_idx: window.GetProperty("_PROPERTY: filtred playlist idx", -1),	
 	panelFontAdjustement: -1,
 	emphasisOnActive: false,
-	newly_added : "新添加的音轨",
-	history : "历史 (过去几周播放的音轨)",
-	top_rated : "评级最高的音轨",
-	radios : "电台",
-	most_played : "经常播放的音轨",
+	newly_added : "最近添加的",
+	history : "本周听过的",
+	top_rated : "评级最高的",
+	radios : "网络电台",
+	most_played : "经常播放的",
 	podcasts : "播客",
 	external_files : "外部文件",
 };
@@ -1695,10 +1695,10 @@ oBrowser = function(name) {
         _newplaylist.AppendMenuItem(MF_STRING, 101, "新智能播放列表");
         _autoplaylist.AppendTo(_newplaylist, MF_STRING, "预设播放列表");
         //_autoplaylist.AppendMenuItem(MF_STRING, 200, "Media Library (full)");
-        _autoplaylist.AppendMenuItem(MF_STRING, 205, "历史 (过去几周播放的音轨)");
-        _autoplaylist.AppendMenuItem(MF_STRING, 206, "经常播放的音轨");
-        _autoplaylist.AppendMenuItem(MF_STRING, 207, "评级最高的音轨");
-        _autoplaylist.AppendMenuItem(MF_STRING, 210, "新添加的音轨");
+        _autoplaylist.AppendMenuItem(MF_STRING, 205, "本周听过的");
+        _autoplaylist.AppendMenuItem(MF_STRING, 206, "经常播放的");
+        _autoplaylist.AppendMenuItem(MF_STRING, 207, "评级最高的");
+        _autoplaylist.AppendMenuItem(MF_STRING, 210, "最近添加的");
 		_autoplaylist.AppendMenuItem(MF_SEPARATOR, 0, "");
         _autoplaylist.AppendMenuItem(MF_STRING, 211, properties.radios);
         _autoplaylist.AppendMenuItem(MF_STRING, 212, properties.external_files);

@@ -1370,7 +1370,7 @@ oShowList = function(parentPanelName) {
 			this.discnumber = Tags[2];
 			this.date = Tags[3];
 			this.genre = Tags[4];
-			this.total_tracks = this.pl.Count+(this.pl.Count>1?" 音轨":" 音轨");
+			this.total_tracks = this.pl.Count+(this.pl.Count>1?"音轨":"音轨");
 		} else {
 			TagsString = TF.showlistReduced.EvalWithMetadb(this.pl[0]);
 			Tags = TagsString.split(" ^^ ");
@@ -1379,7 +1379,7 @@ oShowList = function(parentPanelName) {
 			this.discnumber = (Tags[0]=='')?'':' - 光碟 '+Tags[0];
 			this.date = ' ('+brw.groups_draw[this.idx].date+')';
 			this.genre = brw.groups_draw[this.idx].genre;
-			this.total_tracks = this.pl.Count+(this.pl.Count>1?" 音轨":" 音轨");
+			this.total_tracks = this.pl.Count+(this.pl.Count>1?"音轨":"音轨");
 		}
 
 		this.firstRowInfo = this.album+this.discnumber+this.date;
@@ -1998,7 +1998,7 @@ oHeaderbar = function(name) {
 		if(brw.finishLoading) {
 			if(brw.playlistItemCount) {
 				this.timeTxt = brw.FormatTime(brw.totalTime);
-				this.itemsTxt=',  '+brw.playlistItemCount+' 音轨'+((brw.playlistItemCount>1)?" ":"")+',  '+brw.groups_draw.length+' 分组 '+((brw.groups_draw.length>1)?" ":"");
+				this.itemsTxt=',  '+brw.playlistItemCount+'音轨'+((brw.playlistItemCount>1)?" ":"")+',  '+brw.groups_draw.length+'分组 '+((brw.groups_draw.length>1)?" ":"");
 
 				// Main Text, Left justified
 				if(brw.playlistName==globalProperties.whole_library){
@@ -3066,12 +3066,12 @@ oBrowser = function(name) {
 			totalS -= (totalH = Math.floor(totalS / 3600)) * 3600;
 			totalS -= (totalM = Math.floor(totalS / 60)) * 60;
 
-			txt_week = (totalW > 0) ? `${totalW} 星期${totalW > 1 ? '' : ''}, ` : '';
-			txt_day = (totalD > 0) ? `${totalD} 天${totalD > 1 ? '' : ''}, ` : '';
-			txt_hour = (totalH > 0) ? `${totalH} 小时${totalH > 1 ? '' : ''}, ` : '';
-			txt_mins = (totalM > 0) ? `${totalM} 分${totalM > 1 ? '' : ''}, ` : '';
+			txt_week = (totalW > 0) ? `${totalW}星期${totalW > 1 ? '' : ''}, ` : '';
+			txt_day = (totalD > 0) ? `${totalD}天${totalD > 1 ? '' : ''}, ` : '';
+			txt_hour = (totalH > 0) ? `${totalH}小时${totalH > 1 ? '' : ''}, ` : '';
+			txt_mins = (totalM > 0) ? `${totalM}分${totalM > 1 ? '' : ''}, ` : '';
 
-			time_txt = `${txt_week}${txt_day}${txt_hour}${txt_mins}${totalS} 秒`;
+			time_txt = `${txt_week}${txt_day}${txt_hour}${txt_mins}${totalS}秒`;
 		}
 		return time_txt;
 	}
@@ -3222,7 +3222,7 @@ oBrowser = function(name) {
 				if(i>0) {
 					if(this.custom_firstRow) this.groups[i-1].firstRow = TF.grouping.EvalWithMetadb(this.groups[i-1].pl[0]);
 					else this.groups[i-1].firstRow = this.groups[i-1].artist
-					if(this.custom_secondRow) this.groups[i-1].secondRow = this.groups[i-1].pl.Count+(this.groups[this.groups.length-1].pl.Count>1?" 音轨":" 音轨");
+					if(this.custom_secondRow) this.groups[i-1].secondRow = this.groups[i-1].pl.Count+(this.groups[this.groups.length-1].pl.Count>1?"音轨":"音轨");
 					else this.groups[i-1].secondRow = this.groups[i-1].album;
 
 					this.totalTime += this.groups[i-1].length;
@@ -3318,7 +3318,7 @@ oBrowser = function(name) {
 			if(this.groups.length>0){
 				if(this.custom_firstRow) this.groups[this.groups.length-1].firstRow = TF.grouping.EvalWithMetadb(this.groups[this.groups.length-1].pl[0]);
 				else this.groups[this.groups.length-1].firstRow = this.groups[this.groups.length-1].artist
-				if(this.custom_secondRow) this.groups[this.groups.length-1].secondRow = this.groups[this.groups.length-1].pl.Count+(this.groups[this.groups.length-1].pl.Count>1?" 音轨":" 音轨");
+				if(this.custom_secondRow) this.groups[this.groups.length-1].secondRow = this.groups[this.groups.length-1].pl.Count+(this.groups[this.groups.length-1].pl.Count>1?"音轨":"音轨");
 				else this.groups[this.groups.length-1].secondRow = this.groups[this.groups.length-1].album;
 				this.totalTime += this.groups[this.groups.length-1].length;
 				if(this.searched_track!=null && this.found_albumIdx>-1) {
