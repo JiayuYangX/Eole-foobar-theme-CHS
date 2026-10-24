@@ -80,7 +80,7 @@ class ResizeHandler {
 	}
 
 	editText() {
-		return (ppt.text_only ? '类型: 仅文本' + (panel.style.showFilmStrip ? '\n - 调整布局: 按住拖动线框' : '') : (ppt.img_only ? '类型: 仅图像' + (panel.style.showFilmStrip ? '\n - 调整布局: 按住拖动线框' : '') : '名称: ' + panel.style.name[ppt.style] + (ppt.style < 4 ? '\n\n类型: 自动\n - 布局调整: 拖动线' + (panel.style.showFilmStrip && !ppt.img_only && ppt.style != 4 ? 's' : '') + '\n - 图像强度: Shift + 滚轮滚动文本' : ppt.style == 4 ? '\n\n类型: 自动' + (panel.style.showFilmStrip && !ppt.img_only ? '\n - 调整布局: 按住拖动线框' : '') + '\n - 图像强度: Shift + 滚轮滚动文本' : '\n\n类型: 自由发挥\n - 调整布局: 按住拖动线框与框体: Ctrl (任意), Ctrl + Alt (图像), Ctrl + Shift (文本) 或 Ctrl + Alt + Shift (幻灯片)\n - 叠加强度: Shift + 滚轮滚动文本'))) + (img.isType('Refl') && !ppt.text_only && ppt.style != 4 ? '\n - 镜像强度: Shift + 滚轮滚动主图像' : '') + (!ppt.img_only ? '\n - 文本大小: Ctrl + 滚轮滚动文本' : '') + '\n - ' + (ppt.style != 4 ? '' : '文本 ') +'填充: 显示标签';
+		return (ppt.text_only ? '类型: 仅文本' + (panel.style.showFilmStrip ? '\n - 调整布局: 按住拖动线框' : '') : (ppt.img_only ? '类型: 仅图像' + (panel.style.showFilmStrip ? '\n - 调整布局: 按住拖动线框' : '') : '名称: ' + panel.style.name[ppt.style] + (ppt.style < 4 ? '\n\n类型: 自动\n - 布局调整: 拖动线' + (panel.style.showFilmStrip && !ppt.img_only && ppt.style != 4 ? 's' : '') + '\n - 图像强度: Shift + 滚轮滚动文本' : ppt.style == 4 ? '\n\n类型: 自动' + (panel.style.showFilmStrip && !ppt.img_only ? '\n - 调整布局: 按住拖动线框' : '') + '\n - 图像强度: Shift + 滚轮滚动文本' : '\n\n类型: 自由发挥\n - 调整布局: 按住拖动线框与框体: Ctrl (任意), Ctrl + Alt (图像), Ctrl + Shift (文本) 或 Ctrl + Alt + Shift (胶片条)\n - 叠加强度: Shift + 滚轮滚动文本'))) + (img.isType('Refl') && !ppt.text_only && ppt.style != 4 ? '\n - 镜像强度: Shift + 滚轮滚动主图像' : '') + (!ppt.img_only ? '\n - 文本大小: Ctrl + 滚轮滚动文本' : '') + '\n - ' + (ppt.style != 4 ? '' : '文本 ') +'填充: 显示标签';
 	}
 
 	filmMove(x, y) {
