@@ -1543,14 +1543,18 @@ class Images {
 		}
 		this.id.curImg = this.id.img;
 		this.id.img = this.cur_pth();
-		if (this.id.curImg != this.id.img) this.style.alpha = this.transition.level;
-		else this.style.alpha = 255;
-		timer.clear(timer.transition);
-		timer.transition.id = setInterval(() => {
-			this.style.alpha = Math.min(this.style.alpha *= this.transition.incr, 255);
-			txt.paint();
-			if (this.style.alpha == 255) timer.clear(timer.transition);
-		}, 12);
+		if (this.id.curImg != this.id.img) {
+			this.style.alpha = this.transition.level;
+			timer.clear(timer.transition);
+			timer.transition.id = setInterval(() => {
+				this.style.alpha = Math.min(this.style.alpha *= this.transition.incr, 255);
+				txt.paint();
+				if (this.style.alpha == 255) timer.clear(timer.transition);
+			}, 12);
+		} else if (!timer.transition.id) {
+			this.style.alpha = 255;
+			txt.paint(); // 同路径普通重绘（Seeker 等）仍要刷新
+		}
 	}
 
 	pth() {
