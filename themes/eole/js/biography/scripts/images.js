@@ -875,7 +875,6 @@ class Images {
 			if (this.artist) this.getArtImages();
 		}
 		this.setCheckArr(ppt.cycPhoto ? this.art.images[this.art.ix] : null);
-		this.applyArtFallback($.handle(panel.id.focus)); // [RAF] 进入艺人视图先落照片回退，文件夹照片/类型4到达后覆盖
 		this.loadArtImage();
 	}
 
@@ -1297,7 +1296,10 @@ class Images {
 
 	loadArtImage() {
 		if (this.art.images.length && ppt.cycPhoto) this.loadImg(art, this.art.images[this.art.ix], true, this.art.ix);
-		else if (!this.init) this.getFbImg();
+		else if (!this.init) {
+			this.getFbImg(); // [RAF] 先发查询（建立在途标记）
+			this.applyArtFallback($.handle(panel.id.focus)); // [RAF] 无照片时立即应用统一照片回退：艺人图槽 → 用户占位 → 水印
+		}
 	}
 
 	loadCycCov(handle, art_id, image, image_path) { // stndAlb
